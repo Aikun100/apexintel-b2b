@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "apexintel-b2b",
+  "main": "src/worker.js",
   "compatibility_date": "2026-11-20",
   "workers_dev": true,
   "observability": {

@@ -2765,53 +2765,22 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
   <!-- Modular SaaS Application Engine & Native Payment (Self-Contained) -->
   <script>
 /**
- * ApexIntel B2B - Authentication & Dynamic Navigation System
- * Handles client-side auth, demo accounts seeding, session management,
- * auth modal rendering, and dynamic navbar state updates.
+ * ApexIntel B2B - Production-Grade Authentication & Dynamic Navigation System
+ * 
+ * Architecture:
+ * - Server-authoritative session management via HttpOnly, Secure cookies
+ * - Real API integration (/api/auth/login, /api/auth/register, /api/auth/logout, /api/auth/me)
+ * - Zero plaintext passwords or session tokens stored in browser storage
+ * - In-memory user identity state with automatic session restoration on page load
+ * - Dynamic navbar state updates & role-based UI presentation
  */
 
 (function () {
   'use strict';
 
-  // --- Constants & Storage Keys ---
-  const STORAGE_ACCOUNTS = 'apexintel_accounts';
-  const STORAGE_SESSION = 'apexintel_session';
   const STORAGE_ORDERS = 'apexintel_orders';
 
-  // --- Seed Data ---
-  const SEED_ACCOUNTS = [
-    {
-      email: 'alex@velocitygrowth.io',
-      name: 'Alex Rivera',
-      company: 'Velocity Growth Agency',
-      plan: 'Enterprise Pro',
-      credits: 250,
-      role: 'customer',
-      password: 'demo123',
-      apiKey: 'apex_live_sec_7f9a2b8e4d1c603a'
-    },
-    {
-      email: 'sarah@outboundsprint.com',
-      name: 'Sarah Chen',
-      company: 'OutboundSprint',
-      plan: 'Agency Growth',
-      credits: 50,
-      role: 'customer',
-      password: 'demo123',
-      apiKey: 'apex_live_sec_1a3b5c7d9e0f2468'
-    },
-    {
-      email: 'admin@apexintel.io',
-      name: 'Admin',
-      company: 'ApexIntel HQ',
-      plan: 'Admin',
-      credits: 9999,
-      role: 'admin',
-      password: 'apex2026',
-      apiKey: 'apex_live_sec_root_999988887777'
-    }
-  ];
-
+  // --- Seed Orders (Local UI Showcase Data) ---
   const SEED_ORDERS = [
     {
       id: 'ord_tx_9011',
@@ -2823,7 +2792,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       packName: 'Texas High-Ticket Contractors',
       leadsDelivered: 24,
       amount: 79,
-      processor: 'Gumroad',
+      processor: 'Stripe',
       status: 'Delivered',
       downloadUrl: '/covers/cover_texas.png',
       leads: [
@@ -2843,7 +2812,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       packName: 'Florida Solar & Storm Restoration',
       leadsDelivered: 24,
       amount: 79,
-      processor: 'Gumroad',
+      processor: 'Stripe',
       status: 'Delivered',
       downloadUrl: '/covers/cover_florida.png',
       leads: [
@@ -2862,7 +2831,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       packName: 'California Luxury MedSpas',
       leadsDelivered: 24,
       amount: 89,
-      processor: 'Gumroad',
+      processor: 'Stripe',
       status: 'Delivered',
       downloadUrl: '/covers/cover_medspas.png',
       leads: [
@@ -2870,68 +2839,53 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
         { domain: 'skinspirit.com', company: 'SkinSpirit Beverly Hills', email: 'info@skinspirit.com' },
         { domain: 'ljcmedspa.com', company: 'La Jolla Cosmetic MedSpa', email: 'appointments@ljcmedspa.com' }
       ]
-    },
-    {
-      id: 'ord_hv_6501',
-      date: '2026-11-18T16:04:00Z',
-      customerEmail: 'mike@industrialgrowth.io',
-      customerName: 'Mike Sullivan',
-      company: 'Industrial Growth Partners',
-      packId: 'hvac',
-      packName: 'Commercial HVAC & Mechanical',
-      leadsDelivered: 24,
-      amount: 99,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_hvac.png',
-      leads: [
-        { domain: 'ambermech.com', company: 'Amber Mechanical Contractors', email: 'service@ambermech.com' },
-        { domain: 'dallasmech.com', company: 'Dallas Mechanical Group', email: 'estimating@dallasmech.com' }
-      ]
-    },
-    {
-      id: 'ord_cst_3019',
-      date: '2026-11-21T08:30:00Z',
-      customerEmail: 'david@zenithb2b.com',
-      customerName: 'David Vance',
-      company: 'Zenith B2B Media',
-      packId: 'custom_250',
-      packName: 'Custom Extraction (Phoenix Roofing & Solar)',
-      leadsDelivered: 250,
-      amount: 299,
-      processor: 'Stripe Invoice',
-      status: 'Delivered',
-      downloadUrl: '#',
-      leads: []
     }
   ];
 
-  // --- Auth Engine ---
+  // --- Production Auth Engine ---
   const ApexAuth = {
-    _getAccounts: function () {
-      try {
-        const stored = localStorage.getItem(STORAGE_ACCOUNTS);
-        return stored ? JSON.parse(stored) : [];
-      } catch (e) {
-        return [];
-      }
-    },
-
-    _saveAccounts: function (accounts) {
-      localStorage.setItem(STORAGE_ACCOUNTS, JSON.stringify(accounts));
-    },
+    _currentUser: null,
+    _initialized: false,
 
     initStorage: function () {
-      if (!localStorage.getItem(STORAGE_ACCOUNTS)) {
-        localStorage.setItem(STORAGE_ACCOUNTS, JSON.stringify(SEED_ACCOUNTS));
-      }
       if (!localStorage.getItem(STORAGE_ORDERS)) {
         localStorage.setItem(STORAGE_ORDERS, JSON.stringify(SEED_ORDERS));
       }
     },
 
-    getAccounts: function () {
-      return this._getAccounts();
+    /**
+     * Restore authenticated session from backend via GET /api/auth/me
+     */
+    checkSession: async function () {
+      try {
+        const res = await fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && data.user) {
+            this._currentUser = data.user;
+          } else {
+            this._currentUser = null;
+          }
+        } else {
+          this._currentUser = null;
+        }
+      } catch (err) {
+        // Network or offline fallback
+        this._currentUser = null;
+      } finally {
+        this._initialized = true;
+        if (typeof window.updateNavbarState === 'function') {
+          window.updateNavbarState();
+        }
+      }
+      return this._currentUser;
     },
 
     getOrders: function (customerEmail) {
@@ -2956,56 +2910,112 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       }
     },
 
-    login: function (email, password) {
-      const accounts = this._getAccounts();
-      const user = accounts.find(
-        a => a.email.toLowerCase() === email.trim().toLowerCase() && a.password === password
-      );
-      if (!user) {
-        return { success: false, message: 'Invalid email or password.' };
+    /**
+     * Authenticate via POST /api/auth/login
+     */
+    login: async function (email, password) {
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          return {
+            success: false,
+            message: data.error || data.message || 'Invalid email or password.'
+          };
+        }
+
+        this._currentUser = data.user;
+        if (typeof window.updateNavbarState === 'function') {
+          window.updateNavbarState();
+        }
+        return { success: true, user: data.user };
+      } catch (err) {
+        return {
+          success: false,
+          message: 'Unable to reach the authentication service. Please check your connection.'
+        };
       }
-      // Set session (excluding raw password)
-      const sessionUser = { ...user };
-      delete sessionUser.password;
-      sessionStorage.setItem(STORAGE_SESSION, JSON.stringify(sessionUser));
-      updateNavbarState();
-      return { success: true, user: sessionUser };
     },
 
-    register: function (data) {
-      const accounts = this._getAccounts();
-      const exists = accounts.some(a => a.email.toLowerCase() === data.email.trim().toLowerCase());
-      if (exists) {
-        return { success: false, message: 'An account with this email already exists.' };
-      }
-      const newAccount = {
-        email: data.email.trim().toLowerCase(),
-        name: data.name.trim(),
-        company: data.company.trim() || 'Independent Agency',
-        plan: 'Agency Growth',
-        credits: 50,
-        role: 'customer',
-        password: data.password,
-        targetNiche: data.targetNiche || 'Contractors',
-        apiKey: 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
-      };
-      accounts.push(newAccount);
-      this._saveAccounts(accounts);
+    /**
+     * Register customer account via POST /api/auth/register
+     */
+    register: async function (data) {
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name: data.name,
+            company: data.company,
+            email: data.email,
+            password: data.password,
+            passwordConfirmation: data.passwordConfirmation || data.password,
+            targetNiche: data.targetNiche
+          })
+        });
 
-      const sessionUser = { ...newAccount };
-      delete sessionUser.password;
-      sessionStorage.setItem(STORAGE_SESSION, JSON.stringify(sessionUser));
-      updateNavbarState();
-      return { success: true, user: sessionUser };
+        const resData = await res.json();
+        if (!res.ok || !resData.success) {
+          return {
+            success: false,
+            message: resData.error || resData.message || 'Registration failed.'
+          };
+        }
+
+        this._currentUser = resData.user;
+        if (typeof window.updateNavbarState === 'function') {
+          window.updateNavbarState();
+        }
+        return { success: true, user: resData.user };
+      } catch (err) {
+        return {
+          success: false,
+          message: 'Unable to reach registration service. Please retry shortly.'
+        };
+      }
     },
 
-    logout: function () {
-      sessionStorage.removeItem(STORAGE_SESSION);
-      updateNavbarState();
+    /**
+     * Terminate session via POST /api/auth/logout
+     */
+    logout: async function () {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+      } catch (err) {
+        // Logout should proceed even if network fails
+      }
+
+      this._currentUser = null;
+      if (typeof window.updateNavbarState === 'function') {
+        window.updateNavbarState();
+      }
+
       if (typeof window.showToast === 'function') {
         window.showToast('Signed out successfully.');
       }
-      // If customer dashboard is open, close it
+
+      // Close open dashboards
       const dash = document.getElementById('customerDashboardModal');
       if (dash) dash.classList.add('hidden');
       const adminDash = document.getElementById('adminDashboardModal');
@@ -3013,21 +3023,24 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     },
 
     getCurrentUser: function () {
-      try {
-        const raw = sessionStorage.getItem(STORAGE_SESSION);
-        return raw ? JSON.parse(raw) : null;
-      } catch (e) {
-        return null;
+      return this._currentUser;
+    },
+
+    updateCurrentUser: function (updates) {
+      if (this._currentUser) {
+        this._currentUser = { ...this._currentUser, ...updates };
+        if (typeof window.updateNavbarState === 'function') {
+          window.updateNavbarState();
+        }
       }
     },
 
     isLoggedIn: function () {
-      return this.getCurrentUser() !== null;
+      return this._currentUser !== null;
     },
 
     isAdmin: function () {
-      const u = this.getCurrentUser();
-      return u && u.role === 'admin';
+      return this._currentUser !== null && this._currentUser.role === 'admin';
     }
   };
 
@@ -3071,33 +3084,33 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
-              <span class="text-[10px] text-slate-500 font-mono">demo: demo123</span>
+              <span class="text-[10px] text-slate-500 font-mono">min 12 chars</span>
             </div>
-            <input type="password" id="signInPassword" required placeholder="••••••••" autocomplete="current-password"
+            <input type="password" id="signInPassword" required placeholder="••••••••••••" autocomplete="current-password"
                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
           </div>
 
           <div id="signInError" class="text-xs text-rose-400 hidden pt-1"></div>
 
-          <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-indigo-600/30 active:scale-95">
-            Sign In to Dashboard &rarr;
+          <button id="signInSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-indigo-600/30 active:scale-95 flex items-center justify-center gap-2">
+            <span>Sign In to Dashboard &rarr;</span>
           </button>
 
           <!-- 1-Click Demo Login Shortcuts -->
           <div class="pt-3 border-t border-slate-800/80">
-            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 text-center">⚡ 1-Click Demo Test Accounts</span>
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 text-center">⚡ 1-Click Test Accounts</span>
             <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="fillDemoAccount('alex@velocitygrowth.io', 'demo123')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition group">
+              <button type="button" onclick="fillDemoAccount('alex@velocitygrowth.io', 'ApexDemo2026!')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition group">
                 <div class="text-[11px] font-bold text-white group-hover:text-indigo-400 transition">Alex (Agency Pro)</div>
                 <div class="text-[10px] text-slate-500 font-mono">250 credits • 2 packs</div>
               </button>
-              <button type="button" onclick="fillDemoAccount('sarah@outboundsprint.com', 'demo123')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition group">
+              <button type="button" onclick="fillDemoAccount('sarah@outboundsprint.com', 'ApexDemo2026!')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition group">
                 <div class="text-[11px] font-bold text-white group-hover:text-indigo-400 transition">Sarah (Growth SDR)</div>
                 <div class="text-[10px] text-slate-500 font-mono">50 credits • 1 pack</div>
               </button>
             </div>
             <div class="mt-2 text-center">
-              <button type="button" onclick="fillDemoAccount('admin@apexintel.io', 'apex2026')" class="text-[10px] text-slate-500 hover:text-emerald-400 font-mono transition">
+              <button type="button" onclick="fillDemoAccount('admin@apexintel.io', 'AdminMaster2026!')" class="text-[10px] text-slate-500 hover:text-emerald-400 font-mono transition">
                 🔒 Sign in as Platform Admin (admin@apexintel.io)
               </button>
             </div>
@@ -3122,8 +3135,16 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Password</label>
-            <input type="password" id="regPassword" required placeholder="Create secure password" minlength="6"
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
+              <span class="text-[10px] text-slate-500 font-mono">min 12 chars</span>
+            </div>
+            <input type="password" id="regPassword" required placeholder="Create secure password" minlength="12"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Confirm Password</label>
+            <input type="password" id="regPasswordConfirm" required placeholder="Re-enter password" minlength="12"
                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
           </div>
           <div>
@@ -3139,8 +3160,8 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
 
           <div id="registerError" class="text-xs text-rose-400 hidden pt-1"></div>
 
-          <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-600/30 active:scale-95">
-            Create Free Account (+50 Credits) &rarr;
+          <button id="registerSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-600/30 active:scale-95 flex items-center justify-center gap-2">
+            <span>Create Free Account (+50 Credits) &rarr;</span>
           </button>
         </form>
 
@@ -3178,7 +3199,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       const isAdm = user.role === 'admin';
       const badgeColor = isAdm
         ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-        : user.plan.includes('Pro')
+        : (user.plan && user.plan.includes('Pro'))
         ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
         : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30';
 
@@ -3186,7 +3207,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
         <!-- Credits Counter Badge -->
         <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono">
           <span class="text-indigo-400">🎯</span>
-          <span class="text-white font-bold">${user.credits}</span>
+          <span class="text-white font-bold">${user.credits !== undefined ? user.credits : 50}</span>
           <span class="text-slate-500 text-[10px]">credits</span>
         </div>
 
@@ -3209,7 +3230,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
               <div class="text-xs font-bold text-white">${user.name}</div>
               <div class="text-[11px] text-slate-400 truncate">${user.email}</div>
               <div class="mt-1.5 inline-block text-[10px] font-black uppercase px-2 py-0.5 rounded border ${badgeColor}">
-                ${user.plan}
+                ${user.plan || 'Agency Growth'}
               </div>
             </div>
 
@@ -3310,56 +3331,99 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     if (form) form.requestSubmit();
   };
 
-  window.handleSignInSubmit = function (e) {
+  window.handleSignInSubmit = async function (e) {
     e.preventDefault();
     const email = document.getElementById('signInEmail').value;
     const password = document.getElementById('signInPassword').value;
     const err = document.getElementById('signInError');
+    const submitBtn = document.getElementById('signInSubmitBtn');
 
-    const res = ApexAuth.login(email, password);
-    if (!res.success) {
-      err.innerText = res.message;
-      err.classList.remove('hidden');
-    } else {
-      err.classList.add('hidden');
-      closeAuthModal();
-      if (typeof window.showToast === 'function') {
-        window.showToast(`Welcome back, ${res.user.name}!`);
-      }
-      // If admin, open admin dash or customer dash
-      if (res.user.role === 'admin') {
-        if (typeof window.openAdminDashboard === 'function') {
-          window.openAdminDashboard();
-        }
+    err.classList.add('hidden');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>⏳ Authenticating...</span>`;
+    }
+
+    try {
+      const res = await ApexAuth.login(email, password);
+      if (!res.success) {
+        err.innerText = res.message;
+        err.classList.remove('hidden');
       } else {
-        if (typeof window.openCustomerDashboard === 'function') {
-          window.openCustomerDashboard('crm');
+        err.classList.add('hidden');
+        closeAuthModal();
+        if (typeof window.showToast === 'function') {
+          window.showToast(`Welcome back, ${res.user.name}!`);
         }
+        if (res.user.role === 'admin') {
+          if (typeof window.openAdminDashboard === 'function') {
+            window.openAdminDashboard();
+          }
+        } else {
+          if (typeof window.openCustomerDashboard === 'function') {
+            window.openCustomerDashboard('crm');
+          }
+        }
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Sign In to Dashboard &rarr;</span>`;
       }
     }
   };
 
-  window.handleRegisterSubmit = function (e) {
+  window.handleRegisterSubmit = async function (e) {
     e.preventDefault();
     const name = document.getElementById('regName').value;
     const company = document.getElementById('regCompany').value;
     const email = document.getElementById('regEmail').value;
     const password = document.getElementById('regPassword').value;
+    const passwordConfirmation = document.getElementById('regPasswordConfirm')?.value || password;
     const niche = document.getElementById('regNiche').value;
     const err = document.getElementById('registerError');
+    const submitBtn = document.getElementById('registerSubmitBtn');
 
-    const res = ApexAuth.register({ name, company, email, password, targetNiche: niche });
-    if (!res.success) {
-      err.innerText = res.message;
+    err.classList.add('hidden');
+
+    if (password !== passwordConfirmation) {
+      err.innerText = 'Password confirmation does not match.';
       err.classList.remove('hidden');
-    } else {
-      err.classList.add('hidden');
-      closeAuthModal();
-      if (typeof window.showToast === 'function') {
-        window.showToast(`Account created! Welcome, ${res.user.name}.`);
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>⏳ Creating Account...</span>`;
+    }
+
+    try {
+      const res = await ApexAuth.register({ 
+        name, 
+        company, 
+        email, 
+        password, 
+        passwordConfirmation, 
+        targetNiche: niche 
+      });
+
+      if (!res.success) {
+        err.innerText = res.message;
+        err.classList.remove('hidden');
+      } else {
+        err.classList.add('hidden');
+        closeAuthModal();
+        if (typeof window.showToast === 'function') {
+          window.showToast(`Account created! Welcome, ${res.user.name}.`);
+        }
+        if (typeof window.openCustomerDashboard === 'function') {
+          window.openCustomerDashboard('crm');
+        }
       }
-      if (typeof window.openCustomerDashboard === 'function') {
-        window.openCustomerDashboard('crm');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Create Free Account (+50 Credits) &rarr;</span>`;
       }
     }
   };
@@ -3385,10 +3449,11 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
   });
 
   // --- Bootstrap on Page Load ---
-  window.initAuth = function () {
+  window.initAuth = async function () {
     ApexAuth.initStorage();
     injectAuthModal();
-    updateNavbarState();
+    // Validate session with authoritative backend
+    await ApexAuth.checkSession();
   };
 
   // Auto-run if DOM already loaded
