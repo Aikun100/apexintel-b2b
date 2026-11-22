@@ -1,0 +1,40 @@
+{
+  "name": "browser-agent-workspace",
+  "version": "1.0.0",
+  "description": "Dedicated workspace for controlling Google Chrome via Open Browser Control & MCP",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.js",
+    "bundle": "node scripts/bundle-all.js",
+    "validate": "node scripts/validate-scripts-syntax.js",
+    "test": "node scripts/verify-live-deployment.js",
+    "deploy": "npx wrangler deploy"
+  },
+  "keywords": [
+    "browser-automation",
+    "mcp",
+    "open-browser-control",
+    "agent"
+  ],
+  "author": "Aaron Agbas",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1175.0",
+    "@aws-sdk/client-lambda": "^3.1175.0",
+    "@aws-sdk/client-s3": "^3.1175.0",
+    "@aws-sdk/lib-dynamodb": "^3.1175.0",
+    "axios": "^1.21.1",
+    "cheerio": "^1.2.0",
+    "crawlee": "^3.18.2",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^18.0.10",
+    "exceljs": "^4.4.0",
+    "libphonenumber-js": "^1.13.17",
+    "stripe": "^23.2.0",
+    "validator": "^13.15.35"
+  },
+  "devDependencies": {
+    "wrangler": "^4.166.0"
+  }
+}

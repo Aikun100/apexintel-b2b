@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "apexintel-b2b",
+  "compatibility_date": "2026-11-20",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "public"
+  },
+  "routes": [
+    { "pattern": "apexintel-b2b.shop", "custom_domain": true },
+    { "pattern": "www.apexintel-b2b.shop", "custom_domain": true }
+  ]
+}
