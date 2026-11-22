@@ -26,9 +26,17 @@ import { auditLogger } from './audit-logger.js';
 
 export class AuthService {
   constructor(options = {}) {
-    this.repo = options.repository || getAuthRepository();
+    this._customRepo = options.repository || null;
     this.rateLimiter = options.rateLimiter || rateLimiter;
     this.auditLogger = options.auditLogger || auditLogger;
+  }
+
+  get repo() {
+    return this._customRepo || getAuthRepository();
+  }
+
+  set repo(val) {
+    this._customRepo = val;
   }
 
   /**

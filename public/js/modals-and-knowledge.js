@@ -152,7 +152,7 @@
       `
     },
     playbook2: {
-      title: 'B2B Data Verification 101: MX Records & SMTP Handshakes',
+      title: 'B2B Data Verification 101: DNS MX Records & Deliverability Auditing',
       category: 'Data Engineering & Deliverability',
       readTime: '5 min read',
       content: `

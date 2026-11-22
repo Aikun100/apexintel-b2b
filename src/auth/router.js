@@ -38,11 +38,12 @@ import {
  */
 export function validateWorkerSecret(headers = {}) {
   const configuredSecret = process.env.WORKER_BACKEND_SECRET;
+  const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
 
   // In development and test environments, if WORKER_BACKEND_SECRET is not configured,
   // allow local requests but mark as unverified by Worker (cannot trust arbitrary X-Forwarded-For).
   if (!configuredSecret) {
-    if (process.env.NODE_ENV === 'production') {
+    if (isProduction) {
       return { 
         valid: false, 
         reason: 'Worker-to-Lambda authentication is mandatory in production but unconfigured.',
@@ -82,7 +83,7 @@ export async function dispatchAuthRoute(reqObj, service = authService) {
   const headers = reqObj.headers || {};
   const ip = reqObj.ip || '127.0.0.1';
   const userAgent = reqObj.userAgent || '';
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
 
   const cookies = parseCookies(headers.cookie || headers.Cookie || '');
   const sessionToken = cookies[SESSION_CONFIG.COOKIE_NAME] || null;

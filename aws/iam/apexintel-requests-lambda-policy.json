@@ -1,0 +1,50 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBCustomRequestsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_custom_requests",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_custom_requests/index/*"
+      ]
+    },
+    {
+      "Sid": "DynamoDBAuthSessionReadAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_sessions",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_users"
+      ]
+    },
+    {
+      "Sid": "SESSendEmailAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchLogsAccess",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:ap-southeast-2:129264592603:*"
+    }
+  ]
+}

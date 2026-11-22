@@ -34,7 +34,12 @@ const SCHEMA_FILES = [
   'schema-users.json',
   'schema-sessions.json',
   'schema-rate-limits.json',
-  'schema-password-resets.json'
+  'schema-password-resets.json',
+  'schema-crm.json',
+  'schema-orders.json',
+  'schema-leads-cache.json',
+  'schema-scans-cache.json',
+  'schema-custom-requests.json'
 ];
 
 async function setupTables() {

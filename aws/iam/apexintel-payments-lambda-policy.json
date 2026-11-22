@@ -1,0 +1,56 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBOrdersTableOperations",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:Query"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_orders",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_orders/index/userId-createdAt-index",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_orders/index/stripeSessionId-index"
+      ]
+    },
+    {
+      "Sid": "DynamoDBSessionAndUserReadForAuthMiddleware",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_sessions",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_users"
+      ]
+    },
+    {
+      "Sid": "S3DatasetFulfillmentAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::apexintel-datasets-production/*"
+    },
+    {
+      "Sid": "CloudWatchLogGroupCreation",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup"
+      ],
+      "Resource": "arn:aws:logs:ap-southeast-2:129264592603:*"
+    },
+    {
+      "Sid": "CloudWatchLogStreamAndEvents",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:ap-southeast-2:129264592603:log-group:/aws/lambda/apexintel-payments:*"
+    }
+  ]
+}

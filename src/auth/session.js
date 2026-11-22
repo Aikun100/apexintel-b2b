@@ -141,7 +141,9 @@ export function parseCookies(cookieHeader) {
  * @returns {string}
  */
 export function serializeSessionCookie(token, options = {}) {
-  const isProd = options.isProduction !== undefined ? options.isProduction : process.env.NODE_ENV === 'production';
+  const isProd = options.isProduction !== undefined 
+    ? options.isProduction 
+    : (process.env.NODE_ENV === 'production' || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME));
   const maxAge = options.maxAge !== undefined ? options.maxAge : SESSION_CONFIG.MAX_AGE_SECONDS;
   const cookieName = options.cookieName || SESSION_CONFIG.COOKIE_NAME;
 
@@ -158,7 +160,9 @@ export function serializeSessionCookie(token, options = {}) {
  * @returns {string}
  */
 export function serializeClearSessionCookie(options = {}) {
-  const isProd = options.isProduction !== undefined ? options.isProduction : process.env.NODE_ENV === 'production';
+  const isProd = options.isProduction !== undefined 
+    ? options.isProduction 
+    : (process.env.NODE_ENV === 'production' || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME));
   const cookieName = options.cookieName || SESSION_CONFIG.COOKIE_NAME;
 
   let cookie = `${cookieName}=; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`;

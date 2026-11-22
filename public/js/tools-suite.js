@@ -12,75 +12,29 @@
   'use strict';
 
   // =========================================================================
-  // TOOL 1: WEBSITE INTELLIGENCE SCANNER
+  // TOOL 1: WEBSITE INTELLIGENCE SCANNER (SSRF-Hardened Real Backend Audit)
   // =========================================================================
 
-  const DEMO_SCAN_PROFILES = {
-    'dallasroofer.com': {
-      domain: 'dallasroofer.com',
-      company: 'Dallas Commercial Roofing & Restoration',
-      ip: '104.21.55.19',
-      ssl: 'Valid (Cloudflare Origin Cert, TLS 1.3)',
-      speed: 980,
-      speedRating: 'Severe Latency (Grade F)',
-      title: 'Dallas Roofer | Commercial Roofing Contractors DFW',
-      metaDesc: 'Looking for a roofer in Dallas? Call our team today for a free inspection.',
-      cms: 'WordPress 6.4 (Elementor Page Builder)',
-      pixels: { meta: false, gtm: false, ga4: true, tiktok: false, googleAds: false },
-      flaws: [
-        'Missing Meta (Facebook) Retargeting Pixel — 97% of visitors leave without remarketing capture',
-        'Severe 980ms TTFB Mobile Latency caused by uncompressed Elementor assets',
-        'Missing Google Ads Conversion Tag — ad spend cannot be attributed',
-        'Zero schema.org LocalBusiness markup found in DOM'
-      ],
-      suggestedPitch: 'We noticed Dallas Commercial Roofing is running ad campaigns without a Meta Retargeting Pixel installed, and mobile response latency is clocking in at 980ms. Fixing these two leaks typically recovers 18-24 lost contractor quote requests monthly.'
-    },
-    'austincontractor.com': {
-      domain: 'austincontractor.com',
-      company: 'Austin Premier Builders & Remodeling',
-      ip: '172.67.142.88',
-      ssl: 'Valid (Let’s Encrypt, TLS 1.3)',
-      speed: 840,
-      speedRating: 'High Latency (Grade D)',
-      title: 'Austin Contractors & Home Remodeling Services',
-      metaDesc: 'Austin premier general contractors for high-end residential & commercial construction.',
-      cms: 'Squarespace v7.1',
-      pixels: { meta: false, gtm: true, ga4: true, tiktok: false, googleAds: false },
-      flaws: [
-        'Zero Meta Pixel tracking on high-ticket custom remodeling estimates',
-        'Squarespace heavy JS bundle causing 840ms mobile load lag',
-        'Phone number in header is plain text, not clickable tel: link for mobile users'
-      ],
-      suggestedPitch: 'Your Austin remodeling landing page has a 840ms load delay on mobile devices and is missing Meta Retargeting. Converting your phone call links and adding pixel remarketing would prevent high-intent homeowners from bouncing to competitors.'
-    },
-    'miamisolar.com': {
-      domain: 'miamisolar.com',
-      company: 'Miami Commercial Solar Solutions',
-      ip: '198.51.100.42',
-      ssl: 'Valid (Sectigo RSA, TLS 1.2)',
-      speed: 1120,
-      speedRating: 'Critical Mobile Latency (Grade F-)',
-      title: 'Solar Panel Installation Miami FL',
-      metaDesc: 'Top commercial solar panel installers in South Florida. Save on electricity.',
-      cms: 'Custom PHP / Apache',
-      pixels: { meta: false, gtm: false, ga4: false, tiktok: false, googleAds: false },
-      flaws: [
-        'ZERO ad tracking pixels found (No Meta Pixel, No GA4, No GTM)',
-        'Critical 1,120ms server delay on mobile 4G connections',
-        'Lead form has 9 required input fields causing high drop-off',
-        'Missing HTTPS strict transport security (HSTS) header'
-      ],
-      suggestedPitch: 'Miami Commercial Solar currently has zero tracking pixels installed and takes over 1.1s to respond on mobile. In solar sales where cost-per-click is $45+, you are effectively losing 70%+ of your paid ad visitors with zero ability to remarket.'
-    }
-  };
+  function escapeHTML(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
-  window.runDomainScan = function () {
+  // Active scanned profile cache in client memory
+  window.currentScannedProfile = null;
+
+  window.runDomainScan = async function () {
     const rawInput = document.getElementById('scanDomainInput')?.value.trim();
-    const domain = (rawInput || 'dallasroofer.com').replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0].toLowerCase();
-    
-    // Safety check against malicious / internal inputs
-    if (domain === 'localhost' || domain.startsWith('127.') || domain.startsWith('192.168.') || domain.startsWith('10.') || domain.includes('..')) {
-      alert('Security Alert: Private network and loopback scanning is restricted. Please enter a public domain name.');
+    const domain = (rawInput || 'dallasroofer.com').replace(/^(https?:\/\/)?(www\.)?/, '').split(/[\/\?#]/)[0].toLowerCase();
+
+    // Client-side quick check
+    if (!domain) {
+      if (typeof window.showToast === 'function') window.showToast('Please enter a target domain.');
       return;
     }
 
@@ -98,62 +52,118 @@
       scanBtn.classList.add('opacity-50');
     }
 
-    let pct = 15;
-    if (progressBar) progressBar.style.width = '15%';
-    if (statusText) statusText.innerText = 'Step 1/5: Resolving DNS & MX Mail Servers...';
-    if (percentText) percentText.innerText = '15%';
+    // Dynamic progress bar animation while network audit runs
+    let pct = 20;
+    if (progressBar) progressBar.style.width = '20%';
+    if (statusText) statusText.innerText = 'Step 1/4: Resolving DNS & email authentication records...';
+    if (percentText) percentText.innerText = '20%';
 
-    const steps = [
-      { pct: 35, status: 'Step 2/5: Handshaking TLS 1.3 & Port 443 SSL...' },
-      { pct: 60, status: 'Step 3/5: Measuring First Contentful Paint & Server TTFB...' },
-      { pct: 85, status: 'Step 4/5: Auditing Meta, Google & TikTok Ad Pixels...' },
-      { pct: 100, status: 'Step 5/5: Generating Actionable Agency Pitch Report...' }
+    const progressStages = [
+      { pct: 45, text: 'Step 2/4: Handshaking TLS 1.3 & verifying SSL certificates...' },
+      { pct: 70, text: 'Step 3/4: Measuring server TTFB latency & scanning DOM for ad pixels...' },
+      { pct: 90, text: 'Step 4/4: Synthesizing commercial sales pitch teardown...' }
     ];
 
-    let currentStep = 0;
-    const interval = setInterval(() => {
-      if (currentStep < steps.length) {
-        const s = steps[currentStep];
+    let stageIdx = 0;
+    const progressTimer = setInterval(() => {
+      if (stageIdx < progressStages.length) {
+        const s = progressStages[stageIdx];
         if (progressBar) progressBar.style.width = s.pct + '%';
         if (percentText) percentText.innerText = s.pct + '%';
-        if (statusText) statusText.innerText = s.status;
-        currentStep++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => {
-          if (progress) progress.classList.add('hidden');
-          if (scanBtn) {
-            scanBtn.disabled = false;
-            scanBtn.classList.remove('opacity-50');
-          }
-          renderScanResults(domain);
-        }, 400);
+        if (statusText) statusText.innerText = s.text;
+        stageIdx++;
       }
     }, 450);
+
+    try {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+      const response = await fetch('/api/tools/scan-website', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
+        },
+        body: JSON.stringify({ domain })
+      });
+
+      clearInterval(progressTimer);
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success || !data.scan) {
+        if (progress) progress.classList.add('hidden');
+        if (scanBtn) {
+          scanBtn.disabled = false;
+          scanBtn.classList.remove('opacity-50');
+        }
+
+        const errMsg = data.error || 'Website scan could not be completed. Please verify the domain and retry.';
+        if (data.ssrfBlocked) {
+          alert(`Security Notice: ${errMsg}`);
+        } else if (typeof window.showToast === 'function') {
+          window.showToast(errMsg);
+        }
+
+        if (resultsBox) {
+          resultsBox.innerHTML = `
+            <div class="mt-8 p-6 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm space-y-2">
+              <div class="font-bold flex items-center gap-2">
+                <span>⚠️</span> Scan Alert
+              </div>
+              <p class="font-mono text-xs">${escapeHTML(errMsg)}</p>
+            </div>
+          `;
+          resultsBox.classList.remove('hidden');
+        }
+        return;
+      }
+
+      // Complete progress bar animation
+      if (progressBar) progressBar.style.width = '100%';
+      if (percentText) percentText.innerText = '100%';
+      if (statusText) statusText.innerText = 'Audit Complete!';
+
+      setTimeout(() => {
+        if (progress) progress.classList.add('hidden');
+        if (scanBtn) {
+          scanBtn.disabled = false;
+          scanBtn.classList.remove('opacity-50');
+        }
+        window.currentScannedProfile = data.scan;
+        renderScanResults(data.scan);
+        if (typeof window.showToast === 'function') {
+          window.showToast(`Verified live signal audit complete for ${data.scan.domain}`);
+        }
+      }, 300);
+
+    } catch (err) {
+      clearInterval(progressTimer);
+      if (progress) progress.classList.add('hidden');
+      if (scanBtn) {
+        scanBtn.disabled = false;
+        scanBtn.classList.remove('opacity-50');
+      }
+      if (typeof window.showToast === 'function') {
+        window.showToast('Network error during website scan: ' + err.message);
+      }
+    }
   };
 
-  function renderScanResults(domain) {
-    const profile = DEMO_SCAN_PROFILES[domain] || {
-      domain: domain,
-      company: domain.charAt(0).toUpperCase() + domain.slice(1).split('.')[0] + ' Commercial Services',
-      ip: '172.67.188.' + Math.floor(20 + Math.random() * 80),
-      ssl: 'Valid (256-bit SSL, TLS 1.3 Active)',
-      speed: Math.floor(740 + Math.random() * 380),
-      speedRating: 'Sub-Optimal Latency (Needs Optimization)',
-      title: `${domain} | Official Business Portal`,
-      metaDesc: 'Commercial services, customer inquiries, and professional solutions.',
-      cms: 'WordPress / NGINX Enterprise',
-      pixels: { meta: false, gtm: true, ga4: true, tiktok: false, googleAds: false },
-      flaws: [
-        'Missing Meta Pixel: No retargeting audience built for paid social traffic',
-        `High mobile first-byte latency (${Math.floor(750 + Math.random() * 350)}ms) creates bounce risk`,
-        'Missing OpenGraph Twitter Card image tags for social shares'
-      ],
-      suggestedPitch: `We audited ${domain} and detected an uncaptured retargeting opportunity: your visitors are leaving without being tagged by Meta Pixel, while mobile load latency is averaging 800ms+. Fixing these two items gives your sales team an immediate lift in qualified inbound inquiries.`
-    };
-
+  function renderScanResults(profile) {
+    if (!profile) return;
     const container = document.getElementById('scanResultsContainer');
     if (!container) return;
+
+    const domain = escapeHTML(profile.domain);
+    const company = escapeHTML(profile.company);
+    const ip = escapeHTML(profile.ip);
+    const ssl = escapeHTML(profile.ssl);
+    const speed = typeof profile.speed === 'number' ? profile.speed : 650;
+    const speedRating = escapeHTML(profile.speedRating || 'Standard Latency');
+    const cms = escapeHTML(profile.cms || 'Custom Web Application');
+    const pixels = profile.pixels || { meta: false, gtm: false, ga4: false, tiktok: false, googleAds: false };
+    const flaws = Array.isArray(profile.flaws) ? profile.flaws : [];
+    const suggestedPitch = escapeHTML(profile.suggestedPitch || '');
 
     container.innerHTML = `
       <div class="mt-8 p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl text-left space-y-6">
@@ -162,14 +172,14 @@
           <div>
             <div class="flex items-center gap-2 mb-1">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Audit Complete: Verified Live Signal</span>
+              <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Audit Complete: Verified Live Signal ${profile.fromCache ? '(Cached)' : ''}</span>
             </div>
-            <h3 class="text-2xl font-black text-white font-mono">${profile.domain}</h3>
-            <p class="text-xs text-slate-400">${profile.company} • Server IP: <span class="font-mono text-slate-300">${profile.ip}</span></p>
+            <h3 class="text-2xl font-black text-white font-mono">${domain}</h3>
+            <p class="text-xs text-slate-400">${company} • Server IP: <span class="font-mono text-slate-300">${ip}</span></p>
           </div>
           <div class="flex items-center gap-3">
-            <span class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold ${profile.speed > 900 ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'}">
-              ⚡ ${profile.speed}ms TTFB
+            <span class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold ${speed > 800 ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
+              ⚡ ${speed}ms TTFB
             </span>
             <button onclick="copyGeneratedScanPitch()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
               <span>✉️</span> Copy Outreach Pitch
@@ -181,23 +191,23 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Mobile Latency</div>
-            <div class="text-lg font-black ${profile.speed > 900 ? 'text-rose-400' : 'text-amber-400'} font-mono">${profile.speed}ms</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${profile.speedRating}</div>
+            <div class="text-lg font-black ${speed > 800 ? 'text-rose-400' : 'text-emerald-400'} font-mono">${speed}ms</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${speedRating}</div>
           </div>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Meta Pixel Retargeting</div>
-            <div class="text-lg font-black ${profile.pixels.meta ? 'text-emerald-400' : 'text-rose-400'} font-mono">${profile.pixels.meta ? 'ACTIVE' : 'MISSING (LEAK)'}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${profile.pixels.meta ? 'Audience building' : 'Zero remarketing active'}</div>
+            <div class="text-lg font-black ${pixels.meta ? 'text-emerald-400' : 'text-rose-400'} font-mono">${pixels.meta ? 'ACTIVE' : 'MISSING (LEAK)'}</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${pixels.meta ? 'Audience building' : 'Zero remarketing active'}</div>
           </div>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Google Tag / GA4</div>
-            <div class="text-lg font-black ${profile.pixels.ga4 ? 'text-emerald-400' : 'text-amber-400'} font-mono">${profile.pixels.ga4 ? 'DETECTED' : 'UNVERIFIED'}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${profile.pixels.gtm ? 'Managed via GTM' : 'Standard script'}</div>
+            <div class="text-lg font-black ${pixels.ga4 || pixels.gtm ? 'text-emerald-400' : 'text-amber-400'} font-mono">${pixels.ga4 || pixels.gtm ? 'DETECTED' : 'UNVERIFIED'}</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${pixels.gtm ? 'Managed via GTM' : (pixels.ga4 ? 'GA4 Active' : 'No Tag Found')}</div>
           </div>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">CMS & Technology</div>
-            <div class="text-sm font-bold text-slate-200 mt-1 truncate">${profile.cms}</div>
-            <div class="text-[11px] text-emerald-400 mt-0.5">${profile.ssl}</div>
+            <div class="text-sm font-bold text-slate-200 mt-1 truncate">${cms}</div>
+            <div class="text-[11px] text-emerald-400 mt-0.5">${ssl}</div>
           </div>
         </div>
 
@@ -207,7 +217,7 @@
             <span>⚠️</span> Identified Commercial Sales Opportunities (Pitch Angles)
           </div>
           <ul class="space-y-1.5 text-xs text-slate-300">
-            ${profile.flaws.map(f => `<li class="flex items-start gap-2"><span class="text-rose-400 font-bold">•</span><span>${f}</span></li>`).join('')}
+            ${flaws.map(f => `<li class="flex items-start gap-2"><span class="text-rose-400 font-bold">•</span><span>${escapeHTML(f)}</span></li>`).join('')}
           </ul>
         </div>
 
@@ -220,7 +230,7 @@
             <span class="text-[11px] text-indigo-400 font-mono">100% Ready for Outreach</span>
           </div>
           <p id="scanPitchText" class="text-xs text-slate-300 font-mono bg-slate-900 p-4 rounded-xl border border-slate-800 leading-relaxed">
-            "${profile.suggestedPitch}"
+            "${suggestedPitch}"
           </p>
 
           <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -246,18 +256,18 @@
       const audits = JSON.parse(localStorage.getItem('apexintel_audit_scans') || '[]');
       const newScan = {
         id: 'audit_' + Date.now(),
-        domain: domain,
-        company: domain.split('.')[0].toUpperCase() + ' Services',
+        domain: profile.domain,
+        company: profile.company,
         scannedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
-        speed_ms: profile.speed,
+        speed_ms: speed,
         cms: profile.cms,
-        metaPixel: profile.pixels.meta,
-        googleAds: profile.pixels.google,
-        mxVerified: true,
-        icpScore: profile.speed < 800 ? 92 : 84,
+        metaPixel: !!pixels.meta,
+        googleAds: !!pixels.googleAds,
+        mxVerified: !!profile.dns?.mx?.length,
+        icpScore: speed < 800 ? 92 : 84,
         pitch: profile.suggestedPitch
       };
-      if (!audits.some(a => a.domain.toLowerCase() === domain.toLowerCase())) {
+      if (!audits.some(a => a.domain.toLowerCase() === profile.domain.toLowerCase())) {
         audits.unshift(newScan);
         localStorage.setItem('apexintel_audit_scans', JSON.stringify(audits));
       }
@@ -265,8 +275,11 @@
   }
 
   window.saveScannedProspectToCrm = function (domain) {
-    const profile = generateDiagnosticProfile(domain);
-    const companyName = domain.split('.')[0].charAt(0).toUpperCase() + domain.split('.')[0].slice(1) + ' Services';
+    const p = (window.currentScannedProfile && window.currentScannedProfile.domain === domain)
+      ? window.currentScannedProfile
+      : { domain, company: domain + ' Services', speed: 650, pixels: {}, cms: 'Web App' };
+
+    const companyName = p.company || (domain.split('.')[0].charAt(0).toUpperCase() + domain.split('.')[0].slice(1) + ' Services');
     const leadObj = {
       name: companyName,
       company: companyName,
@@ -274,9 +287,9 @@
       email: `contact@${domain}`,
       phone: '+1 555 0199',
       city: 'Direct Market',
-      speed: `${profile.speed}ms`,
-      pixel: profile.pixels.meta ? 'Meta Pixel Active' : 'No Pixel',
-      tech: profile.cms
+      speed: `${p.speed}ms`,
+      pixel: p.pixels?.meta ? 'Meta Pixel Active' : 'No Pixel',
+      tech: p.cms
     };
     if (typeof window.saveLeadToCrm === 'function') {
       window.saveLeadToCrm(leadObj);
@@ -594,50 +607,87 @@
     if (rateEl) rateEl.innerText = `$${rate.toFixed(2)} / record`;
   };
 
-  window.handleCustomRequestBuilderSubmit = function (e) {
+  window.handleCustomRequestBuilderSubmit = async function (e) {
     e.preventDefault();
-    const industry = document.getElementById('crIndustrySelect')?.value;
-    const territory = document.getElementById('crTerritoryInput')?.value;
-    const volume = document.getElementById('crVolumeSlider')?.value;
-    const email = document.getElementById('crEmailInput')?.value;
-    const price = document.getElementById('crEstimatedPrice')?.innerText;
+    const industry = document.getElementById('crIndustrySelect')?.value || 'Commercial Services';
+    const territory = document.getElementById('crTerritoryInput')?.value?.trim();
+    const volume = parseInt(document.getElementById('crVolumeSlider')?.value, 10) || 100;
+    const email = document.getElementById('crEmailInput')?.value?.trim();
+    const hasLatency = document.getElementById('crCheckLatency')?.checked;
+    const hasPixel = document.getElementById('crCheckPixel')?.checked;
+    const hasMobile = document.getElementById('crCheckMobile')?.checked;
 
     if (!email || !territory) {
-      alert('Please fill in your delivery email and target geographic area.');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Please fill in your delivery email and target geographic area.');
+      } else {
+        alert('Please fill in your delivery email and target geographic area.');
+      }
       return;
     }
 
-    const orderId = `REQ-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    const newRequest = {
-      id: orderId,
-      date: new Date().toISOString(),
-      industry: industry,
-      territory: territory,
-      volume: volume,
-      email: email,
-      estimatedPrice: price,
-      status: 'Queued for Crawler Extraction'
-    };
-
-    // Save to user storage
-    const existing = JSON.parse(localStorage.getItem('apex_custom_requests') || '[]');
-    existing.unshift(newRequest);
-    localStorage.setItem('apex_custom_requests', JSON.stringify(existing));
-    localStorage.setItem('apexintel_custom_requests', JSON.stringify(existing));
-
-    // Show confirmation UI
-    const form = document.getElementById('customRequestForm');
-    const success = document.getElementById('customRequestSuccess');
-    if (form) form.classList.add('hidden');
-    if (success) {
-      success.classList.remove('hidden');
-      const orderRef = document.getElementById('crSuccessOrderRef');
-      if (orderRef) orderRef.innerText = orderId;
+    const submitBtn = document.getElementById('crSubmitBtn') || e.target.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50');
     }
 
-    if (typeof window.showToast === 'function') {
-      window.showToast(`✓ Extraction Order ${orderId} submitted! Receipt sent to ${email}.`);
+    try {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+      const response = await fetch('/api/requests/custom', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          industry,
+          territory,
+          volume,
+          email,
+          enrichments: {
+            latency: Boolean(hasLatency),
+            pixel: Boolean(hasPixel),
+            mobile: Boolean(hasMobile)
+          }
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.success || !data.request) {
+        const errMsg = data.error || 'Failed to submit extraction request. Please try again.';
+        if (typeof window.showToast === 'function') window.showToast(errMsg);
+        else alert(errMsg);
+        return;
+      }
+
+      const request = data.request;
+      const orderId = request.requestId;
+
+      // Show confirmation UI
+      const form = document.getElementById('customRequestForm');
+      const success = document.getElementById('customRequestSuccess');
+      if (form) form.classList.add('hidden');
+      if (success) {
+        success.classList.remove('hidden');
+        const orderRef = document.getElementById('crSuccessOrderRef');
+        if (orderRef) orderRef.innerText = orderId;
+      }
+
+      if (typeof window.showToast === 'function') {
+        window.showToast(`✓ Extraction Order ${orderId} submitted! Price: ${request.estimatedPrice}`);
+      }
+    } catch (err) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('Network error submitting request: ' + err.message);
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50');
+      }
     }
   };
 

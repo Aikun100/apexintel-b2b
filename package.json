@@ -8,8 +8,11 @@
     "start": "node serve.js",
     "bundle": "node scripts/bundle-all.js",
     "validate": "node scripts/validate-scripts-syntax.js",
-    "test": "node scripts/verify-live-deployment.js",
+    "test": "node scripts/run-all-tests.mjs",
     "deploy": "npx wrangler deploy"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "keywords": [
     "browser-automation",
@@ -24,6 +27,7 @@
     "@aws-sdk/client-lambda": "^3.1175.0",
     "@aws-sdk/client-s3": "^3.1175.0",
     "@aws-sdk/lib-dynamodb": "^3.1175.0",
+    "@aws-sdk/s3-request-presigner": "^3.1175.0",
     "axios": "^1.21.1",
     "cheerio": "^1.2.0",
     "crawlee": "^3.18.2",

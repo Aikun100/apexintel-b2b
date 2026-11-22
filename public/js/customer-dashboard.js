@@ -7,6 +7,16 @@
 (function () {
   'use strict';
 
+  function escapeHTML(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // --- Constants: 11 Pipeline Statuses ---
   const PIPELINE_STATUSES = [
     { id: 'New', label: 'New', color: 'indigo', border: 'border-indigo-500/40', bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
@@ -292,92 +302,11 @@
     }
   ];
 
-  // --- Seed Custom Requests ---
-  const DEFAULT_CUSTOM_REQUESTS = [
-    {
-      id: 'REQ-2026-4491',
-      date: '2026-11-20 10:15',
-      industry: 'Commercial Solar & Roofing',
-      territory: 'Phoenix & Scottsdale, AZ',
-      volume: '250',
-      estimatedPrice: '$299.00',
-      email: 'alex@velocitygrowth.io',
-      status: 'Delivered',
-      notes: 'Delivered 250 verified high-ticket contractors in Maricopa County.'
-    },
-    {
-      id: 'REQ-2026-5120',
-      date: '2026-11-22 08:40',
-      industry: 'Luxury Medical Spas & Dermatology',
-      territory: 'Miami & Palm Beach, FL',
-      volume: '150',
-      estimatedPrice: '$199.00',
-      email: 'alex@velocitygrowth.io',
-      status: 'Mining',
-      notes: 'Crawler active on South Florida aesthetic licensing registries.'
-    }
-  ];
+  // --- Custom Extraction Requests State ---
+  window.userCustomRequests = [];
 
-  // --- Default Purchases ---
-  const defaultPurchases = [
-    {
-      id: 'tx-roofing-01',
-      key: 'texas',
-      name: 'Texas High-Ticket Contractors',
-      territory: 'Austin, Dallas-Fort Worth, Houston, San Antonio',
-      niche: 'Commercial Roofing & Storm Restoration',
-      orderDate: 'Nov 15, 2026',
-      leadCount: 24,
-      price: '$79.00',
-      invoiceId: 'INV-2026-0891',
-      leads: [
-        { name: 'T Rock Roofing & Restoration', email: 'info@dallasroofer.com', phone: '+1 469 931 9867', city: 'Dallas, TX', speed: '1473ms', pixel: 'No Pixel', mx: 'OK' },
-        { name: 'Sutton Roofing & Solar', email: 'office@suttonroofinginc.com', phone: '+1 512 837 8777', city: 'Austin, TX', speed: '620ms', pixel: 'Meta Pixel', mx: 'OK' },
-        { name: 'Precision Roof Crafters', email: 'leads@precisionroof.com', phone: '+1 713 799 8555', city: 'Houston, TX', speed: '980ms', pixel: 'Google Ads', mx: 'OK' },
-        { name: 'Freedom Solar Power', email: 'contact@freedomsolar.com', phone: '+1 512 759 8320', city: 'Austin, TX', speed: '510ms', pixel: 'Meta & Google', mx: 'OK' },
-        { name: 'Kidd Roofing', email: 'info@kiddroof.com', phone: '+1 512 671 7791', city: 'Austin, TX', speed: '720ms', pixel: 'No Pixel', mx: 'OK' },
-        { name: 'San Antonio Roofing Pros', email: 'dispatch@saroofingpros.com', phone: '+1 210 555 9812', city: 'San Antonio, TX', speed: '840ms', pixel: 'Google Ads', mx: 'OK' }
-      ]
-    },
-    {
-      id: 'fl-solar-02',
-      key: 'florida',
-      name: 'Florida High-Ticket Solar & Storm Restoration',
-      territory: 'Miami, Tampa Bay, Orlando',
-      niche: 'Hurricane Mitigation & Solar',
-      orderDate: 'Nov 18, 2026',
-      leadCount: 24,
-      price: '$79.00',
-      invoiceId: 'INV-2026-0944',
-      leads: [
-        { name: 'Tampa Bay Solar', email: 'info@tampabaysolar.com', phone: '+1 813 398 3687', city: 'Tampa, FL', speed: '740ms', pixel: 'Google Ads', mx: 'OK' },
-        { name: 'SunVena Solar', email: 'service@sunvena.com', phone: '+1 407 555 8362', city: 'Orlando, FL', speed: '610ms', pixel: 'Meta Pixel', mx: 'OK' },
-        { name: 'Best Roofing Florida', email: 'emergency@bestroofing.net', phone: '+1 888 844 7663', city: 'Fort Lauderdale, FL', speed: '890ms', pixel: 'No Pixel', mx: 'OK' },
-        { name: 'Goldin Solar', email: 'contact@goldinsolar.com', phone: '+1 305 555 1200', city: 'Miami, FL', speed: '580ms', pixel: 'Meta & Google', mx: 'OK' },
-        { name: 'Florida Disaster Recovery', email: 'claims@fldisasterrecovery.com', phone: '+1 813 555 3321', city: 'Tampa, FL', speed: '1120ms', pixel: 'No Pixel', mx: 'OK' },
-        { name: 'Solar Energy Florida', email: 'commercial@solarenergyfl.com', phone: '+1 305 444 8920', city: 'Miami, FL', speed: '650ms', pixel: 'Google Ads', mx: 'OK' }
-      ]
-    },
-    {
-      id: 'ca-medspa-03',
-      key: 'medspas',
-      name: 'California Luxury MedSpas & Aesthetic Clinics',
-      territory: 'Beverly Hills, San Francisco, San Diego',
-      niche: 'Plastic Surgery & Luxury Aesthetics',
-      orderDate: 'Nov 20, 2026',
-      leadCount: 24,
-      price: '$89.00',
-      invoiceId: 'INV-2026-1022',
-      leads: [
-        { name: 'NassifMD Medical Spa', email: 'concierge@nassifmd.com', phone: '+1 310 275 2467', city: 'Beverly Hills, CA', speed: '530ms', pixel: 'Meta & Google', mx: 'OK' },
-        { name: 'SkinSpirit Beverly Hills', email: 'info@skinspirit.com', phone: '+1 310 555 7820', city: 'Beverly Hills, CA', speed: '680ms', pixel: 'Meta Pixel', mx: 'OK' },
-        { name: 'La Jolla Cosmetic MedSpa', email: 'appointments@ljcmedspa.com', phone: '+1 858 452 1981', city: 'San Diego, CA', speed: '720ms', pixel: 'Google Ads', mx: 'OK' },
-        { name: 'Epi Center MedSpa', email: 'frontdesk@epicentermedspa.com', phone: '+1 415 362 4754', city: 'San Francisco, CA', speed: '640ms', pixel: 'Meta Pixel', mx: 'OK' },
-        { name: 'Rodeo Drive Aesthetics', email: 'vip@rodeodriveaesthetics.com', phone: '+1 310 888 1902', city: 'Beverly Hills, CA', speed: '810ms', pixel: 'No Pixel', mx: 'OK' },
-        { name: 'Pacific Heights Plastic Surgery', email: 'info@pacificheightsplastics.com', phone: '+1 415 923 3005', city: 'San Francisco, CA', speed: '590ms', pixel: 'Meta & Google', mx: 'OK' }
-      ]
-    }
-  ];
+  // --- Server-Authoritative User Purchased Orders ---
+  let userPurchasedOrders = [];
 
   // --- Delivered leads for Deduplication Ledger ---
   const dedupeLedgerRecords = [
@@ -400,23 +329,143 @@
     }
   }
 
-  // --- Storage Accessors ---
-  function getCrmLeads() {
-    const raw = localStorage.getItem('apexintel_crm_leads');
-    if (!raw) {
-      localStorage.setItem('apexintel_crm_leads', JSON.stringify(DEFAULT_CRM_LEADS));
-      return DEFAULT_CRM_LEADS;
-    }
+  // --- In-Memory Multi-Tenant CRM Cache & Server-Authoritative Sync ---
+  let crmLeadsCache = null;
+  let crmFetchPromise = null;
+
+  async function syncLeadToBackend(leadId, updates) {
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
     try {
-      return JSON.parse(raw);
-    } catch (e) {
-      return DEFAULT_CRM_LEADS;
+      await fetch(`/api/crm/leads/${encodeURIComponent(leadId)}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(updates)
+      });
+    } catch (err) {
+      console.warn('[CRM Sync] Failed to update lead on server:', err);
     }
   }
 
-  function saveCrmLeads(leads) {
-    localStorage.setItem('apexintel_crm_leads', JSON.stringify(leads));
+  async function createLeadOnBackend(lead) {
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
+    try {
+      const res = await fetch('/api/crm/leads', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(lead)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.lead;
+      }
+    } catch (err) {
+      console.warn('[CRM Sync] Failed to create lead on server:', err);
+    }
   }
+
+  async function deleteLeadFromBackend(leadId) {
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
+    try {
+      await fetch(`/api/crm/leads/${encodeURIComponent(leadId)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+    } catch (err) {
+      console.warn('[CRM Sync] Failed to delete lead from server:', err);
+    }
+  }
+
+  window.loadCrmLeadsFromBackend = async function () {
+    if (crmFetchPromise) return crmFetchPromise;
+
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
+      crmLeadsCache = DEFAULT_CRM_LEADS;
+      renderCrmLeads();
+      renderCampaignsAndFollowUps();
+      return crmLeadsCache;
+    }
+
+    crmFetchPromise = (async () => {
+      try {
+        const res = await fetch('/api/crm/leads?limit=100', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && Array.isArray(data.leads)) {
+            if (data.leads.length > 0) {
+              crmLeadsCache = data.leads;
+            } else {
+              // Brand new user with 0 leads: seed initial sample data into backend
+              try {
+                const seedRes = await fetch('/api/crm/leads', {
+                  method: 'POST',
+                  credentials: 'include',
+                  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                  body: JSON.stringify({ leads: DEFAULT_CRM_LEADS })
+                });
+                if (seedRes.ok) {
+                  const seedData = await seedRes.json();
+                  crmLeadsCache = seedData.leads || DEFAULT_CRM_LEADS;
+                } else {
+                  crmLeadsCache = DEFAULT_CRM_LEADS;
+                }
+              } catch {
+                crmLeadsCache = DEFAULT_CRM_LEADS;
+              }
+            }
+          } else {
+            crmLeadsCache = DEFAULT_CRM_LEADS;
+          }
+        } else {
+          crmLeadsCache = DEFAULT_CRM_LEADS;
+        }
+      } catch (err) {
+        console.warn('[CRM] Failed to fetch leads from server:', err);
+        crmLeadsCache = DEFAULT_CRM_LEADS;
+      } finally {
+        crmFetchPromise = null;
+        renderCrmLeads();
+        renderCampaignsAndFollowUps();
+      }
+      return crmLeadsCache;
+    })();
+
+    return crmFetchPromise;
+  };
+
+  function getCrmLeads() {
+    if (crmLeadsCache === null) {
+      crmLeadsCache = DEFAULT_CRM_LEADS;
+      window.loadCrmLeadsFromBackend();
+    }
+    return crmLeadsCache;
+  }
+
+  function saveCrmLeads(leads) {
+    crmLeadsCache = leads;
+  }
+
+  window.clearCustomerDashboardCache = function () {
+    crmLeadsCache = null;
+    crmFetchPromise = null;
+    activeLeadInDrawer = null;
+    userPurchasedOrders = [];
+  };
 
   function getCrmCampaigns() {
     const raw = localStorage.getItem('apexintel_crm_campaigns');
@@ -449,36 +498,37 @@
   }
 
   function getCustomRequests() {
-    const raw1 = localStorage.getItem('apex_custom_requests');
-    const raw2 = localStorage.getItem('apexintel_custom_requests');
-    let list = [];
-    if (raw2) {
-      try { list = JSON.parse(raw2); } catch (e) {}
-    } else if (raw1) {
-      try { list = JSON.parse(raw1); } catch (e) {}
-    }
-    if (!list || list.length === 0) {
-      list = DEFAULT_CUSTOM_REQUESTS;
-      localStorage.setItem('apexintel_custom_requests', JSON.stringify(list));
-    }
-    return list;
+    return window.userCustomRequests || [];
   }
+
+  window.loadCustomRequestsFromBackend = async function () {
+    try {
+      const resp = await fetch('/api/requests/custom', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && data.success && Array.isArray(data.requests)) {
+        window.userCustomRequests = data.requests;
+        renderCustomRequests();
+      }
+    } catch (e) {
+      console.warn('Failed to load custom requests from backend:', e);
+    }
+  };
 
   function getUserData() {
     if (window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function') {
       const u = window.ApexAuth.getCurrentUser();
       if (u) return u;
     }
-    const session = sessionStorage.getItem('apexintel_session');
-    if (session) {
-      try { return JSON.parse(session); } catch (e) {}
-    }
     return {
-      name: 'Alex Rivera',
-      email: 'alex@velocitygrowth.io',
-      company: 'Velocity Growth Agency',
-      plan: 'Enterprise Pro',
-      credits: 250,
+      name: 'User',
+      email: '',
+      company: 'Agency',
+      plan: 'Community',
+      credits: 0,
       role: 'customer'
     };
   }
@@ -1220,46 +1270,54 @@
           const statusObj = PIPELINE_STATUSES.find(s => s.id === l.status) || PIPELINE_STATUSES[0];
           const isOverdue = l.followUpDate && new Date(l.followUpDate) < new Date(new Date().toDateString());
 
+          const comp = escapeHTML(l.company || '');
+          const dom = escapeHTML(l.domain || '');
+          const em = escapeHTML(l.email || '');
+          const cty = escapeHTML(l.city || '');
+          const prio = escapeHTML(l.priority || 'P2');
+          const fuDate = escapeHTML(l.followUpDate || '');
+          const score = typeof l.opportunityScore === 'number' ? l.opportunityScore : 80;
+
           tr.innerHTML = `
-            <td class="py-3 px-4" onclick="window.openLeadDrawer('${l.id}')">
+            <td class="py-3 px-4" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
               <div class="font-bold text-white flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full ${l.priority === 'P1' ? 'bg-emerald-400' : 'bg-indigo-400'}"></span>
-                ${l.company}
+                ${comp}
               </div>
-              <div class="text-[11px] text-slate-400 font-mono mt-0.5">${l.domain} • ${l.email}</div>
+              <div class="text-[11px] text-slate-400 font-mono mt-0.5">${dom} • ${em}</div>
             </td>
-            <td class="py-3 px-3" onclick="window.openLeadDrawer('${l.id}')">
+            <td class="py-3 px-3" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
               <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${l.priority === 'P1' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30' : l.priority === 'P2' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'}">
-                ${l.priority || 'P2'}
+                ${prio}
               </span>
             </td>
             <td class="py-3 px-3">
-              <select onchange="window.updateLeadStatus('${l.id}', this.value)" onclick="event.stopPropagation()" class="px-2 py-1 rounded-lg bg-slate-950 border ${statusObj.border} text-[11px] font-bold ${statusObj.text} focus:outline-none">
+              <select onchange="window.updateLeadStatus('${escapeHTML(l.id)}', this.value)" onclick="event.stopPropagation()" class="px-2 py-1 rounded-lg bg-slate-950 border ${statusObj.border} text-[11px] font-bold ${statusObj.text} focus:outline-none">
                 ${PIPELINE_STATUSES.map(s => `<option value="${s.id}" ${s.id === l.status ? 'selected' : ''}>${s.label}</option>`).join('')}
               </select>
             </td>
-            <td class="py-3 px-3 font-mono font-bold text-slate-200" onclick="window.openLeadDrawer('${l.id}')">
-              <span class="${l.opportunityScore >= 85 ? 'text-emerald-400' : 'text-indigo-300'}">${l.opportunityScore || 80}/100</span>
+            <td class="py-3 px-3 font-mono font-bold text-slate-200" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
+              <span class="${score >= 85 ? 'text-emerald-400' : 'text-indigo-300'}">${score}/100</span>
             </td>
-            <td class="py-3 px-3 text-slate-400 text-xs" onclick="window.openLeadDrawer('${l.id}')">
-              ${l.city}
+            <td class="py-3 px-3 text-slate-400 text-xs" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
+              ${cty}
             </td>
-            <td class="py-3 px-3 text-xs" onclick="window.openLeadDrawer('${l.id}')">
-              ${l.followUpDate ? `
+            <td class="py-3 px-3 text-xs" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
+              ${fuDate ? `
                 <span class="font-mono text-[11px] ${isOverdue ? 'text-rose-400 font-bold flex items-center gap-1' : 'text-slate-300'}">
-                  ${isOverdue ? '⚠️ ' : ''}${l.followUpDate}
+                  ${isOverdue ? '⚠️ ' : ''}${fuDate}
                 </span>
               ` : '<span class="text-slate-600 font-mono text-[11px]">None set</span>'}
             </td>
             <td class="py-3 px-4 text-center">
               <div class="flex items-center justify-center gap-1">
-                <button onclick="window.openLeadDrawer('${l.id}')" title="Open Drawer" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                <button onclick="window.openLeadDrawer('${escapeHTML(l.id)}')" title="Open Drawer" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
                   📝
                 </button>
-                <button onclick="window.generateOutreachForLead('${l.id}')" title="Generate Pitch" class="p-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 transition border border-indigo-500/30">
+                <button onclick="window.generateOutreachForLead('${escapeHTML(l.id)}')" title="Generate Pitch" class="p-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 transition border border-indigo-500/30">
                   ✉️
                 </button>
-                <button onclick="window.deleteLeadFromCrm('${l.id}')" title="Delete" class="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 transition">
+                <button onclick="window.deleteLeadFromCrm('${escapeHTML(l.id)}')" title="Delete" class="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 transition">
                   🗑️
                 </button>
               </div>
@@ -1295,16 +1353,16 @@
                 Drop leads here
               </div>
             ` : stageLeads.map(lead => `
-              <div onclick="window.openLeadDrawer('${lead.id}')" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 p-3 rounded-xl cursor-pointer transition shadow-sm space-y-2 group">
+              <div onclick="window.openLeadDrawer('${escapeHTML(lead.id)}')" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 p-3 rounded-xl cursor-pointer transition shadow-sm space-y-2 group">
                 <div class="flex items-start justify-between gap-1">
-                  <h6 class="text-xs font-bold text-white group-hover:text-indigo-300 transition line-clamp-1">${lead.company}</h6>
-                  <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded ${lead.priority === 'P1' ? 'bg-rose-500/20 text-rose-300' : 'bg-indigo-500/20 text-indigo-300'} shrink-0">${lead.priority}</span>
+                  <h6 class="text-xs font-bold text-white group-hover:text-indigo-300 transition line-clamp-1">${escapeHTML(lead.company)}</h6>
+                  <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded ${lead.priority === 'P1' ? 'bg-rose-500/20 text-rose-300' : 'bg-indigo-500/20 text-indigo-300'} shrink-0">${escapeHTML(lead.priority)}</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-mono truncate">${lead.domain}</div>
+                <div class="text-[10px] text-slate-400 font-mono truncate">${escapeHTML(lead.domain)}</div>
                 <div class="flex items-center justify-between text-[10px] pt-1 border-t border-slate-900">
-                  <span class="text-emerald-400 font-mono font-bold">${lead.opportunityScore}/100</span>
+                  <span class="text-emerald-400 font-mono font-bold">${escapeHTML(lead.opportunityScore)}/100</span>
                   <div class="flex items-center gap-1">
-                    <button onclick="event.stopPropagation(); window.advanceLeadStage('${lead.id}')" title="Advance Stage" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition font-mono">
+                    <button onclick="event.stopPropagation(); window.advanceLeadStage('${escapeHTML(lead.id)}')" title="Advance Stage" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition font-mono">
                       →
                     </button>
                   </div>
@@ -1393,23 +1451,23 @@
               <span class="text-base">${isOverdue ? '⚠️' : isToday ? '⏰' : '📅'}</span>
               <div>
                 <div class="flex items-center gap-2">
-                  <h6 class="text-xs font-bold text-white">${l.company}</h6>
+                  <h6 class="text-xs font-bold text-white">${escapeHTML(l.company)}</h6>
                   <span class="text-[10px] font-mono px-2 py-0.2 rounded ${isOverdue ? 'bg-rose-500/20 text-rose-400 font-bold' : isToday ? 'bg-cyan-500/20 text-cyan-400 font-bold' : 'bg-slate-800 text-slate-400'}">
-                    ${isOverdue ? 'OVERDUE' : isToday ? 'TODAY' : l.followUpDate}
+                    ${escapeHTML(isOverdue ? 'OVERDUE' : isToday ? 'TODAY' : l.followUpDate)}
                   </span>
                 </div>
-                <p class="text-[11px] text-slate-400 mt-0.5">${l.notes?.[0]?.text || 'Scheduled follow-up touchpoint'}</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">${escapeHTML(l.notes?.[0]?.text || 'Scheduled follow-up touchpoint')}</p>
               </div>
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-              <button onclick="window.markFollowUpComplete('${l.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition">
+              <button onclick="window.markFollowUpComplete('${escapeHTML(l.id)}')" class="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition">
                 ✓ Mark Done
               </button>
-              <button onclick="window.snoozeFollowUp('${l.id}', 2)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
+              <button onclick="window.snoozeFollowUp('${escapeHTML(l.id)}', 2)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
                 +2 Days
               </button>
-              <button onclick="window.openLeadDrawer('${l.id}')" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 text-xs font-bold transition">
+              <button onclick="window.openLeadDrawer('${escapeHTML(l.id)}')" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 text-xs font-bold transition">
                 Drawer
               </button>
             </div>
@@ -1433,22 +1491,22 @@
       tr.innerHTML = `
         <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
           <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-          ${a.domain}
+          ${escapeHTML(a.domain)}
         </td>
-        <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">${a.scannedAt}</td>
+        <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">${escapeHTML(a.scannedAt)}</td>
         <td class="py-3 px-3">
           <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold ${a.speed_ms > 900 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
-            ${a.speed_ms}ms
+            ${escapeHTML(a.speed_ms)}ms
           </span>
         </td>
-        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${a.cms}</td>
+        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${escapeHTML(a.cms)}</td>
         <td class="py-3 px-3 text-xs">
           <span class="${a.googleAds ? 'text-emerald-400 font-bold' : 'text-slate-500'}">Ads: ${a.googleAds ? 'Yes' : 'No'}</span> • 
           <span class="${a.metaPixel ? 'text-indigo-400 font-bold' : 'text-slate-500'}">Pixel: ${a.metaPixel ? 'Yes' : 'No'}</span>
         </td>
-        <td class="py-3 px-3 font-mono font-bold text-white">${a.icpScore}/100</td>
+        <td class="py-3 px-3 font-mono font-bold text-white">${escapeHTML(a.icpScore)}/100</td>
         <td class="py-3 px-4 text-right">
-          <button onclick="window.exportAuditReport('${a.id}')" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5 ml-auto">
+          <button onclick="window.exportAuditReport('${escapeHTML(a.id)}')" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5 ml-auto">
             <span>📄</span> Export Report (.html)
           </button>
         </td>
@@ -1459,34 +1517,57 @@
 
   // 4. Render Custom Extraction Requests
   function renderCustomRequests() {
+    if (!window.userCustomRequestsLoaded) {
+      window.userCustomRequestsLoaded = true;
+      window.loadCustomRequestsFromBackend();
+    }
+
     const list = getCustomRequests();
     const container = document.getElementById('customRequestsList');
     if (!container) return;
 
     container.innerHTML = '';
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 text-center rounded-2xl bg-slate-900/40 border border-slate-800 text-slate-400">
+          <p class="text-sm font-bold text-white mb-1">No Custom Extraction Requests Yet</p>
+          <p class="text-xs">Use Tool 6 in the Intelligence Suite to request bespoke B2B contractor datasets.</p>
+        </div>
+      `;
+      return;
+    }
+
     list.forEach(req => {
       const card = document.createElement('div');
       card.className = 'bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4';
-      
+
+      const reqId = escapeHTML(req.requestId || req.id);
+      const status = escapeHTML(req.status || 'Submitted');
       const isDelivered = req.status === 'Delivered';
-      
+      const date = escapeHTML((req.createdAt || req.date || 'Nov 2026').slice(0, 16).replace('T', ' '));
+      const industry = escapeHTML(req.industry || '');
+      const territory = escapeHTML(req.territory || '');
+      const volume = escapeHTML(String(req.volume || ''));
+      const price = escapeHTML(req.estimatedPrice || '$299.00');
+      const notes = escapeHTML(req.notes || ('Target volume: ' + volume + ' decision makers'));
+
       card.innerHTML = `
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-mono font-bold text-indigo-400">${req.id}</span>
+            <span class="text-xs font-mono font-bold text-indigo-400">${reqId}</span>
             <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${isDelivered ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">
-              ${req.status}
+              ${status}
             </span>
-            <span class="text-xs text-slate-500">• ${req.date || 'Nov 2026'}</span>
+            <span class="text-xs text-slate-500">• ${date}</span>
           </div>
-          <h5 class="text-sm font-bold text-white">${req.industry} — ${req.territory}</h5>
-          <p class="text-xs text-slate-400">${req.notes || 'Target volume: ' + req.volume + ' decision makers'}</p>
+          <h5 class="text-sm font-bold text-white">${industry} — ${territory}</h5>
+          <p class="text-xs text-slate-400">${notes}</p>
         </div>
 
         <div class="flex items-center gap-3 shrink-0">
-          <span class="text-sm font-mono font-bold text-white">${req.estimatedPrice || '$299.00'}</span>
+          <span class="text-sm font-mono font-bold text-white">${price}</span>
           ${isDelivered ? `
-            <button onclick="window.downloadCustomExtractionCsv('${req.id}')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
+            <button onclick="window.downloadCustomExtractionCsv('${reqId}')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
               <span>📥</span> Download Dataset (.CSV)
             </button>
           ` : `
@@ -1563,6 +1644,7 @@
     if (lead) {
       lead.status = newStatus;
       saveCrmLeads(leads);
+      syncLeadToBackend(leadId, { status: newStatus });
       notify(`Status updated to "${newStatus}" for ${lead.company}`);
       renderCrmLeads();
     }
@@ -1579,6 +1661,7 @@
       const nextStatus = PIPELINE_STATUSES[currentIndex + 1].id;
       lead.status = nextStatus;
       saveCrmLeads(leads);
+      syncLeadToBackend(leadId, { status: nextStatus });
       notify(`Advanced ${lead.company} to "${nextStatus}"`);
       renderCrmLeads();
     }
@@ -1625,6 +1708,7 @@
 
     leads.unshift(newLead);
     saveCrmLeads(leads);
+    createLeadOnBackend(newLead);
     notify(`✓ Added ${newLead.company} to CRM Pipeline!`);
   };
 
@@ -1690,10 +1774,10 @@
         d.className = 'bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-xs space-y-1';
         d.innerHTML = `
           <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-            <span>${n.author || 'User'}</span>
-            <span>${n.timestamp}</span>
+            <span>${escapeHTML(n.author || 'User')}</span>
+            <span>${escapeHTML(n.timestamp)}</span>
           </div>
-          <p class="text-slate-200">${n.text}</p>
+          <p class="text-slate-200">${escapeHTML(n.text)}</p>
         `;
         list.appendChild(d);
       });
@@ -1708,6 +1792,7 @@
     const target = leads.find(l => l.id === activeLeadInDrawer.id);
     if (target) target.status = val;
     saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { status: val });
     notify(`Status updated to "${val}"`);
     renderCrmLeads();
   };
@@ -1720,6 +1805,7 @@
     const target = leads.find(l => l.id === activeLeadInDrawer.id);
     if (target) target.priority = val;
     saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { priority: val });
     notify(`Priority set to ${val}`);
     renderCrmLeads();
   };
@@ -1732,6 +1818,7 @@
     const target = leads.find(l => l.id === activeLeadInDrawer.id);
     if (target) target.followUpDate = val;
     saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { followUpDate: val });
     notify(`Follow-up date scheduled for ${val}`);
     renderCrmLeads();
   };
@@ -1759,6 +1846,7 @@
       target.notes.unshift(newNote);
     }
     saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { notes: target ? target.notes : activeLeadInDrawer.notes });
 
     inp.value = '';
     renderDrawerNotes(activeLeadInDrawer);
@@ -1798,6 +1886,7 @@
     let leads = getCrmLeads();
     leads = leads.filter(l => l.id !== leadId);
     saveCrmLeads(leads);
+    deleteLeadFromBackend(leadId);
     notify('Lead removed from CRM.');
     renderCrmLeads();
   };
@@ -1810,6 +1899,7 @@
       lead.followUpDate = '';
       if (lead.status === 'Follow-Up') lead.status = 'Contacted';
       saveCrmLeads(leads);
+      syncLeadToBackend(leadId, { followUpDate: '', status: lead.status });
       notify(`Follow-up marked complete for ${lead.company}`);
       renderCampaignsAndFollowUps();
       renderCrmLeads();
@@ -1824,6 +1914,7 @@
       current.setDate(current.getDate() + days);
       lead.followUpDate = current.toISOString().split('T')[0];
       saveCrmLeads(leads);
+      syncLeadToBackend(leadId, { followUpDate: lead.followUpDate });
       notify(`Snoozed follow-up to ${lead.followUpDate}`);
       renderCampaignsAndFollowUps();
       renderCrmLeads();
@@ -1885,6 +1976,7 @@
 
     leads.unshift(newLead);
     saveCrmLeads(leads);
+    createLeadOnBackend(newLead);
     window.closeAddLeadModal();
     notify(`✓ Saved ${company} to CRM Pipeline!`);
     renderCrmLeads();
@@ -1995,33 +2087,63 @@
     notify(`Downloaded custom dataset for ${req.id}!`);
   };
 
-  // --- Retained Dataset & Ledger Methods ---
+  // --- Server-Authoritative User Purchased Orders & S3 Fulfillment ---
+  window.loadUserOrdersFromBackend = async function () {
+    const user = getUserData();
+    if (!user || !user.email) return;
+
+    try {
+      const resp = await fetch('/api/orders', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!resp.ok) {
+        if (resp.status === 401) {
+          userPurchasedOrders = [];
+          populateDatasetsList();
+          return;
+        }
+        throw new Error(`Failed to load orders (${resp.status})`);
+      }
+
+      const data = await resp.json();
+      userPurchasedOrders = data.orders || [];
+      populateDatasetsList();
+    } catch (err) {
+      console.warn('[Orders Load Error]:', err.message);
+      populateDatasetsList();
+    }
+  };
+
   function populateDatasetsList() {
     const container = document.getElementById('purchasedDatasetsList');
     if (!container) return;
 
-    const user = getUserData();
-    let orders = defaultPurchases;
+    container.innerHTML = '';
 
-    if (window.ApexAuth && typeof window.ApexAuth.getOrders === 'function') {
-      const authOrders = window.ApexAuth.getOrders(user.email);
-      if (authOrders && authOrders.length > 0) {
-        orders = authOrders.map(o => ({
-          id: o.id,
-          key: o.packId || 'texas',
-          name: o.packName || 'Contractors Intelligence Pack',
-          territory: o.packId === 'florida' ? 'Miami, Tampa, Orlando' : o.packId === 'medspas' ? 'Beverly Hills, SF' : o.packId === 'hvac' ? 'Chicago, DFW, Atlanta' : 'Austin, DFW, Houston',
-          orderDate: o.date ? new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Nov 20, 2026',
-          leadCount: o.leadsDelivered || 24,
-          price: `$${o.amount || 79}.00`,
-          invoiceId: `INV-${(o.id || '2026-0891').replace('ord_', '').toUpperCase()}`,
-          leads: defaultPurchases[0].leads
-        }));
-      }
+    if (!userPurchasedOrders || userPurchasedOrders.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
+          <div class="text-3xl">📦</div>
+          <h5 class="text-white font-bold text-sm">No Purchased Datasets Yet</h5>
+          <p class="text-xs text-slate-400 max-w-sm mx-auto">
+            Your verified commercial datasets will appear here immediately upon completing payment.
+          </p>
+          <button onclick="window.customerDashQuickReorder()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md shadow-indigo-600/30">
+            Browse Intelligence Catalog &rarr;
+          </button>
+        </div>
+      `;
+      return;
     }
 
-    container.innerHTML = '';
-    orders.forEach(pack => {
+    userPurchasedOrders.forEach(order => {
+      const isPaid = order.status === 'paid';
+      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
       const card = document.createElement('div');
       card.className = 'bg-slate-900/80 border border-slate-800 hover:border-slate-700 p-4 rounded-2xl transition flex flex-col md:flex-row md:items-center justify-between gap-4';
       card.innerHTML = `
@@ -2031,27 +2153,32 @@
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h5 class="font-bold text-white text-sm">${pack.name}</h5>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${pack.leadCount} Leads</span>
+              <h5 class="font-bold text-white text-sm">${order.productName || 'Intelligence Pack'}</h5>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                ${isPaid ? '✓ Unlocked & Verified' : '⏳ Pending Payment'}
+              </span>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">${pack.territory}</p>
+            <p class="text-xs text-slate-400 mt-0.5">Commercial Dataset • ${order.filename || 'Enriched_Audited.xlsx'}</p>
             <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-500 font-mono">
-              <span>Ordered: ${pack.orderDate}</span>
+              <span>Ordered: ${orderDate}</span>
               <span>•</span>
-              <span class="text-slate-400 font-bold">${pack.price}</span>
+              <span class="text-slate-400 font-bold">$${order.amount}.00</span>
               <span>•</span>
-              <span class="text-indigo-400">${pack.invoiceId}</span>
+              <span class="text-indigo-400">${order.orderId}</span>
             </div>
           </div>
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <button onclick="window.downloadDatasetPacks('${pack.key}', 'xlsx')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
-            <span>📥 Download .XLSX</span>
-          </button>
-          <button onclick="window.downloadDatasetPacks('${pack.key}', 'csv')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700">
-            Export .CSV
-          </button>
+          ${isPaid ? `
+            <button onclick="window.downloadDatasetOrder('${order.orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
+              <span>📥 Download Verified (.XLSX)</span>
+            </button>
+          ` : `
+            <button onclick="window.redirectToStripeHostedCheckout('${order.productKey}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">
+              <span>Complete Payment ($${order.amount}.00)</span>
+            </button>
+          `}
         </div>
       `;
       container.appendChild(card);
@@ -2119,6 +2246,8 @@
   window.openCustomerDashboard = function (initialTab = 'crm') {
     injectDashboardHTML();
     refreshDashboardUserInfo();
+    window.loadCrmLeadsFromBackend();
+    window.loadUserOrdersFromBackend();
     window.switchCustomerTab(initialTab);
 
     const modal = document.getElementById('customerDashboard');
@@ -2177,8 +2306,6 @@
     user.company = company || user.company;
     user.email = email || user.email;
 
-    sessionStorage.setItem('apexintel_session', JSON.stringify(user));
-
     if (window.ApexAuth && typeof window.ApexAuth.updateCurrentUser === 'function') {
       window.ApexAuth.updateCurrentUser(user);
     }
@@ -2190,36 +2317,60 @@
     notify('Profile & Agency settings updated successfully!');
   };
 
-  window.downloadDatasetPacks = function (key, format) {
-    const pack = defaultPurchases.find(p => p.key === key) || defaultPurchases[0];
-    let content = 'Company,Email,Phone,City_State,Mobile_Speed_ms,Pixel_Audit,DNS_MX_Valid\n';
-    pack.leads.forEach(l => {
-      content += `"${l.name}","${l.email}","${l.phone}","${l.city}","${l.speed}","${l.pixel}","${l.mx}"\n`;
-    });
+  window.downloadDatasetOrder = async function (orderId) {
+    if (!orderId) {
+      notify('Invalid order reference.');
+      return;
+    }
 
-    const filename = `${pack.key}_commercial_leads_verified.${format === 'xlsx' ? 'csv' : 'csv'}`;
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    notify(`Downloaded: ${pack.name} (${format.toUpperCase()})`);
+    notify('⏳ Requesting secure presigned download from AWS S3...');
+
+    try {
+      const resp = await fetch(`/api/downloads/signed-url?orderId=${encodeURIComponent(orderId)}`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || !data.success) {
+        if (resp.status === 401) {
+          notify('Authentication required. Please sign in again.');
+          return;
+        }
+        if (resp.status === 403) {
+          notify(data.error || 'Access denied: Payment verification required.');
+          return;
+        }
+        throw new Error(data.error || 'Failed to generate download URL.');
+      }
+
+      if (data.downloadUrl) {
+        notify('✓ Presigned URL authorized. Starting download...');
+        const link = document.createElement('a');
+        link.href = data.downloadUrl;
+        link.setAttribute('download', data.filename || 'apexintel_dataset.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (err) {
+      console.error('[Download Error]:', err);
+      notify(`Download error: ${err.message}`);
+    }
+  };
+
+  window.downloadDatasetPacks = function (keyOrOrderId) {
+    const order = userPurchasedOrders.find(o => o.orderId === keyOrOrderId || o.productKey === keyOrOrderId);
+    if (order) {
+      window.downloadDatasetOrder(order.orderId);
+    } else {
+      notify('No paid order found for this dataset. Please complete checkout to unlock.');
+    }
   };
 
   window.downloadCombinedMasterDataset = function () {
-    let content = 'Company,Email,Phone,City_State,Mobile_Speed_ms,Pixel_Audit,DNS_MX_Valid,Territory_Pack\n';
-    defaultPurchases.forEach(pack => {
-      pack.leads.forEach(l => {
-        content += `"${l.name}","${l.email}","${l.phone}","${l.city}","${l.speed}","${l.pixel}","${l.mx}","${pack.name}"\n`;
-      });
-    });
-
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'apexintel_master_all_purchased_leads.csv';
-    link.click();
-    notify('Downloaded Combined Master Dataset (72 Leads)!');
+    notify('Datasets are securely delivered per verified order. Access individual packs above.');
   };
 
   window.downloadCustomerInvoice = function (invId, product, amount, date) {
@@ -2268,10 +2419,10 @@ Support: aaronagbas102@gmail.com
 
   window.customerDashLogout = function () {
     window.closeCustomerDashboard();
+    window.clearCustomerDashboardCache();
     if (window.ApexAuth && typeof window.ApexAuth.logout === 'function') {
       window.ApexAuth.logout();
     } else {
-      sessionStorage.removeItem('apexintel_session');
       if (typeof window.updateNavbarState === 'function') {
         window.updateNavbarState();
       }

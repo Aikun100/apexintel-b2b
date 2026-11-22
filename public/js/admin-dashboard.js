@@ -7,6 +7,16 @@
 (function () {
   'use strict';
 
+  function escapeHTML(str) {
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   // --- Sample Admin Seed Data ---
   const ADMIN_METRICS = {
     grossRevenue: 14820,
@@ -28,7 +38,7 @@
       product: 'Texas Commercial Contractors',
       tier: 'Pack (24 leads)',
       amount: '$79.00',
-      processor: 'PayPal Card',
+      processor: 'Stripe Checkout',
       status: 'Delivered',
       statusColor: 'emerald'
     },
@@ -40,7 +50,7 @@
       product: 'California Luxury MedSpas',
       tier: 'Pack (24 leads)',
       amount: '$89.00',
-      processor: 'PayPal Card',
+      processor: 'Stripe Checkout',
       status: 'Delivered',
       statusColor: 'emerald'
     },
@@ -64,7 +74,7 @@
       product: 'Commercial HVAC & Mechanical',
       tier: 'Pack (24 leads)',
       amount: '$99.00',
-      processor: 'PayPal Card',
+      processor: 'Stripe Checkout',
       status: 'Delivered',
       statusColor: 'emerald'
     },
@@ -76,7 +86,7 @@
       product: 'Florida Solar & Storm Restoration',
       tier: 'Pack (24 leads)',
       amount: '$79.00',
-      processor: 'PayPal Card',
+      processor: 'Stripe Checkout',
       status: 'Delivered',
       statusColor: 'emerald'
     },
@@ -88,7 +98,7 @@
       product: 'Commercial HVAC & Mechanical',
       tier: 'Pack (24 leads)',
       amount: '$99.00',
-      processor: 'PayPal Card',
+      processor: 'Stripe Checkout',
       status: 'Delivered',
       statusColor: 'emerald'
     }
@@ -137,49 +147,28 @@
     }
   ];
 
-  // Helper to fetch custom requests from storage
-  function getCustomRequestsForAdmin() {
-    const raw2 = localStorage.getItem('apexintel_custom_requests');
-    const raw1 = localStorage.getItem('apex_custom_requests');
-    let list = [];
-    if (raw2) {
-      try { list = JSON.parse(raw2); } catch (e) {}
-    } else if (raw1) {
-      try { list = JSON.parse(raw1); } catch (e) {}
-    }
-    if (!list || list.length === 0) {
-      list = [
-        {
-          id: 'REQ-2026-4491',
-          date: '2026-11-20 10:15',
-          industry: 'Commercial Solar & Roofing',
-          territory: 'Phoenix & Scottsdale, AZ',
-          volume: '250',
-          estimatedPrice: '$299.00',
-          email: 'alex@velocitygrowth.io',
-          status: 'Delivered',
-          notes: 'Delivered 250 verified high-ticket contractors in Maricopa County.'
-        },
-        {
-          id: 'REQ-2026-5120',
-          date: '2026-11-22 08:40',
-          industry: 'Luxury Medical Spas & Dermatology',
-          territory: 'Miami & Palm Beach, FL',
-          volume: '150',
-          estimatedPrice: '$199.00',
-          email: 'alex@velocitygrowth.io',
-          status: 'Mining',
-          notes: 'Crawler active on South Florida aesthetic licensing registries.'
-        }
-      ];
-      localStorage.setItem('apexintel_custom_requests', JSON.stringify(list));
-    }
-    return list;
-  }
+  // --- Admin Custom Requests Backend State ---
+  window.adminCustomRequestsList = [];
 
-  function saveCustomRequestsFromAdmin(list) {
-    localStorage.setItem('apexintel_custom_requests', JSON.stringify(list));
-    localStorage.setItem('apex_custom_requests', JSON.stringify(list));
+  window.loadAdminCustomRequestsFromBackend = async function () {
+    try {
+      const resp = await fetch('/api/requests/custom', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && data.success && Array.isArray(data.requests)) {
+        window.adminCustomRequestsList = data.requests;
+        renderAdminCustomRequests();
+      }
+    } catch (e) {
+      console.warn('Failed to load admin custom requests from backend:', e);
+    }
+  };
+
+  function getCustomRequestsForAdmin() {
+    return window.adminCustomRequestsList || [];
   }
 
   // Inject Admin Dashboard Modal HTML
@@ -424,7 +413,7 @@
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <span class="text-sm font-extrabold uppercase tracking-wider text-indigo-400">📋 Live Order & Transaction Feed</span>
-                <span class="text-[10px] font-mono text-slate-500">Synced with PayPal & Stripe</span>
+                <span class="text-[10px] font-mono text-slate-500">Synced with Stripe Checkout & Webhooks</span>
               </div>
               <span class="text-xs text-slate-400">Showing last real-time transactions</span>
             </div>
@@ -501,28 +490,53 @@
     const tbody = document.getElementById('adminCustomRequestsTableBody');
     if (!tbody) return;
 
+    if (!window.adminCustomRequestsLoaded) {
+      window.adminCustomRequestsLoaded = true;
+      window.loadAdminCustomRequestsFromBackend();
+    }
+
     const list = getCustomRequestsForAdmin();
     tbody.innerHTML = '';
+    if (list.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-6 text-center text-slate-500 font-sans text-xs">
+            No custom extraction requests in queue.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
     list.forEach(req => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-900/60 transition';
+      const reqId = escapeHTML(req.requestId || req.id);
+      const email = escapeHTML(req.email || '');
+      const industry = escapeHTML(req.industry || '');
+      const territory = escapeHTML(req.territory || '');
+      const volume = escapeHTML(String(req.volume || ''));
+      const price = escapeHTML(req.estimatedPrice || '$299.00');
+      const status = req.status || 'Submitted';
+
       tr.innerHTML = `
-        <td class="py-2.5 px-3 text-indigo-400 font-bold">${req.id}</td>
-        <td class="py-2.5 px-3 text-slate-300 font-sans">${req.email}</td>
-        <td class="py-2.5 px-3 text-white font-sans">${req.industry} <span class="text-slate-400">(${req.territory})</span></td>
-        <td class="py-2.5 px-3 text-slate-300">${req.volume}</td>
-        <td class="py-2.5 px-3 text-emerald-400 font-bold">${req.estimatedPrice || '$299.00'}</td>
+        <td class="py-2.5 px-3 text-indigo-400 font-bold font-mono">${reqId}</td>
+        <td class="py-2.5 px-3 text-slate-300 font-sans">${email}</td>
+        <td class="py-2.5 px-3 text-white font-sans">${industry} <span class="text-slate-400">(${territory})</span></td>
+        <td class="py-2.5 px-3 text-slate-300 font-mono">${volume}</td>
+        <td class="py-2.5 px-3 text-emerald-400 font-bold font-mono">${price}</td>
         <td class="py-2.5 px-3">
-          <select onchange="window.adminUpdateCustomRequestStatus('${req.id}', this.value)" class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-[11px] text-white focus:outline-none">
-            <option value="Submitted" ${req.status === 'Submitted' ? 'selected' : ''}>Submitted</option>
-            <option value="Reviewing" ${req.status === 'Reviewing' ? 'selected' : ''}>Reviewing</option>
-            <option value="Mining" ${req.status === 'Mining' ? 'selected' : ''}>Mining</option>
-            <option value="Delivered" ${req.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+          <select onchange="window.adminUpdateCustomRequestStatus('${reqId}', this.value)" class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-[11px] text-white focus:outline-none">
+            <option value="Submitted" ${status === 'Submitted' ? 'selected' : ''}>Submitted</option>
+            <option value="Reviewing" ${status === 'Reviewing' ? 'selected' : ''}>Reviewing</option>
+            <option value="Mining" ${status === 'Mining' ? 'selected' : ''}>Mining</option>
+            <option value="Delivered" ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="Cancelled" ${status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
           </select>
         </td>
         <td class="py-2.5 px-3 text-right">
-          ${req.status !== 'Delivered' ? `
-            <button onclick="window.adminFulfillCustomRequest('${req.id}')" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
+          ${status !== 'Delivered' ? `
+            <button onclick="window.adminFulfillCustomRequest('${reqId}')" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
               ✓ Deliver Now
             </button>
           ` : `
@@ -535,25 +549,43 @@
   }
 
   // Admin status update action
-  window.adminUpdateCustomRequestStatus = function (reqId, newStatus) {
-    const list = getCustomRequestsForAdmin();
-    const target = list.find(r => r.id === reqId);
-    if (target) {
-      target.status = newStatus;
-      saveCustomRequestsFromAdmin(list);
+  window.adminUpdateCustomRequestStatus = async function (reqId, newStatus) {
+    try {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+      const resp = await fetch('/api/requests/custom/' + encodeURIComponent(reqId), {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus })
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data.success) {
+        const errMsg = data.error || 'Failed to update request status.';
+        if (typeof window.showToast === 'function') window.showToast(errMsg);
+        return;
+      }
+
+      const target = (window.adminCustomRequestsList || []).find(r => (r.requestId || r.id) === reqId);
+      if (target) {
+        target.status = newStatus;
+      }
       if (typeof window.showToast === 'function') {
         window.showToast(`Updated request ${reqId} status to "${newStatus}"!`);
       }
       renderAdminCustomRequests();
+    } catch (err) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('Network error updating status: ' + err.message);
+      }
     }
   };
 
   // Admin fulfill action
   window.adminFulfillCustomRequest = function (reqId) {
     window.adminUpdateCustomRequestStatus(reqId, 'Delivered');
-    if (typeof window.showToast === 'function') {
-      window.showToast(`Order ${reqId} marked as Delivered! Client can download now.`);
-    }
   };
 
   // --- Exposed Window Functions ---
@@ -598,15 +630,51 @@
     }
   };
 
-  window.triggerEmergencyRecrawl = function () {
+  window.triggerEmergencyRecrawl = async function () {
     if (typeof window.showToast === 'function') {
-      window.showToast('⚡ Invoking AWS Lambda (apex-web-app)... Fresh crawl dispatched!');
+      window.showToast('⚡ Invoking AWS Lambda crawler pipeline...');
     }
-    setTimeout(() => {
-      if (typeof window.showToast === 'function') {
-        window.showToast('✓ 240 fresh leads ingested & verified into DynamoDB leads_cache.');
+
+    try {
+      const resp = await fetch('/api/discovery/recrawl', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || !data.success) {
+        if (resp.status === 401) {
+          if (typeof window.showToast === 'function') {
+            window.showToast('Authentication required: Please sign in as administrator.');
+          }
+          return;
+        }
+        if (resp.status === 403) {
+          if (typeof window.showToast === 'function') {
+            window.showToast('Access Denied: Administrator role required.');
+          }
+          return;
+        }
+        throw new Error(data.error || 'Crawler invocation failed.');
       }
-    }, 2200);
+
+      if (typeof window.showToast === 'function') {
+        window.showToast(`✓ ${data.persistedCount || data.verifiedCount || 'Fresh'} leads verified & ingested into DynamoDB leads_cache!`);
+      }
+
+      if (typeof window.switchTab === 'function') {
+        window.switchTab(window.activeTabKey || 'texas');
+      }
+    } catch (err) {
+      console.error('[Emergency Recrawl Error]:', err);
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Crawl error: ${err.message}`);
+      }
+    }
   };
 
   window.initAdminDashboard = function () {

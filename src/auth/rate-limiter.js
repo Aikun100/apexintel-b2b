@@ -22,6 +22,14 @@ export const RATE_LIMIT_CONFIG = {
     WINDOW_SECONDS: 60 * 60, // 1 hour
     MAX_ATTEMPTS_PER_IP: 5,
     MAX_ATTEMPTS_PER_EMAIL: 3
+  },
+  SCAN: {
+    WINDOW_SECONDS: 60, // 1 minute
+    MAX_ATTEMPTS_PER_IP: 10
+  },
+  CUSTOM_REQUEST: {
+    WINDOW_SECONDS: 15 * 60, // 15 minutes
+    MAX_ATTEMPTS_PER_IP: 5
   }
 };
 

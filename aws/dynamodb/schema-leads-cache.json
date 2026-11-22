@@ -1,0 +1,82 @@
+{
+  "TableName": "leads_cache",
+  "BillingMode": "PAY_PER_REQUEST",
+  "KeySchema": [
+    {
+      "AttributeName": "id",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "id",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "trade",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "city",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "createdAt",
+      "AttributeType": "S"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "trade-createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "trade",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    },
+    {
+      "IndexName": "city-createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "city",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "SSESpecification": {
+    "Enabled": true
+  },
+  "PointInTimeRecoverySpecification": {
+    "PointInTimeRecoveryEnabled": true
+  },
+  "Tags": [
+    {
+      "Key": "Project",
+      "Value": "ApexIntel-B2B"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Production"
+    },
+    {
+      "Key": "Module",
+      "Value": "Discovery-Crawler"
+    }
+  ]
+}

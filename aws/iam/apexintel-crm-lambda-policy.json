@@ -1,0 +1,50 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBCrmTableOperations",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:Query"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_user_crm",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_user_crm/index/userId-status-index",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_user_crm/index/userId-updatedAt-index"
+      ]
+    },
+    {
+      "Sid": "DynamoDBSessionAndUserReadForAuthMiddleware",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_sessions",
+        "arn:aws:dynamodb:ap-southeast-2:129264592603:table/apexintel_users"
+      ]
+    },
+    {
+      "Sid": "CloudWatchLogGroupCreation",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup"
+      ],
+      "Resource": "arn:aws:logs:ap-southeast-2:129264592603:*"
+    },
+    {
+      "Sid": "CloudWatchLogStreamAndEvents",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:ap-southeast-2:129264592603:log-group:/aws/lambda/apexintel-crm:*"
+    }
+  ]
+}

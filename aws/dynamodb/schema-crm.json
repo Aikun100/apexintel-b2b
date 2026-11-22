@@ -1,0 +1,86 @@
+{
+  "TableName": "apexintel_user_crm",
+  "BillingMode": "PAY_PER_REQUEST",
+  "KeySchema": [
+    {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "leadId",
+      "KeyType": "RANGE"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "leadId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "status",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "updatedAt",
+      "AttributeType": "S"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "userId-status-index",
+      "KeySchema": [
+        {
+          "AttributeName": "userId",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "status",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    },
+    {
+      "IndexName": "userId-updatedAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "userId",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "updatedAt",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "SSESpecification": {
+    "Enabled": true
+  },
+  "PointInTimeRecoverySpecification": {
+    "PointInTimeRecoveryEnabled": true
+  },
+  "Tags": [
+    {
+      "Key": "Project",
+      "Value": "ApexIntel-B2B"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Production"
+    },
+    {
+      "Key": "Module",
+      "Value": "CRM"
+    }
+  ]
+}

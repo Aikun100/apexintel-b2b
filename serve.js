@@ -2,6 +2,11 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { handleNodeHttpRequest } from './src/auth/router.js';
+import { handleNodeCrmHttpRequest } from './src/crm/router.js';
+import { handleNodePaymentsHttpRequest } from './src/payments/router.js';
+import { handleNodeDiscoveryHttpRequest } from './src/discovery/router.js';
+import { handleNodeToolsHttpRequest } from './src/tools/router.js';
+import { handleNodeRequestsHttpRequest } from './src/requests/router.js';
 import { getAuthRepository } from './src/auth/repository.js';
 import { hashPassword } from './src/auth/password.js';
 
@@ -103,6 +108,38 @@ const server = http.createServer((req, res) => {
   // Handle API Authentication routes (/api/auth/*)
   if (req.url.startsWith('/api/auth/')) {
     return handleNodeHttpRequest(req, res);
+  }
+
+  // Handle API Multi-Tenant CRM routes (/api/crm/*)
+  if (req.url.startsWith('/api/crm/')) {
+    return handleNodeCrmHttpRequest(req, res);
+  }
+
+  // Handle API Payments, Webhooks, & Downloads (/api/orders*, /api/webhooks/*, /api/downloads/*)
+  if (req.url.startsWith('/api/orders') || req.url.startsWith('/api/webhooks/') || req.url.startsWith('/api/downloads/')) {
+    return handleNodePaymentsHttpRequest(req, res);
+  }
+
+  // Handle API Discovery & Crawler Recrawl (/api/discovery/*, /api/admin/recrawl)
+  if (req.url.startsWith('/api/discovery/') || req.url.startsWith('/api/admin/recrawl')) {
+    return handleNodeDiscoveryHttpRequest(req, res);
+  }
+
+  // Handle API Tools & Website Scanner (/api/tools/*)
+  if (req.url.startsWith('/api/tools/')) {
+    return handleNodeToolsHttpRequest(req, res);
+  }
+
+  // Handle API Custom Extraction Requests (/api/requests/*)
+  if (req.url.startsWith('/api/requests/')) {
+    return handleNodeRequestsHttpRequest(req, res);
+  }
+
+  // Fallback for unhandled /api/* routes (parity with Cloudflare Worker 404 JSON)
+  if (req.url.startsWith('/api/')) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: false, error: `API endpoint '${req.url.split('?')[0]}' not found.` }));
+    return;
   }
 
   // Handle POST to save rendered cover images

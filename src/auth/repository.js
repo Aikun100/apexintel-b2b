@@ -356,13 +356,19 @@ let activeRepository = null;
 export function getAuthRepository() {
   if (activeRepository) return activeRepository;
 
+  const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
+
   if (process.env.USE_MOCK_STORAGE === 'true' || process.env.NODE_ENV === 'test') {
     activeRepository = new InMemoryAuthRepository();
+  } else if (isProduction) {
+    // In production or AWS Lambda runtime, fail closed: never fallback to in-memory storage
+    activeRepository = new DynamoDBAuthRepository();
   } else {
-    // Attempt DynamoDB, fall back to in-memory if credentials/tables fail
+    // Development fallback
     try {
       activeRepository = new DynamoDBAuthRepository();
-    } catch {
+    } catch (err) {
+      console.warn(`[getAuthRepository] DynamoDB initialization failed in development: ${err.message}. Falling back to InMemoryAuthRepository.`);
       activeRepository = new InMemoryAuthRepository();
     }
   }

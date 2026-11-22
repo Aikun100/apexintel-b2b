@@ -249,7 +249,10 @@
         window.showToast('Signed out successfully.');
       }
 
-      // Close open dashboards
+      // Close open dashboards & purge cached CRM tenant state
+      if (typeof window.clearCustomerDashboardCache === 'function') {
+        window.clearCustomerDashboardCache();
+      }
       const dash = document.getElementById('customerDashboardModal');
       if (dash) dash.classList.add('hidden');
       const adminDash = document.getElementById('adminDashboardModal');

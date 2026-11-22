@@ -1,0 +1,78 @@
+{
+  "TableName": "apexintel_orders",
+  "BillingMode": "PAY_PER_REQUEST",
+  "KeySchema": [
+    {
+      "AttributeName": "orderId",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "orderId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "createdAt",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "stripeSessionId",
+      "AttributeType": "S"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "userId-createdAt-index",
+      "KeySchema": [
+        {
+          "AttributeName": "userId",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "createdAt",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    },
+    {
+      "IndexName": "stripeSessionId-index",
+      "KeySchema": [
+        {
+          "AttributeName": "stripeSessionId",
+          "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "SSESpecification": {
+    "Enabled": true
+  },
+  "PointInTimeRecoverySpecification": {
+    "PointInTimeRecoveryEnabled": true
+  },
+  "Tags": [
+    {
+      "Key": "Project",
+      "Value": "ApexIntel-B2B"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Production"
+    },
+    {
+      "Key": "Module",
+      "Value": "Payments"
+    }
+  ]
+}

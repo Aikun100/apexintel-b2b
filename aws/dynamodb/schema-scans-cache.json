@@ -1,0 +1,40 @@
+{
+  "TableName": "apexintel_scans_cache",
+  "BillingMode": "PAY_PER_REQUEST",
+  "KeySchema": [
+    {
+      "AttributeName": "domain",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "domain",
+      "AttributeType": "S"
+    }
+  ],
+  "TimeToLiveSpecification": {
+    "Enabled": true,
+    "AttributeName": "ttl"
+  },
+  "SSESpecification": {
+    "Enabled": true
+  },
+  "PointInTimeRecoverySpecification": {
+    "PointInTimeRecoveryEnabled": true
+  },
+  "Tags": [
+    {
+      "Key": "Project",
+      "Value": "ApexIntel-B2B"
+    },
+    {
+      "Key": "Environment",
+      "Value": "Production"
+    },
+    {
+      "Key": "Module",
+      "Value": "Website-Scanner"
+    }
+  ]
+}
