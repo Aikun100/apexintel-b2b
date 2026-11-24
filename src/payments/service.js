@@ -34,9 +34,16 @@ export class PaymentsService {
   }
 
   get stripe() {
+    const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME);
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (isProduction && (!stripeKey || stripeKey.startsWith('sk_test_placeholder'))) {
+      const err = new Error('STRIPE_SECRET_KEY is not configured in production environment.');
+      err.statusCode = 500;
+      throw err;
+    }
     if (this._stripeClient) return this._stripeClient;
-    const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder_for_local_dev';
-    this._stripeClient = new Stripe(stripeKey, {
+    const finalKey = stripeKey || 'sk_test_placeholder_for_local_dev';
+    this._stripeClient = new Stripe(finalKey, {
       apiVersion: '2024-06-20'
     });
     return this._stripeClient;
@@ -198,7 +205,53 @@ export class PaymentsService {
         throw error;
       }
 
-      // Idempotency: if already marked paid, return success without re-modifying
+      // 1. Strict Session ID verification
+      if (order.stripeSessionId && session.id && session.id !== order.stripeSessionId) {
+        console.warn(`[SECURITY WARNING] Stripe Session ID mismatch for order ${order.orderId}: expected ${order.stripeSessionId}, got ${session.id}`);
+        const err = new Error('Security validation failed: Stripe Session ID mismatch.');
+        err.statusCode = 400;
+        throw err;
+      }
+
+      // 2. Strict Authoritative Amount verification
+      if (session.amount_total !== undefined && session.amount_total !== order.amountInCents) {
+        console.warn(`[SECURITY WARNING] Payment amount mismatch for order ${order.orderId}: expected ${order.amountInCents}, got ${session.amount_total}`);
+        const err = new Error('Security validation failed: Payment amount mismatch.');
+        err.statusCode = 400;
+        throw err;
+      }
+
+      // 3. Strict Authoritative Currency verification
+      if (session.currency && session.currency.toLowerCase() !== (order.currency || 'usd').toLowerCase()) {
+        console.warn(`[SECURITY WARNING] Currency mismatch for order ${order.orderId}: expected ${order.currency}, got ${session.currency}`);
+        const err = new Error('Security validation failed: Currency mismatch.');
+        err.statusCode = 400;
+        throw err;
+      }
+
+      // 4. Strict Payment State verification (must be 'paid')
+      if (session.payment_status !== 'paid') {
+        console.warn(`[WEBHOOK] Session ${session.id} for order ${order.orderId} ignored: payment_status is '${session.payment_status}' (not 'paid').`);
+        return {
+          received: true,
+          eventType: event.type,
+          ignored: true,
+          reason: 'payment_not_paid',
+          orderId: order.orderId
+        };
+      }
+
+      // 5. Deduplication check: replayed event ID
+      if (this.repo.hasProcessedEvent && this.repo.hasProcessedEvent(event.id)) {
+        return {
+          received: true,
+          eventType: event.type,
+          alreadyFulfilled: true,
+          orderId: order.orderId
+        };
+      }
+
+      // 6. Fast-path check: if order is already marked paid
       if (order.status === 'paid') {
         return {
           received: true,
@@ -208,13 +261,22 @@ export class PaymentsService {
         };
       }
 
-      // Authoritative order fulfillment
+      // 7. Atomic Conditional Fulfillment & Event Deduplication
       const now = new Date().toISOString();
-      await this.repo.updateOrderStatus(order.orderId, {
-        status: 'paid',
+      const fulfillmentResult = await this.repo.markOrderPaidAtomically(order.orderId, {
+        stripeEventId: event.id || null,
         stripePaymentIntentId: session.payment_intent || null,
         paidAt: now
       });
+
+      if (fulfillmentResult.alreadyFulfilled) {
+        return {
+          received: true,
+          eventType: event.type,
+          alreadyFulfilled: true,
+          orderId: order.orderId
+        };
+      }
 
       return {
         received: true,

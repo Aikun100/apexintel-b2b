@@ -25,6 +25,11 @@ export const ORDERS_TABLE_NAME = process.env.DYNAMODB_ORDERS_TABLE || 'apexintel
 export class InMemoryOrdersRepository {
   constructor() {
     this.ordersById = new Map(); // Key: orderId
+    this.processedEventIds = new Set(); // Track processed Stripe event IDs
+  }
+
+  hasProcessedEvent(eventId) {
+    return Boolean(eventId && this.processedEventIds.has(eventId));
   }
 
   async createOrder(order) {
@@ -64,6 +69,49 @@ export class InMemoryOrdersRepository {
     return { ...updated };
   }
 
+  async markOrderPaidAtomically(orderId, { stripeEventId, stripePaymentIntentId, paidAt } = {}) {
+    if (stripeEventId && this.processedEventIds.has(stripeEventId)) {
+      const order = this.ordersById.get(orderId);
+      return { alreadyFulfilled: true, order: order ? { ...order } : null };
+    }
+
+    const existing = this.ordersById.get(orderId);
+    if (!existing) {
+      const error = new Error(`Order '${orderId}' not found.`);
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (existing.status === 'paid') {
+      if (stripeEventId) this.processedEventIds.add(stripeEventId);
+      return { alreadyFulfilled: true, order: { ...existing } };
+    }
+
+    if (existing.status !== 'pending_payment') {
+      const error = new Error(`Order '${orderId}' cannot be marked paid from status '${existing.status}'.`);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // Atomic synchronous transition
+    const now = paidAt || new Date().toISOString();
+    const updated = {
+      ...existing,
+      status: 'paid',
+      stripePaymentIntentId: stripePaymentIntentId || existing.stripePaymentIntentId || null,
+      lastStripeEventId: stripeEventId || existing.lastStripeEventId || null,
+      paidAt: now,
+      updatedAt: now
+    };
+
+    this.ordersById.set(orderId, updated);
+    if (stripeEventId) {
+      this.processedEventIds.add(stripeEventId);
+    }
+
+    return { fulfilled: true, order: { ...updated } };
+  }
+
   async listOrdersByUserId(userId) {
     const orders = [];
     for (const order of this.ordersById.values()) {
@@ -78,6 +126,7 @@ export class InMemoryOrdersRepository {
 
   clear() {
     this.ordersById.clear();
+    this.processedEventIds.clear();
   }
 }
 
@@ -159,6 +208,57 @@ export class DynamoDBOrdersRepository {
       if (err.name === 'ConditionalCheckFailedException') {
         const error = new Error(`Order '${orderId}' not found.`);
         error.statusCode = 404;
+        throw error;
+      }
+      throw err;
+    }
+  }
+
+  async markOrderPaidAtomically(orderId, { stripeEventId, stripePaymentIntentId, paidAt } = {}) {
+    const now = paidAt || new Date().toISOString();
+
+    const updateExpr = 'SET #status = :paid, stripePaymentIntentId = :pi, lastStripeEventId = :eventId, paidAt = :paidAt, updatedAt = :updatedAt';
+    const exprAttrNames = {
+      '#status': 'status'
+    };
+    const exprAttrValues = {
+      ':paid': 'paid',
+      ':pending': 'pending_payment',
+      ':pi': stripePaymentIntentId || null,
+      ':eventId': stripeEventId || null,
+      ':paidAt': now,
+      ':updatedAt': now
+    };
+
+    let conditionExpr = 'attribute_exists(orderId) AND #status = :pending';
+    if (stripeEventId) {
+      conditionExpr += ' AND (attribute_not_exists(lastStripeEventId) OR lastStripeEventId <> :eventId)';
+    }
+
+    try {
+      const res = await this.docClient.send(new UpdateCommand({
+        TableName: this.tableName,
+        Key: { orderId },
+        ConditionExpression: conditionExpr,
+        UpdateExpression: updateExpr,
+        ExpressionAttributeNames: exprAttrNames,
+        ExpressionAttributeValues: exprAttrValues,
+        ReturnValues: 'ALL_NEW'
+      }));
+      return { fulfilled: true, order: res.Attributes };
+    } catch (err) {
+      if (err.name === 'ConditionalCheckFailedException') {
+        const existing = await this.getOrderById(orderId);
+        if (!existing) {
+          const error = new Error(`Order '${orderId}' not found.`);
+          error.statusCode = 404;
+          throw error;
+        }
+        if (existing.status === 'paid' || (stripeEventId && existing.lastStripeEventId === stripeEventId)) {
+          return { alreadyFulfilled: true, order: existing };
+        }
+        const error = new Error(`Order '${orderId}' cannot be marked paid from status '${existing.status}'.`);
+        error.statusCode = 400;
         throw error;
       }
       throw err;

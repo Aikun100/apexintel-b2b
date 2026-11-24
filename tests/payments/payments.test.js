@@ -314,6 +314,9 @@ test('Payments Suite: Cryptographic Webhook Verification & Idempotent Fulfillmen
       data: {
         object: {
           id: stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
           payment_intent: 'pi_test_live_payment_intent_8899',
           metadata: {
             orderId,
@@ -354,6 +357,9 @@ test('Payments Suite: Cryptographic Webhook Verification & Idempotent Fulfillmen
       data: {
         object: {
           id: stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
           payment_intent: 'pi_test_live_payment_intent_8899',
           metadata: {
             orderId,
@@ -378,6 +384,360 @@ test('Payments Suite: Cryptographic Webhook Verification & Idempotent Fulfillmen
     assert.equal(res.body.received, true);
     assert.equal(res.body.alreadyFulfilled, true);
     assert.equal(res.body.orderId, orderId);
+  });
+});
+
+test('Payments Suite: Concurrency, Replay Defense & Strict Validation', async (t) => {
+  ordersRepo.clear();
+  authRepo.clear();
+  process.env.STRIPE_WEBHOOK_SECRET = TEST_WEBHOOK_SECRET;
+
+  const testUser = await createTestUser('integrity@apexintel.io', 'Integrity Tester');
+
+  await t.test('handles concurrent webhooks on the same order with exactly one fulfillment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_concurrent_test_101',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'florida',
+      productName: APEX_PRODUCT_CATALOG.florida.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      s3Bucket: 'apexintel-datasets-production',
+      s3Key: 'datasets/Florida_HighTicket_Contractors_Enriched_Audited.xlsx',
+      filename: 'Florida_HighTicket_Contractors_Enriched_Audited.xlsx',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_concurrent_sess_101'
+    });
+
+    const webhookEvent1 = {
+      id: 'evt_concurrent_delivery_1',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
+          payment_intent: 'pi_test_concurrent_pi_1',
+          metadata: {
+            orderId: order.orderId,
+            userId: testUser.user.userId
+          }
+        }
+      }
+    };
+
+    const webhookEvent2 = {
+      id: 'evt_concurrent_delivery_2',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
+          payment_intent: 'pi_test_concurrent_pi_2',
+          metadata: {
+            orderId: order.orderId,
+            userId: testUser.user.userId
+          }
+        }
+      }
+    };
+
+    const sig1 = generateTestStripeSignature(webhookEvent1);
+    const sig2 = generateTestStripeSignature(webhookEvent2);
+
+    const [res1, res2] = await Promise.all([
+      paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent1), sig1),
+      paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent2), sig2)
+    ]);
+
+    const results = [res1, res2];
+    const fulfilledCount = results.filter(r => r.fulfilled === true).length;
+    const alreadyFulfilledCount = results.filter(r => r.alreadyFulfilled === true).length;
+
+    assert.equal(fulfilledCount, 1, 'Exactly one concurrent webhook must be fulfilled');
+    assert.equal(alreadyFulfilledCount, 1, 'Exactly one concurrent webhook must return alreadyFulfilled');
+
+    const updatedOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(updatedOrder.status, 'paid');
+    assert.ok(updatedOrder.paidAt);
+  });
+
+  await t.test('replayed event.id returns idempotent alreadyFulfilled: true', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_replay_test_102',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_replay_sess_102'
+    });
+
+    const eventId = 'evt_test_replay_unique_999';
+    const webhookEvent = {
+      id: eventId,
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
+          payment_intent: 'pi_test_replay_pi',
+          metadata: {
+            orderId: order.orderId,
+            userId: testUser.user.userId
+          }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    const res1 = await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+    assert.equal(res1.fulfilled, true);
+
+    const res2 = await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+    assert.equal(res2.received, true);
+    assert.equal(res2.alreadyFulfilled, true);
+    assert.equal(res2.orderId, order.orderId);
+  });
+
+  await t.test('payment_status !== "paid" does NOT mark order paid and returns ignored', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_unpaid_test_103',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_unpaid_sess_103'
+    });
+
+    const webhookEvent = {
+      id: 'evt_test_unpaid_event',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'unpaid',
+          amount_total: 7900,
+          currency: 'usd',
+          payment_intent: null,
+          metadata: {
+            orderId: order.orderId,
+            userId: testUser.user.userId
+          }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+    const res = await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+
+    assert.equal(res.received, true);
+    assert.equal(res.ignored, true);
+    assert.equal(res.reason, 'payment_not_paid');
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
+  await t.test('mismatched amount_total is rejected with 400 and leaves order pending_payment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_mismatch_amount_104',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_amount_sess_104'
+    });
+
+    const webhookEvent = {
+      id: 'evt_mismatch_amount',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 1000,
+          currency: 'usd',
+          metadata: { orderId: order.orderId }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    await assert.rejects(
+      async () => {
+        await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+      },
+      (err) => {
+        assert.equal(err.statusCode, 400);
+        assert.match(err.message, /Payment amount mismatch/i);
+        return true;
+      }
+    );
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
+  await t.test('mismatched currency is rejected with 400 and leaves order pending_payment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_mismatch_currency_105',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_currency_sess_105'
+    });
+
+    const webhookEvent = {
+      id: 'evt_mismatch_currency',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'eur',
+          metadata: { orderId: order.orderId }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    await assert.rejects(
+      async () => {
+        await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+      },
+      (err) => {
+        assert.equal(err.statusCode, 400);
+        assert.match(err.message, /Currency mismatch/i);
+        return true;
+      }
+    );
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
+  await t.test('mismatched stripeSessionId is rejected with 400 and leaves order pending_payment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_mismatch_session_106',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_legit_sess_106'
+    });
+
+    const webhookEvent = {
+      id: 'evt_mismatch_session',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: 'cs_test_attacker_spoofed_session',
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
+          metadata: { orderId: order.orderId }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    await assert.rejects(
+      async () => {
+        await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+      },
+      (err) => {
+        assert.equal(err.statusCode, 400);
+        assert.match(err.message, /Stripe Session ID mismatch/i);
+        return true;
+      }
+    );
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
+  await t.test('missing STRIPE_SECRET_KEY when NODE_ENV=production fails closed with HTTP 500', async () => {
+    const originalEnv = process.env.NODE_ENV;
+    const originalKey = process.env.STRIPE_SECRET_KEY;
+    const originalLambda = process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+    try {
+      process.env.NODE_ENV = 'production';
+      delete process.env.STRIPE_SECRET_KEY;
+      delete process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+      const unconfiguredService = new PaymentsService({ repository: ordersRepo });
+
+      assert.throws(
+        () => {
+          const client = unconfiguredService.stripe;
+        },
+        (err) => {
+          assert.equal(err.statusCode, 500);
+          assert.match(err.message, /STRIPE_SECRET_KEY is not configured in production environment/i);
+          return true;
+        }
+      );
+
+      process.env.STRIPE_SECRET_KEY = 'sk_test_placeholder_for_local_dev';
+      const placeholderService = new PaymentsService({ repository: ordersRepo });
+
+      assert.throws(
+        () => {
+          const client = placeholderService.stripe;
+        },
+        (err) => {
+          assert.equal(err.statusCode, 500);
+          assert.match(err.message, /STRIPE_SECRET_KEY is not configured in production environment/i);
+          return true;
+        }
+      );
+    } finally {
+      process.env.NODE_ENV = originalEnv;
+      if (originalKey !== undefined) {
+        process.env.STRIPE_SECRET_KEY = originalKey;
+      } else {
+        delete process.env.STRIPE_SECRET_KEY;
+      }
+      if (originalLambda !== undefined) {
+        process.env.AWS_LAMBDA_FUNCTION_NAME = originalLambda;
+      } else {
+        delete process.env.AWS_LAMBDA_FUNCTION_NAME;
+      }
+    }
   });
 });
 

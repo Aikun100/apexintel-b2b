@@ -35,7 +35,7 @@ const SUITES = [
   {
     name: 'Stripe Payments & S3 Fulfillment',
     script: 'scripts/run-payment-tests.mjs',
-    expectedTests: 19
+    expectedTests: 27
   },
   {
     name: 'Discovery API & Crawler Ingestion',
