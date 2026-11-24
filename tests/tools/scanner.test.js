@@ -12,6 +12,8 @@
  */
 
 import assert from 'node:assert';
+import tls from 'node:tls';
+import https from 'node:https';
 import { 
   validateTargetDomain, 
   isPrivateOrReservedIp, 
@@ -162,6 +164,11 @@ export async function runScannerTests() {
     assert.strictEqual(isPrivateOrReservedIp('fd00:ec2::254'), true); // AWS IMDS IPv6
     assert.strictEqual(isPrivateOrReservedIp('fc00::1'), true);
     assert.strictEqual(isPrivateOrReservedIp('ff02::1'), true); // Multicast
+  });
+
+  await test('Flags expanded IPv6 loopbacks (0:0:0:0:0:0:0:1 and 0000:0000:0000:0000:0000:0000:0000:0001)', () => {
+    assert.strictEqual(isPrivateOrReservedIp('0:0:0:0:0:0:0:1'), true);
+    assert.strictEqual(isPrivateOrReservedIp('0000:0000:0000:0000:0000:0000:0000:0001'), true);
   });
 
   await test('Flags IPv4-mapped IPv6 pointing to private addresses (::ffff:127.0.0.1)', () => {
@@ -432,6 +439,201 @@ export async function runScannerTests() {
     } finally {
       process.env.NODE_ENV = prevEnv;
       process.env.WORKER_BACKEND_SECRET = prevSecret;
+    }
+  });
+
+  // =========================================================================
+  // 7. REAL TLS VALIDATION & FALLBACK DIAGNOSTICS ELIMINATION
+  // =========================================================================
+  console.log('\n--- 7. Real TLS Validation & Fallback Diagnostics Elimination ---');
+
+  await test('_inspectTls marks self-signed / untrusted certificates as valid: false with authorizationError', async () => {
+    const origConnect = tls.connect;
+    tls.connect = (options, callback) => {
+      const mockSocket = {
+        authorized: false,
+        authorizationError: 'DEPTH_ZERO_SELF_SIGNED_CERT',
+        getPeerCertificate: () => ({
+          subject: { CN: 'untrusted-site.com' },
+          issuer: { CN: 'Self-Signed Untrusted CA' },
+          valid_from: new Date(Date.now() - 86400000).toISOString(),
+          valid_to: new Date(Date.now() + 86400000 * 30).toISOString()
+        }),
+        getProtocol: () => 'TLSv1.3',
+        getCipher: () => ({ name: 'TLS_AES_256_GCM_SHA384' }),
+        end: () => {},
+        destroy: () => {},
+        on: () => mockSocket
+      };
+      setImmediate(callback);
+      return mockSocket;
+    };
+
+    try {
+      const res = await scannerSvc._inspectTls('untrusted-site.com', '93.184.216.34');
+      assert.strictEqual(res.status, 'completed');
+      assert.strictEqual(res.valid, false);
+      assert.strictEqual(res.authorized, false);
+      assert.strictEqual(res.authorizationError, 'DEPTH_ZERO_SELF_SIGNED_CERT');
+      assert.strictEqual(res.expired, false);
+      assert.strictEqual(res.hostnameMatch, true);
+      assert.ok(res.error);
+    } finally {
+      tls.connect = origConnect;
+    }
+  });
+
+  await test('_inspectTls marks expired certificates as valid: false with expired: true', async () => {
+    const origConnect = tls.connect;
+    tls.connect = (options, callback) => {
+      const mockSocket = {
+        authorized: false,
+        authorizationError: 'CERT_HAS_EXPIRED',
+        getPeerCertificate: () => ({
+          subject: { CN: 'expired-site.com' },
+          issuer: { O: 'Let\'s Encrypt' },
+          valid_from: '2022-01-01T00:00:00.000Z',
+          valid_to: '2022-04-01T00:00:00.000Z'
+        }),
+        getProtocol: () => 'TLSv1.3',
+        getCipher: () => ({ name: 'TLS_AES_256_GCM_SHA384' }),
+        end: () => {},
+        destroy: () => {},
+        on: () => mockSocket
+      };
+      setImmediate(callback);
+      return mockSocket;
+    };
+
+    try {
+      const res = await scannerSvc._inspectTls('expired-site.com', '93.184.216.34');
+      assert.strictEqual(res.status, 'completed');
+      assert.strictEqual(res.valid, false);
+      assert.strictEqual(res.expired, true);
+      assert.ok(res.authorizationError);
+      assert.ok(res.error);
+    } finally {
+      tls.connect = origConnect;
+    }
+  });
+
+  await test('_inspectTls marks hostname-mismatched certificates as valid: false with hostnameMatch: false', async () => {
+    const origConnect = tls.connect;
+    tls.connect = (options, callback) => {
+      const mockSocket = {
+        authorized: true,
+        authorizationError: null,
+        getPeerCertificate: () => ({
+          subject: { CN: 'other-domain.com' },
+          issuer: { O: 'DigiCert Inc' },
+          valid_from: new Date(Date.now() - 86400000).toISOString(),
+          valid_to: new Date(Date.now() + 86400000 * 90).toISOString()
+        }),
+        getProtocol: () => 'TLSv1.3',
+        getCipher: () => ({ name: 'TLS_AES_256_GCM_SHA384' }),
+        end: () => {},
+        destroy: () => {},
+        on: () => mockSocket
+      };
+      setImmediate(callback);
+      return mockSocket;
+    };
+
+    try {
+      const res = await scannerSvc._inspectTls('target-domain.com', '93.184.216.34');
+      assert.strictEqual(res.status, 'completed');
+      assert.strictEqual(res.valid, false);
+      assert.strictEqual(res.hostnameMatch, false);
+      assert.ok(res.authorizationError);
+      assert.match(res.authorizationError, /does not match/i);
+    } finally {
+      tls.connect = origConnect;
+    }
+  });
+
+  await test('_fetchHttpDiagnostics returns status: "failed" with ttfbMs: null on connection error', async () => {
+    const origRequest = https.request;
+    https.request = (options, callback) => {
+      const mockReq = {
+        on: (event, handler) => {
+          if (event === 'error') {
+            setImmediate(() => handler(new Error('ECONNREFUSED 93.184.216.34:443')));
+          }
+          return mockReq;
+        },
+        end: () => {},
+        destroy: () => {}
+      };
+      return mockReq;
+    };
+
+    try {
+      const res = await scannerSvc._fetchHttpDiagnostics('unreachable-site.com', '93.184.216.34');
+      assert.strictEqual(res.status, 'failed');
+      assert.strictEqual(res.ttfbMs, null);
+      assert.strictEqual(res.cms, null);
+      assert.strictEqual(res.pixels, null);
+      assert.strictEqual(res.securityHeaders, null);
+      assert.match(res.error, /ECONNREFUSED/);
+    } finally {
+      https.request = origRequest;
+    }
+  });
+
+  await test('scanDomain returns scanStatus: "failed" or "partial" with ttfbMs: null and failedChecks on connection error', async () => {
+    const origConnect = tls.connect;
+    const origRequest = https.request;
+
+    tls.connect = (options, callback) => {
+      const mockSocket = {
+        on: (event, handler) => {
+          if (event === 'error') {
+            setImmediate(() => handler(new Error('TLS connection refused')));
+          }
+          return mockSocket;
+        },
+        destroy: () => {}
+      };
+      return mockSocket;
+    };
+
+    https.request = (options, callback) => {
+      const mockReq = {
+        on: (event, handler) => {
+          if (event === 'error') {
+            setImmediate(() => handler(new Error('HTTP connection refused')));
+          }
+          return mockReq;
+        },
+        end: () => {},
+        destroy: () => {}
+      };
+      return mockReq;
+    };
+
+    const mockDns = {
+      resolve4: async () => ['93.184.216.34'],
+      resolve6: async () => [],
+      resolveMx: async () => [],
+      resolveTxt: async () => []
+    };
+
+    try {
+      const isolatedScanner = new ScannerService({ 
+        repo: new InMemoryScansRepository(),
+        dnsClient: mockDns
+      });
+      const res = await isolatedScanner.scanDomain('offline-contractor.com', { forceRefresh: true });
+      assert.strictEqual(res.scanStatus, 'failed');
+      assert.strictEqual(res.speed, null);
+      assert.strictEqual(res.cms, null);
+      assert.strictEqual(res.pixels, null);
+      assert.ok(Array.isArray(res.failedChecks));
+      assert.ok(res.failedChecks.some(fc => fc.check === 'tls'));
+      assert.ok(res.failedChecks.some(fc => fc.check === 'http'));
+    } finally {
+      tls.connect = origConnect;
+      https.request = origRequest;
     }
   });
 

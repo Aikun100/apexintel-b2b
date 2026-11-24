@@ -158,12 +158,36 @@
     const company = escapeHTML(profile.company);
     const ip = escapeHTML(profile.ip);
     const ssl = escapeHTML(profile.ssl);
-    const speed = typeof profile.speed === 'number' ? profile.speed : 650;
-    const speedRating = escapeHTML(profile.speedRating || 'Standard Latency');
-    const cms = escapeHTML(profile.cms || 'Custom Web Application');
-    const pixels = profile.pixels || { meta: false, gtm: false, ga4: false, tiktok: false, googleAds: false };
+    const speed = typeof profile.speed === 'number' ? profile.speed : null;
+    const speedRating = escapeHTML(profile.speedRating || (speed === null ? 'N/A (Latency Unmeasured)' : 'Standard Latency'));
+    const cms = escapeHTML(profile.cms || 'N/A (Detection Unavailable)');
+    const pixels = profile.pixels || null;
     const flaws = Array.isArray(profile.flaws) ? profile.flaws : [];
     const suggestedPitch = escapeHTML(profile.suggestedPitch || '');
+    const scanStatus = profile.scanStatus || 'completed';
+    const failedChecks = Array.isArray(profile.failedChecks) ? profile.failedChecks : [];
+
+    let statusBadge = '';
+    if (scanStatus === 'completed') {
+      statusBadge = `
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Audit Complete: Verified Live Signal ${profile.fromCache ? '(Cached)' : ''}</span>
+      `;
+    } else if (scanStatus === 'partial') {
+      statusBadge = `
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+        <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">Partial Audit: Some Checks Failed ${profile.fromCache ? '(Cached)' : ''}</span>
+      `;
+    } else {
+      statusBadge = `
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+        <span class="text-xs font-mono font-bold text-rose-400 uppercase tracking-wider">Audit Incomplete / Failed ${profile.fromCache ? '(Cached)' : ''}</span>
+      `;
+    }
+
+    const speedPill = speed !== null
+      ? `<span class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold ${speed > 800 ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">⚡ ${speed}ms TTFB</span>`
+      : `<span class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">⚡ TTFB N/A</span>`;
 
     container.innerHTML = `
       <div class="mt-8 p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl text-left space-y-6">
@@ -171,43 +195,61 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-800 gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Audit Complete: Verified Live Signal ${profile.fromCache ? '(Cached)' : ''}</span>
+              ${statusBadge}
             </div>
             <h3 class="text-2xl font-black text-white font-mono">${domain}</h3>
             <p class="text-xs text-slate-400">${company} • Server IP: <span class="font-mono text-slate-300">${ip}</span></p>
           </div>
           <div class="flex items-center gap-3">
-            <span class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold ${speed > 800 ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}">
-              ⚡ ${speed}ms TTFB
-            </span>
+            ${speedPill}
             <button onclick="copyGeneratedScanPitch()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
               <span>✉️</span> Copy Outreach Pitch
             </button>
           </div>
         </div>
 
+        ${failedChecks.length > 0 ? `
+          <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 space-y-1">
+            <div class="font-bold flex items-center gap-1.5">
+              <span>⚠️</span> Diagnostics Notice (${scanStatus.toUpperCase()}):
+            </div>
+            <ul class="list-disc list-inside space-y-0.5 text-slate-300 text-[11px]">
+              ${failedChecks.map(fc => `<li><span class="font-mono text-amber-400">${escapeHTML(fc.check.toUpperCase())}</span>: ${escapeHTML(fc.reason)}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+
         <!-- 4 Diagnostic Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Mobile Latency</div>
-            <div class="text-lg font-black ${speed > 800 ? 'text-rose-400' : 'text-emerald-400'} font-mono">${speed}ms</div>
+            <div class="text-lg font-black ${speed === null ? 'text-slate-400' : (speed > 800 ? 'text-rose-400' : 'text-emerald-400')} font-mono">
+              ${speed === null ? 'N/A' : speed + 'ms'}
+            </div>
             <div class="text-[11px] text-slate-400 mt-0.5">${speedRating}</div>
           </div>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Meta Pixel Retargeting</div>
-            <div class="text-lg font-black ${pixels.meta ? 'text-emerald-400' : 'text-rose-400'} font-mono">${pixels.meta ? 'ACTIVE' : 'MISSING (LEAK)'}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${pixels.meta ? 'Audience building' : 'Zero remarketing active'}</div>
+            <div class="text-lg font-black ${pixels ? (pixels.meta ? 'text-emerald-400' : 'text-rose-400') : 'text-slate-400'} font-mono">
+              ${pixels ? (pixels.meta ? 'ACTIVE' : 'MISSING (LEAK)') : 'N/A'}
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5">
+              ${pixels ? (pixels.meta ? 'Audience building' : 'Zero remarketing active') : 'HTTP check unmeasured'}
+            </div>
           </div>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">Google Tag / GA4</div>
-            <div class="text-lg font-black ${pixels.ga4 || pixels.gtm ? 'text-emerald-400' : 'text-amber-400'} font-mono">${pixels.ga4 || pixels.gtm ? 'DETECTED' : 'UNVERIFIED'}</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">${pixels.gtm ? 'Managed via GTM' : (pixels.ga4 ? 'GA4 Active' : 'No Tag Found')}</div>
+            <div class="text-lg font-black ${pixels ? (pixels.ga4 || pixels.gtm ? 'text-emerald-400' : 'text-amber-400') : 'text-slate-400'} font-mono">
+              ${pixels ? (pixels.ga4 || pixels.gtm ? 'DETECTED' : 'UNVERIFIED') : 'N/A'}
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5">
+              ${pixels ? (pixels.gtm ? 'Managed via GTM' : (pixels.ga4 ? 'GA4 Active' : 'No Tag Found')) : 'HTTP check unmeasured'}
+            </div>
           </div>
           <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
             <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">CMS & Technology</div>
             <div class="text-sm font-bold text-slate-200 mt-1 truncate">${cms}</div>
-            <div class="text-[11px] text-emerald-400 mt-0.5">${ssl}</div>
+            <div class="text-[11px] ${profile.sslDetails?.valid ? 'text-emerald-400' : 'text-rose-400'} mt-0.5">${ssl}</div>
           </div>
         </div>
 
@@ -261,10 +303,10 @@
         scannedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
         speed_ms: speed,
         cms: profile.cms,
-        metaPixel: !!pixels.meta,
-        googleAds: !!pixels.googleAds,
+        metaPixel: !!(pixels && pixels.meta),
+        googleAds: !!(pixels && pixels.googleAds),
         mxVerified: !!profile.dns?.mx?.length,
-        icpScore: speed < 800 ? 92 : 84,
+        icpScore: speed !== null && speed < 800 ? 92 : 84,
         pitch: profile.suggestedPitch
       };
       if (!audits.some(a => a.domain.toLowerCase() === profile.domain.toLowerCase())) {
@@ -277,7 +319,7 @@
   window.saveScannedProspectToCrm = function (domain) {
     const p = (window.currentScannedProfile && window.currentScannedProfile.domain === domain)
       ? window.currentScannedProfile
-      : { domain, company: domain + ' Services', speed: 650, pixels: {}, cms: 'Web App' };
+      : { domain, company: domain + ' Services', speed: null, pixels: {}, cms: 'N/A' };
 
     const companyName = p.company || (domain.split('.')[0].charAt(0).toUpperCase() + domain.split('.')[0].slice(1) + ' Services');
     const leadObj = {

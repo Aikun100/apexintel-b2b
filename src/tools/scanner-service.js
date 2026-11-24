@@ -22,6 +22,7 @@ export class ScannerService {
   constructor(options = {}) {
     this.repo = options.repo || getScansRepository();
     this.timeoutMs = options.timeoutMs || 5000;
+    this.dnsClient = options.dnsClient || null;
   }
 
   /**
@@ -55,7 +56,7 @@ export class ScannerService {
     }
 
     // 3. DNS-Resolution-First SSRF Verification (pins IP to prevent DNS rebinding)
-    const target = await resolveAndVerifyTarget(domain);
+    const target = await resolveAndVerifyTarget(domain, this.dnsClient);
     const pinnedIp = target.ip;
 
     // 4. Perform Network Audits in parallel with timeouts
@@ -65,33 +66,65 @@ export class ScannerService {
       this._fetchHttpDiagnostics(domain, pinnedIp)
     ]);
 
+    // Track failed checks and determine scanStatus
+    const failedChecks = [];
+    if (dnsResult.status === 'failed') {
+      failedChecks.push({ check: 'dns', reason: dnsResult.error || 'DNS audit failed' });
+    }
+    if (!tlsResult.valid) {
+      failedChecks.push({ check: 'tls', reason: tlsResult.error || tlsResult.authorizationError || 'TLS certificate verification failed' });
+    }
+    if (httpResult.status === 'failed') {
+      failedChecks.push({ check: 'http', reason: httpResult.error || 'HTTP request failed' });
+    }
+
+    let scanStatus = 'completed';
+    if (failedChecks.length > 0) {
+      if (httpResult.status === 'failed' && !tlsResult.valid) {
+        scanStatus = 'failed';
+      } else {
+        scanStatus = 'partial';
+      }
+    }
+
     // 5. Synthesize Company Name and Diagnostics
     const company = this._formatCompanyName(domain, httpResult.title);
     const speed = httpResult.ttfbMs;
-    const speedRating = this._rateSpeed(speed);
+    const speedRating = speed !== null ? this._rateSpeed(speed) : 'N/A (Latency Unmeasured)';
 
     // 6. Identify Conversion Leaks & Flaws
     const flaws = [];
-    if (!httpResult.pixels.meta) {
-      flaws.push('Missing Meta (Facebook) Retargeting Pixel — 97% of paid ad visitors bounce without remarketing audience capture');
+    if (httpResult.pixels) {
+      if (!httpResult.pixels.meta) {
+        flaws.push('Missing Meta (Facebook) Retargeting Pixel — 97% of paid ad visitors bounce without remarketing audience capture');
+      }
+      if (!httpResult.pixels.gtm && !httpResult.pixels.ga4) {
+        flaws.push('Missing Google Analytics / GTM Tag — Site traffic and engagement metrics are unmeasured');
+      }
+      if (!httpResult.pixels.googleAds) {
+        flaws.push('Missing Google Ads Conversion Tag — PPC search ad spend cannot be attributed to closed jobs');
+      }
+    } else {
+      flaws.push('Website unreachable / HTTP diagnostic check failed — Unable to verify analytics and tracking pixels');
     }
-    if (!httpResult.pixels.gtm && !httpResult.pixels.ga4) {
-      flaws.push('Missing Google Analytics / GTM Tag — Site traffic and engagement metrics are unmeasured');
-    }
-    if (!httpResult.pixels.googleAds) {
-      flaws.push('Missing Google Ads Conversion Tag — PPC search ad spend cannot be attributed to closed jobs');
-    }
-    if (speed > 800) {
+
+    if (speed !== null && speed > 800) {
       flaws.push(`Sub-optimal server latency (${speed}ms TTFB) on mobile connections increases prospect abandonment`);
     }
+
     if (!tlsResult.valid) {
-      flaws.push('TLS / SSL Certificate inspection issue: Insecure or invalid certificate configuration');
+      const reason = tlsResult.error || tlsResult.authorizationError || 'Insecure or invalid certificate configuration';
+      flaws.push(`TLS / SSL Certificate inspection issue: ${reason}`);
     } else if (tlsResult.daysRemaining !== null && tlsResult.daysRemaining < 30) {
       flaws.push(`SSL Certificate expires soon (${tlsResult.daysRemaining} days remaining)`);
     }
-    if (!httpResult.securityHeaders.hsts) {
-      flaws.push('Missing HTTP Strict Transport Security (HSTS) security header');
+
+    if (httpResult.securityHeaders) {
+      if (!httpResult.securityHeaders.hsts) {
+        flaws.push('Missing HTTP Strict Transport Security (HSTS) security header');
+      }
     }
+
     if (!dnsResult.spfVerified) {
       flaws.push('Missing SPF DNS record — Outbound sales emails risk landing in prospect spam folders');
     }
@@ -111,14 +144,16 @@ export class ScannerService {
       domain,
       company,
       ip: pinnedIp,
+      scanStatus,
+      failedChecks,
       ssl: tlsResult.valid 
         ? `Valid (${tlsResult.issuer || 'Trusted CA'}, ${tlsResult.protocol || 'TLS 1.3'})`
-        : 'Insecure / No TLS Active',
+        : `Invalid / Insecure (${tlsResult.authorizationError || tlsResult.error || 'Untrusted'})`,
       sslDetails: tlsResult,
       speed,
       speedRating,
-      title: httpResult.title || `${domain} | Official Portal`,
-      metaDesc: httpResult.metaDesc || 'Commercial contractor services, inquiries, and customer estimates.',
+      title: httpResult.title || (httpResult.status === 'completed' ? `${domain} | Official Portal` : null),
+      metaDesc: httpResult.metaDesc || (httpResult.status === 'completed' ? 'Commercial contractor services, inquiries, and customer estimates.' : null),
       cms: httpResult.cms,
       pixels: httpResult.pixels,
       securityHeaders: httpResult.securityHeaders,
@@ -140,25 +175,27 @@ export class ScannerService {
    * @param {string} domain 
    */
   async _auditDns(domain) {
+    const dnsClient = this.dnsClient || dns;
     const result = {
+      status: 'completed',
       mx: [],
       spfVerified: false,
       dmarcVerified: false
     };
 
     try {
-      const mx = await dns.resolveMx(domain);
+      const mx = await dnsClient.resolveMx(domain);
       result.mx = mx.map(m => m.exchange);
     } catch (e) {}
 
     try {
-      const txtRecords = await dns.resolveTxt(domain);
+      const txtRecords = await dnsClient.resolveTxt(domain);
       const flat = txtRecords.flat();
       result.spfVerified = flat.some(t => t.toLowerCase().includes('v=spf1'));
     } catch (e) {}
 
     try {
-      const dmarcRecords = await dns.resolveTxt(`_dmarc.${domain}`);
+      const dmarcRecords = await dnsClient.resolveTxt(`_dmarc.${domain}`);
       const flat = dmarcRecords.flat();
       result.dmarcVerified = flat.some(t => t.toLowerCase().includes('v=dmarc1'));
     } catch (e) {}
@@ -167,15 +204,28 @@ export class ScannerService {
   }
 
   /**
-   * Inspect TLS Certificate via pinned IP socket.
+   * Inspect TLS Certificate via pinned IP socket with real trust, chain, hostname, and expiration checks.
    * @param {string} domain 
    * @param {string} ip 
    */
   async _inspectTls(domain, ip) {
     return new Promise((resolve) => {
+      let resolved = false;
       const timer = setTimeout(() => {
+        if (resolved) return;
+        resolved = true;
         resolve({
+          status: 'failed',
           valid: false,
+          authorized: false,
+          authorizationError: 'TLS handshake timeout',
+          expired: false,
+          hostnameMatch: false,
+          issuer: null,
+          protocol: null,
+          cipher: null,
+          validTo: null,
+          daysRemaining: null,
           error: 'TLS handshake timeout'
         });
       }, 4000);
@@ -187,140 +237,271 @@ export class ScannerService {
           servername: domain,
           rejectUnauthorized: false
         }, () => {
+          if (resolved) return;
+          resolved = true;
           clearTimeout(timer);
           try {
-            const cert = socket.getPeerCertificate();
-            const protocol = socket.getProtocol();
-            const cipher = socket.getCipher()?.name;
-            const valid = !!cert && Object.keys(cert).length > 0;
+            const cert = socket.getPeerCertificate ? socket.getPeerCertificate() : null;
+            const protocol = socket.getProtocol ? socket.getProtocol() : null;
+            const cipher = socket.getCipher ? socket.getCipher()?.name : null;
 
-            let daysRemaining = null;
-            if (cert && cert.valid_to) {
-              const expireDate = new Date(cert.valid_to);
-              daysRemaining = Math.max(0, Math.floor((expireDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+            if (!cert || Object.keys(cert).length === 0) {
+              if (socket.end) socket.end();
+              return resolve({
+                status: 'failed',
+                valid: false,
+                authorized: false,
+                authorizationError: socket.authorizationError ? String(socket.authorizationError) : 'No certificate presented',
+                expired: false,
+                hostnameMatch: false,
+                issuer: null,
+                protocol: protocol || null,
+                cipher: cipher || null,
+                validTo: null,
+                daysRemaining: null,
+                error: 'No peer certificate presented'
+              });
             }
 
-            const issuer = cert?.issuer?.O || cert?.issuer?.CN || 'Standard CA';
+            const authorized = Boolean(socket.authorized);
+            let authorizationError = socket.authorizationError ? String(socket.authorizationError) : null;
 
-            socket.end();
+            // Expiration verification
+            const now = Date.now();
+            let expired = false;
+            let daysRemaining = null;
+            if (cert.valid_to) {
+              const expireDate = new Date(cert.valid_to);
+              const msRemaining = expireDate.getTime() - now;
+              daysRemaining = Math.floor(msRemaining / (1000 * 60 * 60 * 24));
+              if (msRemaining <= 0) {
+                expired = true;
+              }
+            }
+            if (cert.valid_from) {
+              const fromDate = new Date(cert.valid_from);
+              if (now < fromDate.getTime()) {
+                expired = true;
+              }
+            }
+
+            // Hostname match check
+            let hostnameMatch = true;
+            try {
+              const hostCheckErr = tls.checkServerIdentity(domain, cert);
+              if (hostCheckErr) {
+                hostnameMatch = false;
+                if (!authorizationError) {
+                  authorizationError = hostCheckErr.message;
+                }
+              }
+            } catch (hostErr) {
+              hostnameMatch = false;
+              if (!authorizationError) {
+                authorizationError = hostErr.message;
+              }
+            }
+
+            if (expired && !authorizationError) {
+              authorizationError = 'Certificate has expired or is not yet valid';
+            }
+
+            // Valid ONLY IF authorized, not expired, and hostname matches
+            const valid = authorized && !expired && hostnameMatch;
+            const issuer = cert.issuer?.O || cert.issuer?.CN || 'Standard CA';
+
+            if (socket.end) socket.end();
             resolve({
+              status: 'completed',
               valid,
+              authorized,
+              authorizationError,
+              expired,
+              hostnameMatch,
               issuer,
               protocol: protocol || 'TLS 1.3',
               cipher: cipher || 'AES-GCM',
-              validTo: cert?.valid_to || null,
+              validTo: cert.valid_to || null,
               daysRemaining,
-              authorized: socket.authorized
+              error: valid ? null : (authorizationError || 'Certificate verification failed')
             });
           } catch (err) {
-            socket.destroy();
-            resolve({ valid: false, error: err.message });
+            if (socket.destroy) socket.destroy();
+            resolve({
+              status: 'failed',
+              valid: false,
+              authorized: false,
+              authorizationError: err.message,
+              expired: false,
+              hostnameMatch: false,
+              issuer: null,
+              protocol: null,
+              cipher: null,
+              validTo: null,
+              daysRemaining: null,
+              error: err.message
+            });
           }
         });
 
         socket.on('error', (err) => {
+          if (resolved) return;
+          resolved = true;
           clearTimeout(timer);
-          socket.destroy();
-          resolve({ valid: false, error: err.message });
+          if (socket.destroy) socket.destroy();
+          resolve({
+            status: 'failed',
+            valid: false,
+            authorized: false,
+            authorizationError: err.message,
+            expired: false,
+            hostnameMatch: false,
+            issuer: null,
+            protocol: null,
+            cipher: null,
+            validTo: null,
+            daysRemaining: null,
+            error: err.message
+          });
         });
       } catch (err) {
+        if (resolved) return;
+        resolved = true;
         clearTimeout(timer);
-        resolve({ valid: false, error: err.message });
+        resolve({
+          status: 'failed',
+          valid: false,
+          authorized: false,
+          authorizationError: err.message,
+          expired: false,
+          hostnameMatch: false,
+          issuer: null,
+          protocol: null,
+          cipher: null,
+          validTo: null,
+          daysRemaining: null,
+          error: err.message
+        });
       }
     });
   }
 
   /**
    * Fetch HTTP diagnostics (TTFB, headers, HTML body) pinned to verified IP.
+   * Fails cleanly with null diagnostics on error or timeout rather than misleading defaults.
    * @param {string} domain 
    * @param {string} ip 
    */
   async _fetchHttpDiagnostics(domain, ip) {
-    const defaultDiagnostics = {
-      ttfbMs: 650,
-      title: '',
-      metaDesc: '',
-      cms: 'Custom Web Application / NGINX',
-      pixels: { meta: false, gtm: false, ga4: false, tiktok: false, googleAds: false },
-      securityHeaders: { hsts: false, csp: false, xFrameOptions: false, nosniff: false }
-    };
-
     return new Promise((resolve) => {
+      let resolved = false;
       const timer = setTimeout(() => {
-        resolve(defaultDiagnostics);
+        if (resolved) return;
+        resolved = true;
+        resolve({
+          status: 'failed',
+          ttfbMs: null,
+          title: null,
+          metaDesc: null,
+          cms: null,
+          pixels: null,
+          securityHeaders: null,
+          error: 'HTTP request timed out'
+        });
       }, 4500);
 
       const startTime = Date.now();
 
-      const req = https.request({
-        host: ip,
-        port: 443,
-        path: '/',
-        method: 'GET',
-        servername: domain,
-        rejectUnauthorized: false,
-        headers: {
-          'Host': domain,
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ApexIntel-Intelligence-Scanner/2.0',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Cache-Control': 'no-cache'
-        }
-      }, (res) => {
-        const ttfbMs = Math.max(1, Date.now() - startTime);
-
-        // Security Headers Check
-        const hsts = !!res.headers['strict-transport-security'];
-        const csp = !!res.headers['content-security-policy'];
-        const xFrameOptions = !!res.headers['x-frame-options'];
-        const nosniff = (res.headers['x-content-type-options'] || '').toLowerCase().includes('nosniff');
-
-        const securityHeaders = { hsts, csp, xFrameOptions, nosniff };
-
-        let rawHtml = '';
-        res.setEncoding('utf8');
-
-        res.on('data', (chunk) => {
-          rawHtml += chunk;
-          // Limit memory to first 120KB
-          if (rawHtml.length > 120000) {
-            res.destroy();
+      try {
+        const req = https.request({
+          host: ip,
+          port: 443,
+          path: '/',
+          method: 'GET',
+          servername: domain,
+          rejectUnauthorized: true,
+          headers: {
+            'Host': domain,
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ApexIntel-Intelligence-Scanner/2.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cache-Control': 'no-cache'
           }
+        }, (res) => {
+          const ttfbMs = Math.max(1, Date.now() - startTime);
+
+          // Security Headers Check
+          const hsts = !!res.headers['strict-transport-security'];
+          const csp = !!res.headers['content-security-policy'];
+          const xFrameOptions = !!res.headers['x-frame-options'];
+          const nosniff = (res.headers['x-content-type-options'] || '').toLowerCase().includes('nosniff');
+
+          const securityHeaders = { hsts, csp, xFrameOptions, nosniff };
+
+          let rawHtml = '';
+          res.setEncoding('utf8');
+
+          res.on('data', (chunk) => {
+            rawHtml += chunk;
+            // Limit memory to first 120KB
+            if (rawHtml.length > 120000) {
+              res.destroy();
+            }
+          });
+
+          const finishResponse = () => {
+            if (resolved) return;
+            resolved = true;
+            clearTimeout(timer);
+            const parsed = this._parseHtml(rawHtml);
+            resolve({
+              status: 'completed',
+              ttfbMs,
+              title: parsed.title,
+              metaDesc: parsed.metaDesc,
+              cms: parsed.cms,
+              pixels: parsed.pixels,
+              securityHeaders,
+              error: null
+            });
+          };
+
+          res.on('end', finishResponse);
+          res.on('close', finishResponse);
         });
 
-        res.on('end', () => {
+        req.on('error', (err) => {
+          if (resolved) return;
+          resolved = true;
           clearTimeout(timer);
-          const parsed = this._parseHtml(rawHtml);
           resolve({
-            ttfbMs,
-            title: parsed.title,
-            metaDesc: parsed.metaDesc,
-            cms: parsed.cms,
-            pixels: parsed.pixels,
-            securityHeaders
+            status: 'failed',
+            ttfbMs: null,
+            title: null,
+            metaDesc: null,
+            cms: null,
+            pixels: null,
+            securityHeaders: null,
+            error: err.message
           });
         });
 
-        res.on('close', () => {
-          clearTimeout(timer);
-          const parsed = this._parseHtml(rawHtml);
-          resolve({
-            ttfbMs,
-            title: parsed.title,
-            metaDesc: parsed.metaDesc,
-            cms: parsed.cms,
-            pixels: parsed.pixels,
-            securityHeaders
-          });
-        });
-      });
-
-      req.on('error', () => {
+        req.end();
+      } catch (err) {
+        if (resolved) return;
+        resolved = true;
         clearTimeout(timer);
-        resolve(defaultDiagnostics);
-      });
-
-      req.end();
+        resolve({
+          status: 'failed',
+          ttfbMs: null,
+          title: null,
+          metaDesc: null,
+          cms: null,
+          pixels: null,
+          securityHeaders: null,
+          error: err.message
+        });
+      }
     });
   }
 
@@ -403,16 +584,19 @@ export class ScannerService {
   }
 
   _generatePitch(company, domain, speed, pixels, flaws) {
-    if (!pixels.meta && speed > 750) {
+    if (!pixels) {
+      return `We attempted to audit ${domain} and detected reachability or connection issues. In competitive commercial markets, domain downtime or diagnostic errors directly impact inbound customer inquiries.`;
+    }
+    if (!pixels.meta && speed !== null && speed > 750) {
       return `We audited ${domain} and detected an immediate revenue opportunity: your mobile server response latency is averaging ${speed}ms, and visitors are bouncing without a Meta Retargeting Pixel to recapture them. In commercial contractor services where ad clicks exceed $35, plugging this leak typically recovers 15-22 lost quote inquiries per month.`;
     }
     if (!pixels.meta) {
       return `We reviewed ${company}'s digital presence on ${domain} and noticed you currently have zero Meta Retargeting pixels installed. Over 96% of first-time visitors don't inquire on day one; adding turnkey remarketing recapture would directly lower your customer acquisition costs.`;
     }
-    if (speed > 800) {
+    if (speed !== null && speed > 800) {
       return `We ran a performance scan on ${domain} and noticed mobile first-byte response time is clocking in at ${speed}ms. Homeowners and B2B buyers searching on smartphones abandon if page latency exceeds 1.2s; dropping your load time below 450ms gives your sales pipeline an immediate inbound boost.`;
     }
-    return `We audited ${domain} and confirmed high technical performance (${speed}ms TTFB). However, your conversion pipeline has opportunities for multi-channel sales attribution and direct cold outbound acceleration to acquire higher-ticket commercial accounts.`;
+    return `We audited ${domain} and confirmed high technical performance (${speed !== null ? speed + 'ms TTFB' : 'latency verified'}). However, your conversion pipeline has opportunities for multi-channel sales attribution and direct cold outbound acceleration to acquire higher-ticket commercial accounts.`;
   }
 }
 

@@ -127,14 +127,14 @@ export function isPrivateOrReservedIp(ip) {
 
   // 3. IPv6 Checks
   if (net.isIPv6(trimmed)) {
-    // Unspecified ::/128
-    if (trimmed === '::' || trimmed === '0000:0000:0000:0000:0000:0000:0000:0000') return true;
-
-    // Loopback ::1/128
-    if (trimmed === '::1' || trimmed.endsWith(':0001') && trimmed.replace(/:/g, '') === '1') return true;
-
     // Normalize IPv6 by expanding shorthand
     const normalized = expandIpv6(trimmed);
+
+    // Unspecified ::/128
+    if (normalized === '00000000000000000000000000000000') return true;
+
+    // Loopback ::1/128 (handles ::1, 0:0:0:0:0:0:0:1, and 0000:0000:0000:0000:0000:0000:0000:0001)
+    if (normalized === '00000000000000000000000000000001') return true;
 
     // Unique Local Addresses (fc00::/7) -> fc00.. to fdff.. (includes AWS IMDS fd00:ec2::254)
     if (normalized.startsWith('fc') || normalized.startsWith('fd')) return true;

@@ -45,7 +45,7 @@ const SUITES = [
   {
     name: 'Website Intelligence Scanner & SSRF',
     script: 'scripts/run-scanner-tests.mjs',
-    expectedTests: 31
+    expectedTests: 37
   },
   {
     name: 'Custom Extraction Requests & Queue',
