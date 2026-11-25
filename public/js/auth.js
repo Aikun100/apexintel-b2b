@@ -292,37 +292,19 @@
             <button type="button" onclick="switchAuthTab('forgot')" class="text-[11px] text-slate-500 hover:text-cyan-400 transition font-mono">Forgot password?</button>
           </div>
 
-          <!-- 1-Click Demo Login Shortcuts -->
-          <div class="pt-3 border-t border-slate-800/80">
-            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 text-center">⚡ 1-Click Test Accounts</span>
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="fillDemoAccount('alex@velocitygrowth.io', 'ApexDemo2026!')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition group">
-                <div class="text-[11px] font-bold text-white group-hover:text-indigo-400 transition">Alex (Agency Pro)</div>
-                <div class="text-[10px] text-slate-500 font-mono">250 credits • 2 packs</div>
-              </button>
-              <button type="button" onclick="fillDemoAccount('sarah@outboundsprint.com', 'ApexDemo2026!')" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition group">
-                <div class="text-[11px] font-bold text-white group-hover:text-indigo-400 transition">Sarah (Growth SDR)</div>
-                <div class="text-[10px] text-slate-500 font-mono">50 credits • 1 pack</div>
-              </button>
-            </div>
-            <div class="mt-2 text-center">
-              <button type="button" onclick="fillDemoAccount('admin@apexintel.io', 'AdminMaster2026!')" class="text-[10px] text-slate-500 hover:text-emerald-400 font-mono transition">
-                🔒 Sign in as Platform Admin (admin@apexintel.io)
-              </button>
-            </div>
-          </div>
+          <p class="text-center text-[10px] text-slate-500 pt-3 border-t border-slate-800/80">Use your registered account credentials. Demo access is disabled.</p>
         </form>
 
         <!-- REGISTER FORM -->
         <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-3 hidden">
           <div>
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
-            <input type="text" id="regName" required placeholder="Alex Rivera"
+            <input type="text" id="regName" required placeholder="Your full name"
                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
           </div>
           <div>
             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Agency / Company</label>
-            <input type="text" id="regCompany" required placeholder="Velocity Growth Agency"
+            <input type="text" id="regCompany" required placeholder="Your company or agency"
                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
           </div>
           <div>
@@ -460,7 +442,7 @@
           <!-- Credits Counter Badge -->
           <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono">
             <span class="text-indigo-400">🎯</span>
-            <span class="text-white font-bold">${user.credits !== undefined ? user.credits : 50}</span>
+            <span class="text-white font-bold">${user.credits !== null && user.credits !== undefined ? user.credits : '—'}</span>
             <span class="text-slate-500 text-[10px]">credits</span>
           </div>
 
@@ -471,8 +453,8 @@
                 ${initial}
               </div>
               <div class="hidden md:block text-left">
-                <div class="text-xs font-bold text-white leading-tight truncate max-w-[120px]">${user.name}</div>
-                <div class="text-[10px] text-slate-400 truncate max-w-[120px]">${user.company}</div>
+                <div class="text-xs font-bold text-white leading-tight truncate max-w-[120px]">${user.name || 'Account'}</div>
+                <div class="text-[10px] text-slate-400 truncate max-w-[120px]">${user.company || 'Company not set'}</div>
               </div>
               <span class="text-slate-400 text-xs">▾</span>
             </button>
@@ -483,7 +465,7 @@
                 <div class="text-xs font-bold text-white">${user.name}</div>
                 <div class="text-[11px] text-slate-400 truncate">${user.email}</div>
                 <div class="mt-1.5 inline-block text-[10px] font-black uppercase px-2 py-0.5 rounded border ${badgeColor}">
-                  ${user.plan || 'Agency Growth'}
+                  ${user.plan || 'No plan assigned'}
                 </div>
               </div>
 
@@ -614,13 +596,6 @@
     } else {
       window.openAuthModal('signin');
     }
-  };
-
-  window.fillDemoAccount = function (email, password) {
-    document.getElementById('signInEmail').value = email;
-    document.getElementById('signInPassword').value = password;
-    const form = document.getElementById('signInForm');
-    if (form) form.requestSubmit();
   };
 
   window.handleSignInSubmit = async function (e) {
