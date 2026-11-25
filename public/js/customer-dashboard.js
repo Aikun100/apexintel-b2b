@@ -1485,6 +1485,10 @@
     if (!tbody) return;
 
     tbody.innerHTML = '';
+    if (audits.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="py-8 px-4 text-center text-slate-500">No completed website audits are available for this account yet.</td></tr>';
+      return;
+    }
     audits.forEach(a => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-900/50 transition border-b border-slate-800/60';
@@ -2529,7 +2533,7 @@
 
   // Download only records actually returned with a delivered custom request.
   window.downloadCustomExtractionCsv = function (reqId) {
-    const req = getCustomRequests().find(r => r.id === reqId);
+    const req = getCustomRequests().find(r => String(r.requestId || r.id) === String(reqId));
     if (!req || req.status !== 'Delivered') {
       notify('This request has no verified delivered dataset available.');
       return;
