@@ -1,55 +1,62 @@
-# 🌐 Browser Agent Workspace
+# ApexIntel B2B — Sales Intelligence Platform
 
-Dedicated environment for controlling your real Google Chrome browser via **Google Antigravity**, **Model Context Protocol (MCP)**, and **Open Browser Control**.
+ApexIntel is a B2B Sales Intelligence Platform helping agencies, B2B sales teams, and consultants discover businesses, audit digital conversion gaps, manage prospects, and acquire pre-audited US business datasets.
 
----
-
-## 📁 Folder Structure
-```
-c:\laragon\www\browser-agent\
-├── browser-client.js       # Reusable Node module to execute browser commands via MCP
-├── start-bridge.bat        # Double-click launcher to start WebSocket bridge (:9334)
-├── package.json            # NPM scripts & workspace configuration
-├── scripts/
-│   ├── check-status.js     # Tests connection to Chrome extension & lists tabs
-│   ├── search.js           # Opens a new tab and searches Google
-│   └── screenshot.js       # Takes a screenshot of the active tab
-└── README.md               # Quick instructions & command cheat sheet
-```
+**Core positioning:** *"Find the right businesses. Understand the opportunity. Turn intelligence into growth."*
 
 ---
 
-## 🚀 Quick Start
+## Architecture Overview
 
-### 1. Launch the Bridge (Optional background launcher)
-Double-click [**`start-bridge.bat`**](start-bridge.bat) or run:
-```bash
-npm run bridge
-```
-*(The bridge server listens on `ws://localhost:9334` where your Chrome extension connects).*
+- **Frontend (`public/`):** Modular Vanilla JavaScript (ES6+), Tailwind CSS, Single Page Application (`public/index.html` compiled via `scripts/bundle-all.js`).
+- **Edge Proxy (`src/worker.js`):** Cloudflare Workers (`wrangler.jsonc`) serving static assets, enforcing security headers (CSP, HSTS, X-Frame-Options), forwarding trusted client IPs, and injecting `x-apexintel-worker-secret` for `/api/*` requests.
+- **Compute Backend (`src/`, `aws/`):** Node.js 20 ESM handlers for AWS Lambda (`aws/lambda-auth-handler.mjs` and modular routers/services for Auth, CRM, Payments, Discovery, Tools/Scanner, and Custom Research Requests).
+- **Data Stores:** Amazon DynamoDB (`apexintel_users`, `apexintel_sessions`, `apexintel_rate_limits`, `apexintel_password_resets`, `apexintel_user_crm`, `apexintel_orders`, `apexintel_custom_requests`, `apexintel_scans_cache`, `leads_cache`) and private Amazon S3 (`apexintel-datasets-production`).
+- **Payments:** Stripe Checkout and HMAC-SHA256 webhook verification (`src/payments/`).
 
-### 2. Check Connection & Tabs
-```bash
-npm run status
-```
+---
 
-### 3. Open a Web Search
-```bash
-node scripts/search.js "your search query here"
-```
+## Quick Start (Local Development)
 
-### 4. Capture Tab Screenshot
 ```bash
-npm run screenshot
+# Install dependencies
+npm install
+
+# Run local HTTP + API development server (http://localhost:3000)
+node serve.js
+
+# Re-bundle frontend modules into public/index.html after editing public/js/*
+node scripts/bundle-all.js
 ```
 
 ---
 
-## 🤖 Using in Antigravity Chat
-When working in this folder or asking Antigravity to browse, you can say:
-- *"Open a new tab and go to `<url>`"*
-- *"Fill in this form on my browser"*
-- *"Scrape the table from the current tab and save it as JSON"*
-- *"Take a screenshot of the checkout page and inspect for layout bugs"*
+## Automated Verification
 
-The tools connect directly to your live Chrome profile without logging you out of your sessions.
+```bash
+# Run all 7 backend & E2E test suites (192 tests)
+node scripts/run-all-tests.mjs
+
+# Validate JavaScript syntax across frontend modules
+node scripts/validate-scripts-syntax.js
+
+# Build and verify Auth Lambda deployment package (46 checks)
+node scripts/package-auth-lambda.mjs
+node scripts/verify-auth-lambda-package.mjs
+```
+
+---
+
+## Documentation Index
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Product Catalog](docs/PRODUCT_CATALOG.md)
+- [API Documentation](docs/API_DOCUMENTATION.md)
+- [Database Schema](docs/DATABASE_SCHEMA.md)
+- [Data Pipeline](docs/DATA_PIPELINE.md)
+- [Security](docs/SECURITY.md)
+- [Deployment](docs/DEPLOYMENT.md) & [Operator Runbook](docs/OPERATOR_DEPLOYMENT_RUNBOOK.md)
+- [Testing](docs/TESTING.md)
+- [AWS Cost Estimate](docs/AWS_COST_ESTIMATE.md)
+- [UI/UX Design System](docs/UI_UX_DESIGN_SYSTEM_BLUEPRINT.md)
+- [Changelog](docs/CHANGELOG.md)

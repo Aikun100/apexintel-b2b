@@ -154,12 +154,19 @@ export function getScansRepository() {
 
   const isProduction = process.env.NODE_ENV === 'production' || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
 
-  if (isProduction) {
+  if (process.env.USE_MOCK_STORAGE === 'true' || process.env.NODE_ENV === 'test') {
+    currentScansRepo = new InMemoryScansRepository();
+  } else if (isProduction) {
     currentScansRepo = new DynamoDBScansRepository();
-    return currentScansRepo;
+  } else {
+    try {
+      currentScansRepo = new DynamoDBScansRepository();
+    } catch (err) {
+      console.warn(`[getScansRepository] DynamoDB Scans Cache initialization failed in development: ${err.message}. Falling back to InMemoryScansRepository.`);
+      currentScansRepo = new InMemoryScansRepository();
+    }
   }
 
-  currentScansRepo = new InMemoryScansRepository();
   return currentScansRepo;
 }
 

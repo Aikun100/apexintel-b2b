@@ -19,7 +19,14 @@
       packKey: 'texas',
       records: 24,
       avgContract: '$12,000 – $45,000',
-      fields: ['Company Name', 'City/State', 'Trade Category', 'Verified DNS MX Email', 'Direct Phone', 'Mobile TTFB Latency (ms)', 'Ad Pixel Tracking Status', 'Detected CMS / Tech Stack', 'Pre-Audited Conversion Gap'],
+      coverage: { email: '13 / 24', phone: '17 / 24', tech: '17 / 24' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'Sutton Roofing', city: 'Austin, TX', email: 'suttonroofinginc@gmail.com', phone: '+1 512 394 9801', tech: 'Google Analytics' },
+        { company: 'T Rock Roofing', city: 'Dallas, TX', email: 'info@dallasroofer.com', phone: '+1 469 931 9867', tech: 'WordPress' },
+        { company: 'Lon Smith Roofing', city: 'Dallas, TX', email: 'info@lonsmith.com', phone: '+1 800 317 4791', tech: 'WordPress, Google Analytics, Meta Pixel' }
+      ],
+      limitations: 'Where businesses do not publish a direct email or phone, entries are marked Unavailable rather than guessed.',
       overview: 'Curated dataset of premier commercial and residential storm-restoration, metal roofing, and solar installation contractors across Texas. Each record is pre-audited with exact mobile response speed in milliseconds and ad pixel diagnostics so agencies can pitch specific conversion flaws.',
       icp: 'Digital marketing agencies, SEO consultants, and web developers selling $2,500/mo - $5,000/mo retainers or $4,000+ website redesigns to construction trades.',
       pitchAngle: 'Highlight their 800ms+ mobile latency on commercial quote forms and offer a guaranteed 350ms speed rebuild that boosts lead capture.'
@@ -30,9 +37,16 @@
       niche: 'Commercial Solar, Hurricane-Grade Roofing & Mitigation',
       price: '$79.00',
       packKey: 'florida',
-      records: 24,
+      records: 8,
       avgContract: '$15,000 – $60,000',
-      fields: ['Company Name', 'City/State', 'Niche Focus', 'Verified DNS MX Email', 'Direct Phone', 'Server TTFB Latency', 'Meta/Google Pixel Audit', 'CMS Platform', 'Actionable Pitch Angle'],
+      coverage: { email: '5 / 8', phone: '7 / 8', tech: '7 / 8' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'Tampa Bay Solar', city: 'Tampa, FL', email: 'info@tampabaysolar.com', phone: '+1 813 827 6527', tech: 'WordPress, Google Analytics' },
+        { company: 'SunVena Solar', city: 'Orlando, FL', email: 'support@sunvena.com', phone: '+1 407 553 9584', tech: 'WordPress, Google Analytics' },
+        { company: 'Goldin Solar', city: 'Miami, FL', email: 'Unavailable', phone: '+1 855 765 2730', tech: 'WordPress' }
+      ],
+      limitations: 'Points-in-time telemetry; unlisted contact channels left Unavailable.',
       overview: 'Premier South and Central Florida commercial solar integrators and hurricane disaster mitigation operators. Built specifically for high-ticket marketing agencies seeking outfits with large gross margins that invest heavily in customer acquisition.',
       icp: 'Performance marketing agencies, Google Ads specialists, and outbound sales teams looking for commercial solar & roofing companies with high CAC tolerance.',
       pitchAngle: 'Target outfits with high ad spend but missing Meta retargeting pixels, showing them how to recapture 95%+ of paid ad clicks.'
@@ -43,9 +57,16 @@
       niche: 'Aesthetic Medicine, Plastic Surgery, Injectables & Laser',
       price: '$89.00',
       packKey: 'medspas',
-      records: 24,
+      records: 9,
       avgContract: '$8,000 – $25,000/mo Patient LTV',
-      fields: ['Practice Name', 'Metro Location', 'Specialty Specialty', 'Verified MX Email', 'Direct Office Phone', 'Mobile Speed (ms)', 'Ad Pixel Signals', 'Booking Tech Stack', 'Patient Conversion Leak'],
+      coverage: { email: '4 / 9', phone: '7 / 9', tech: '7 / 9' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'SkinSpirit Beverly Hills', city: 'Beverly Hills, CA', email: 'skinspirit@5wpr.com', phone: '+1 855 383 7546', tech: 'Google Analytics' },
+        { company: 'Epi Center MedSpa', city: 'San Francisco, CA', email: 'reception@epicentermedspa.com', phone: '+1 415 362 4754', tech: 'WordPress, Meta Pixel' },
+        { company: 'Nob Hill Aesthetics', city: 'San Francisco, CA', email: 'serviceoffice@nobhillaesthetics.com', tech: 'Shopify, Google Analytics, Meta Pixel', phone: '+1 415 440 6800' }
+      ],
+      limitations: 'Clinic front-desk reception emails verified; private surgeon emails not fabricated.',
       overview: 'Hand-curated intelligence on luxury aesthetic practices, medical spas, and facial plastic surgery centers in high-net-worth California enclaves. Audited for mobile booking friction, missing retargeting, and patient appointment bottlenecks.',
       icp: 'Healthcare marketing agencies, aesthetic patient acquisition specialists, and high-ticket CRM integrators selling to cash-pay aesthetic practices.',
       pitchAngle: 'Offer appointment booking friction fixes and Meta/TikTok retargeting ads to re-engage prospective patients who visited treatment pages.'
@@ -56,9 +77,16 @@
       niche: 'Commercial Chiller, VRF Mechanical Piping & Controls',
       price: '$99.00',
       packKey: 'hvac',
-      records: 24,
+      records: 12,
       avgContract: '$25,000 – $150,000+ Mechanical Bids',
-      fields: ['Mechanical Contractor Name', 'City/State', 'Sub-Trade Division', 'Verified DNS MX Email', 'Direct Phone', 'Server Speed Rating', 'Pixel Tracking Status', 'Host / CDN Infrastructure', 'Commercial Bid Angle'],
+      coverage: { email: '7 / 12', phone: '11 / 12', tech: '7 / 12' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'Midwest Mechanical', city: 'Chicago, IL', email: 'answers@midwestmech.com', phone: '+1 630 850 2300', tech: 'Google Analytics' },
+        { company: 'Way Mechanical', city: 'Dallas, TX', email: 'sales@waymech.com', phone: '+1 713 672 7545', tech: 'Wix' },
+        { company: 'Shumate Commercial HVAC', city: 'Atlanta, GA', email: 'commercialsales@shumatemech.com', phone: '+1 678 584 0880', tech: 'Google Analytics' }
+      ],
+      limitations: 'Cleaned email address entries; malformed legacy spreadsheet cells sanitized.',
       overview: 'High-value dataset targeting commercial mechanical outfits handling commercial chillers, industrial refrigeration, and facility maintenance across the nation’s largest industrial distribution hubs.',
       icp: 'B2B enterprise lead gen agencies, recruitment headhunters, and industrial marketing consultants targeting seven-figure mechanical contractors.',
       pitchAngle: 'Pitch modern B2B LinkedIn outbound pipelines and speed-optimized commercial bidding pages to commercial facility estimators.'
@@ -71,15 +99,28 @@
     const modal = document.getElementById('productDetailModal');
     if (!modal) return;
 
-    document.getElementById('pdmTitle').innerText = spec.title;
-    document.getElementById('pdmTerritory').innerText = spec.territory;
-    document.getElementById('pdmNiche').innerText = spec.niche;
-    document.getElementById('pdmPrice').innerText = spec.price;
-    document.getElementById('pdmRecords').innerText = `${spec.records} Verified Leads`;
-    document.getElementById('pdmAvgContract').innerText = spec.avgContract;
-    document.getElementById('pdmOverview').innerText = spec.overview;
-    document.getElementById('pdmIcp').innerText = spec.icp;
-    document.getElementById('pdmPitchAngle').innerText = `"${spec.pitchAngle}"`;
+    const setText = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = val;
+    };
+    setText('pdmTitle', spec.title);
+    setText('pdmTerritory', spec.territory);
+    setText('pdmNiche', spec.niche);
+    setText('pdmPrice', spec.price);
+    setText('pdmRecords', `${spec.records} Verified Leads`);
+    setText('pdmAvgContract', spec.avgContract);
+    setText('pdmOverview', spec.overview);
+    setText('pdmIcp', spec.icp);
+    setText('pdmPitchAngle', `"${spec.pitchAngle}"`);
+
+    if (spec.coverage) {
+      setText('pdmCovEmail', spec.coverage.email);
+      setText('pdmCovPhone', spec.coverage.phone);
+      setText('pdmCovTech', spec.coverage.tech);
+    }
+    if (spec.limitations) {
+      setText('pdmLimitationsText', spec.limitations);
+    }
 
     const fieldsContainer = document.getElementById('pdmFieldsList');
     if (fieldsContainer) {
@@ -87,6 +128,19 @@
         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300">
           <span class="text-emerald-400">✓</span> ${f}
         </span>
+      `).join('');
+    }
+
+    const sampleTableBody = document.getElementById('pdmSampleTableBody');
+    if (sampleTableBody && Array.isArray(spec.sampleRows)) {
+      sampleTableBody.innerHTML = spec.sampleRows.map(row => `
+        <tr>
+          <td class="p-2.5 font-bold text-white">${row.company}</td>
+          <td class="p-2.5 text-slate-400">${row.city}</td>
+          <td class="p-2.5 text-cyan-400">${row.email}</td>
+          <td class="p-2.5 text-slate-300">${row.phone}</td>
+          <td class="p-2.5 text-emerald-400">${row.tech}</td>
+        </tr>
       `).join('');
     }
 
@@ -102,6 +156,12 @@
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    if (window.location.hash !== `#dataset=${spec.packKey}`) {
+      try {
+        window.history.replaceState({}, '', `#dataset=${spec.packKey}`);
+      } catch {}
+    }
   };
 
   window.closeProductDetailModal = function () {
@@ -110,7 +170,30 @@
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
+    if (/^#dataset=/i.test(window.location.hash)) {
+      try {
+        window.history.replaceState({}, '', window.location.pathname + window.location.search);
+      } catch {}
+    }
   };
+
+  // Hash route listener for #dataset=texas|florida|medspas|hvac
+  function checkDatasetHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/^#dataset=(texas|florida|medspas|hvac)$/i);
+    if (match) {
+      window.openProductDetailModal(match[1].toLowerCase());
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('hashchange', checkDatasetHash);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkDatasetHash);
+    } else {
+      checkDatasetHash();
+    }
+  }
 
   // Open Dataset Comparison Matrix
   window.openComparisonModal = function () {
@@ -231,7 +314,7 @@
         <h4>2. Use of Information</h4>
         <p>Customer emails are strictly used for order delivery, dataset invoice verification, and essential security notices. We never sell, rent, or lease customer payment information to third parties.</p>
         <h4>3. Data Security & Storage</h4>
-        <p>All client communications and payments are processed via 256-bit SSL encryption. Payment transactions are executed directly via accredited payment gateways (PayPal / Stripe) — zero raw card numbers are stored on our servers.</p>
+        <p>All client communications and payments are processed via 256-bit SSL encryption. Payment transactions are executed directly via Stripe Checkout — zero raw card numbers are stored on our servers.</p>
       `
     },
     terms: {

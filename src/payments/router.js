@@ -294,8 +294,10 @@ export async function handleLambdaPaymentsEvent(event, service = paymentsService
   const path = event.rawPath || event.path || '/api/orders';
   const headers = { ...(event.headers || {}) };
 
+  const normalizedPath = path.replace(/\/+$/, '') || '/api/orders';
+
   // For non-webhook routes: check worker secret
-  if (path !== '/api/webhooks/payment') {
+  if (normalizedPath !== '/api/webhooks/payment') {
     const workerAuth = validateWorkerSecret(headers);
     if (!workerAuth.valid) {
       return {
@@ -327,7 +329,7 @@ export async function handleLambdaPaymentsEvent(event, service = paymentsService
       ? Buffer.from(event.body, 'base64').toString('utf8') 
       : event.body;
 
-    if (path === '/api/webhooks/payment') {
+    if (normalizedPath === '/api/webhooks/payment') {
       body = rawPayload;
     } else {
       try {

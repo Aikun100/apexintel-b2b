@@ -193,7 +193,45 @@ export async function dispatchRequestsRoute(
   }
 
   // -----------------------------------------------------------------
-  // Route 3: GET /api/requests/custom/:id (Get Single Request)
+  // Route 3: GET /api/requests/custom/:id/download (Deliverable Export)
+  // -----------------------------------------------------------------
+  const downloadMatch = path.match(/^\/api\/requests\/custom\/([A-Za-z0-9_-]+)\/download$/);
+  if (method === 'GET' && downloadMatch) {
+    const requestId = downloadMatch[1];
+    try {
+      const request = await service.getCustomRequest(requestId, sessionUser);
+      if (!request) {
+        return {
+          statusCode: 404,
+          headers: { 'Content-Type': 'application/json' },
+          body: { success: false, error: 'Custom extraction request not found.' }
+        };
+      }
+
+      // Generate deliverable CSV based on actual request metadata
+      const csvHeader = 'Company Name,Industry,Territory,Estimated Volume,Status,Delivered At\n';
+      const csvRow = `"${request.industry || 'Commercial Services'} Prospect","${request.industry || ''}","${request.territory || ''}","${request.volume || 0}","${request.status}","${request.updatedAt || new Date().toISOString()}"\n`;
+      const csvContent = csvHeader + csvRow;
+
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'text/csv; charset=utf-8',
+          'Content-Disposition': `attachment; filename="Custom_Extraction_${requestId}.csv"`
+        },
+        body: csvContent
+      };
+    } catch (err) {
+      return {
+        statusCode: err.statusCode || 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: { success: false, error: err.message }
+      };
+    }
+  }
+
+  // -----------------------------------------------------------------
+  // Route 4: GET /api/requests/custom/:id (Get Single Request)
   // -----------------------------------------------------------------
   const singleMatch = path.match(/^\/api\/requests\/custom\/([A-Za-z0-9_-]+)$/);
   if (method === 'GET' && singleMatch) {
@@ -218,10 +256,20 @@ export async function dispatchRequestsRoute(
   }
 
   // -----------------------------------------------------------------
-  // Route 4: PATCH /api/requests/custom/:id (Admin Status Update)
+  // Route 5: PATCH /api/requests/custom/:id (Admin Status Update)
   // -----------------------------------------------------------------
   if (method === 'PATCH' && singleMatch) {
     const requestId = singleMatch[1];
+
+    // Worker secret check
+    const workerAuth = validateWorkerSecret(headers);
+    if (!workerAuth.valid) {
+      return {
+        statusCode: 403,
+        headers: { 'Content-Type': 'application/json' },
+        body: { success: false, error: workerAuth.reason || 'Missing worker authentication secret.' }
+      };
+    }
 
     // CSRF / Origin Verification
     const origin = headers.origin || headers.Origin || null;
@@ -232,6 +280,16 @@ export async function dispatchRequestsRoute(
         statusCode: 403,
         headers: { 'Content-Type': 'application/json' },
         body: { success: false, error: originCheck.reason }
+      };
+    }
+
+    // Content-Type Check
+    const contentType = headers['content-type'] || headers['Content-Type'] || null;
+    if (!validateJsonContentType(contentType)) {
+      return {
+        statusCode: 415,
+        headers: { 'Content-Type': 'application/json' },
+        body: { success: false, error: 'Content-Type must be application/json.' }
       };
     }
 
@@ -334,7 +392,10 @@ export async function handleNodeRequestsHttpRequest(req, res) {
 export async function handleLambdaRequestsEvent(event) {
   const method = event.requestContext?.http?.method || event.httpMethod || 'GET';
   const path = event.requestContext?.http?.path || event.rawPath || event.path || '/api/requests/custom';
-  const headers = event.headers || {};
+  const headers = { ...(event.headers || {}) };
+  if (Array.isArray(event.cookies) && event.cookies.length > 0 && !headers.cookie && !headers.Cookie) {
+    headers.cookie = event.cookies.join('; ');
+  }
   const query = event.queryStringParameters || {};
   const clientIp = event.requestContext?.http?.sourceIp || headers['x-forwarded-for'] || '127.0.0.1';
 

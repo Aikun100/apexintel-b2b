@@ -48,7 +48,7 @@
       customerEmail: 'sarah@outboundsprint.com',
       agency: 'OutboundSprint',
       product: 'California Luxury MedSpas',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (9 leads)',
       amount: '$89.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -72,7 +72,7 @@
       customerEmail: 'marcus@leadcraft.agency',
       agency: 'LeadCraft Outbound',
       product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (12 leads)',
       amount: '$99.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -84,7 +84,7 @@
       customerEmail: 'elena@skylinegrowth.com',
       agency: 'Skyline Growth Partners',
       product: 'Florida Solar & Storm Restoration',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (8 leads)',
       amount: '$79.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -96,7 +96,7 @@
       customerEmail: 'mike@industrialgrowth.io',
       agency: 'Industrial Growth Partners',
       product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (12 leads)',
       amount: '$99.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -171,6 +171,47 @@
     return window.adminCustomRequestsList || [];
   }
 
+  let liveAdminOverview = null;
+
+  window.loadAdminOverviewFromBackend = async function () {
+    try {
+      const resp = await fetch('/api/admin/overview', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.success && data.metrics) {
+          liveAdminOverview = data;
+          updateAdminOverviewUI(data);
+        }
+      }
+    } catch (err) {
+      console.warn('[Admin] Could not load live overview, using cached state:', err.message);
+    }
+  };
+
+  function updateAdminOverviewUI(data) {
+    const revEl = document.getElementById('adminGrossRevenueVal');
+    const ordersCountEl = document.getElementById('adminOrdersCountVal');
+    const leadsPoolEl = document.getElementById('adminLeadsPoolVal');
+    const usersCountEl = document.getElementById('adminUsersCountVal');
+
+    if (revEl && data.metrics?.totalRevenue !== undefined) {
+      revEl.innerText = `$${Number(data.metrics.totalRevenue).toLocaleString()}`;
+    }
+    if (ordersCountEl && data.metrics?.paidOrdersCount !== undefined) {
+      ordersCountEl.innerText = `${data.metrics.paidOrdersCount}`;
+    }
+    if (leadsPoolEl && data.metrics?.activeLeadsPool !== undefined) {
+      leadsPoolEl.innerText = `${Number(data.metrics.activeLeadsPool).toLocaleString()}`;
+    }
+    if (usersCountEl && data.metrics?.totalUsers !== undefined) {
+      usersCountEl.innerText = `${data.metrics.totalUsers}`;
+    }
+  }
+
   // Inject Admin Dashboard Modal HTML
   function injectAdminModal() {
     if (document.getElementById('adminDashboardModal')) return;
@@ -189,7 +230,7 @@
                 <div class="flex items-center gap-2.5">
                   <h2 class="text-2xl font-black text-white tracking-tight">ApexIntel Admin Command Center</h2>
                   <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">ROOT ACCESS</span>
-                  <span class="text-[10px] font-mono text-slate-500">v2.0 AWS Production</span>
+                  <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Live Custom Queue • Sample Metrics</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">Real-Time Revenue Analytics, Crawler Fleet Health, Lead Inventory & Custom Extraction Queue</p>
               </div>
@@ -209,24 +250,24 @@
           <!-- KPI Metric Cards Grid (4 Cards) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <!-- Gross Revenue -->
-            <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/40 transition">
+            <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-cyan-500/40 transition">
               <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                <span>Gross Revenue (MTD)</span>
-                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">▲ +$2,370 wk</span>
+                <span>Gross Revenue (Verified)</span>
+                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Stripe Live</span>
               </div>
-              <div class="text-3xl font-black text-white font-mono">$14,820</div>
+              <div id="adminGrossRevenueVal" class="text-3xl font-black text-white font-mono">$246</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
-                <span class="text-emerald-400 font-bold">88</span> paid transactions across all packs
+                <span id="adminOrdersCountVal" class="text-emerald-400 font-bold">3</span> paid transactions across all packs
               </div>
             </div>
 
             <!-- Net Profit & Margin -->
             <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 transition">
               <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                <span>Net Profit (Est.)</span>
-                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">97.7% Margin</span>
+                <span>Net Margin</span>
+                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Serverless</span>
               </div>
-              <div class="text-3xl font-black text-emerald-400 font-mono">$14,480</div>
+              <div class="text-3xl font-black text-emerald-400 font-mono">97.7%</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
                 AWS infrastructure cost: <strong class="text-slate-300 font-mono">$0.00</strong> (credit pool)
               </div>
@@ -238,22 +279,22 @@
                 <span>Pre-Warmed Lead Pool</span>
                 <span class="text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">DynamoDB</span>
               </div>
-              <div class="text-3xl font-black text-cyan-300 font-mono">3,840</div>
+              <div id="adminLeadsPoolVal" class="text-3xl font-black text-cyan-300 font-mono">53</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>100% DNS MX-verified, zero bounce</span>
+                <span>Verified lead records in catalog cache</span>
               </div>
             </div>
 
             <!-- Unique Buyers & Reorder Rate -->
             <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-purple-500/40 transition">
               <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                <span>Agency Client Base</span>
-                <span class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">42% Reorders</span>
+                <span>Total Client Accounts</span>
+                <span class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Auth Users</span>
               </div>
-              <div class="text-3xl font-black text-purple-300 font-mono">88</div>
+              <div id="adminUsersCountVal" class="text-3xl font-black text-purple-300 font-mono">3</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
-                Average LTV: <strong class="text-white font-mono">$168.40</strong> per agency
+                Active customer and admin accounts
               </div>
             </div>
           </div>
@@ -614,6 +655,9 @@
     }
 
     injectAdminModal();
+    if (typeof window.loadAdminOverviewFromBackend === 'function') {
+      window.loadAdminOverviewFromBackend();
+    }
     renderAdminCustomRequests();
     const modal = document.getElementById('adminDashboardModal');
     if (modal) {
@@ -636,10 +680,12 @@
     }
 
     try {
-      const resp = await fetch('/api/discovery/recrawl', {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+      const resp = await fetch('/api/admin/recrawl', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
         },
         credentials: 'include'
       });

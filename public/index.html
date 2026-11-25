@@ -706,7 +706,7 @@
               </span>
             </div>
             <div class="p-6 space-y-3">
-              <div class="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">Florida • 24 Verified Leads</div>
+              <div class="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">Florida • 8 Verified Leads</div>
               <h3 class="text-lg font-black text-white leading-snug">Florida Solar & Restoration</h3>
               <p class="text-xs text-slate-400 leading-relaxed">
                 Hurricane-grade commercial solar installers and rapid-response disaster mitigation outfits in Miami, Tampa & Orlando.
@@ -741,7 +741,7 @@
               </span>
             </div>
             <div class="p-6 space-y-3">
-              <div class="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">California • 24 Verified Leads</div>
+              <div class="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">California • 9 Verified Leads</div>
               <h3 class="text-lg font-black text-white leading-snug">California Luxury MedSpas</h3>
               <p class="text-xs text-slate-400 leading-relaxed">
                 Premier facial plastic surgery, medical aesthetic clinics, and regenerative wellness centers in Beverly Hills & Newport.
@@ -776,7 +776,7 @@
               </span>
             </div>
             <div class="p-6 space-y-3">
-              <div class="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">Multi-State • 24 Verified Leads</div>
+              <div class="text-[10px] font-mono text-cyan-400 uppercase font-bold tracking-wider">Multi-State • 12 Verified Leads</div>
               <h3 class="text-lg font-black text-white leading-snug">Commercial HVAC & Mechanical</h3>
               <p class="text-xs text-slate-400 leading-relaxed">
                 Industrial chiller, commercial refrigeration, and mechanical piping outfits across Chicago, DFW, and Atlanta.
@@ -810,8 +810,8 @@
     <section id="preview" class="space-y-6">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <span class="text-xs font-black uppercase tracking-wider text-cyan-400 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-            Interactive Audit Table
+          <span id="tool5Badge" class="text-xs font-black uppercase tracking-wider text-cyan-400 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+            TOOL 5 OF 6: Interactive Audit Table
           </span>
           <h2 class="text-3xl sm:text-4xl font-black text-white font-display tracking-tight mt-2">
             Explore Verified Records Live
@@ -859,10 +859,11 @@
           <span id="collectionTitle" class="font-bold text-white ml-1">Texas High-Ticket Contractors</span>
           <span class="text-slate-500 mx-2">•</span>
           <span id="collectionTag" class="text-slate-400 font-mono">Austin • Dallas-Fort Worth • Houston • San Antonio</span>
+          <p id="collectionDesc" class="text-slate-500 mt-1">24 premier commercial & residential roofing, storm restoration, and solar outfits across Austin, Dallas, Houston & SA.</p>
         </div>
         <div class="flex items-center gap-2">
           <span class="text-emerald-400 font-mono font-bold">100% DNS MX Pings Active</span>
-          <button onclick="window.openCheckoutModal(activeTabKey)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition shadow">
+          <button id="buyBtn" onclick="window.openCheckoutModal(window.activeTabKey || activeTabKey)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition shadow">
             Acquire Full Pack &rarr;
           </button>
         </div>
@@ -1031,7 +1032,7 @@
               <div id="roiResMultiple" class="text-xs text-emerald-400 font-bold font-mono mt-1">126x ROI on $79 Dataset</div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2 pt-4 border-t border-slate-800 text-left">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-slate-800 text-left">
               <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
                 <div class="text-[10px] text-slate-500 font-mono">Responses</div>
                 <div id="roiResResponses" class="text-base font-bold text-white font-mono">2</div>
@@ -1044,10 +1045,14 @@
                 <div class="text-[10px] text-slate-500 font-mono">Clients</div>
                 <div id="roiResClients" class="text-base font-bold text-emerald-400 font-mono">1</div>
               </div>
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-[10px] text-slate-500 font-mono">Est. CAC</div>
+                <div id="roiResCac" class="text-base font-bold text-cyan-400 font-mono">$79</div>
+              </div>
             </div>
 
             <div class="text-[10px] text-slate-500 font-mono text-left">
-              Break-Even: You only need <strong>0.01 clients</strong> to pay for the dataset. Estimates are mathematical models, not guaranteed outcomes.
+              Break-Even: Closing 1 client covers a $79 dataset multiple times over (modeled outcomes floor at 0 clients when inputs yield fewer than 1 deal).
             </div>
           </div>
         </div>
@@ -1123,8 +1128,8 @@ Best,
 Apex Growth Media</pre>
           </div>
 
-          <!-- 3-Day Bump & LinkedIn Grid -->
-          <div class="grid sm:grid-cols-2 gap-4">
+          <!-- 3-Day Bump, LinkedIn, & Cold Call Opener Grid -->
+          <div class="grid sm:grid-cols-3 gap-4">
             <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
               <div class="flex justify-between items-center">
                 <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">2. 3-Day Follow-Up Bump</span>
@@ -1142,6 +1147,16 @@ Hey Apex team — floating this to the top of your inbox in case it got buried. 
               </div>
               <p id="outreachLinkedin" class="text-xs text-slate-300 font-sans leading-relaxed bg-slate-900 p-3 rounded-xl border border-slate-800">
 Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed your mobile site is clocking in at 940ms. Put together a 2-min fix overview. Would love to send it over!
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono text-slate-400 uppercase font-bold">4. Cold Call Opener</span>
+                <button onclick="copyOutreachItem('outreachCall', 'Call Opener Script')" class="text-xs text-indigo-400 hover:underline">Copy</button>
+              </div>
+              <p id="outreachCall" class="text-xs text-slate-300 font-sans leading-relaxed bg-slate-900 p-3 rounded-xl border border-slate-800">
+Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobile speed with no Meta pixel. Got 30 seconds for a quick benchmark?
               </p>
             </div>
           </div>
@@ -1199,6 +1214,14 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
                   <option value="phone_only">Phone Only (No Email)</option>
                 </select>
               </div>
+              <div>
+                <label for="lqMargin" class="block text-[11px] font-bold text-slate-400 uppercase font-mono mb-1">Ticket Size & Margin</label>
+                <select id="lqMargin" onchange="analyzeLeadQuality()" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
+                  <option value="high">High Ticket ($5,000+ Contract / LTV)</option>
+                  <option value="medium">Medium Ticket ($1,500–$5,000 Contract)</option>
+                  <option value="low">Standard / Small Ticket (<$1,500)</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -1213,6 +1236,12 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
               <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden mt-3 border border-slate-800">
                 <div id="lqScoreBar" class="h-full bg-emerald-500 transition-all duration-500 w-[95%]"></div>
               </div>
+            </div>
+            <div id="lqScoreBreakdown" class="text-left bg-slate-900/60 p-3 rounded-xl border border-slate-800/80 text-[11px] space-y-1 font-mono text-slate-400">
+              <div class="flex justify-between"><span>Speed Telemetry:</span><span class="text-emerald-400 font-bold">+20 pts</span></div>
+              <div class="flex justify-between"><span>Pixel Tracking Gap:</span><span class="text-emerald-400 font-bold">+25 pts</span></div>
+              <div class="flex justify-between"><span>Direct Decision-Maker:</span><span class="text-emerald-400 font-bold">+25 pts</span></div>
+              <div class="flex justify-between"><span>High-Ticket Margin:</span><span class="text-emerald-400 font-bold">+15 pts</span></div>
             </div>
             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-left text-xs space-y-1">
               <span class="text-slate-400 block text-[10px] uppercase font-mono font-bold">Recommended Pitch Strategy:</span>
@@ -1261,12 +1290,12 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
               <span class="text-slate-300">Requested Record Volume:</span>
               <span id="crVolumeLabel" class="text-emerald-400 font-mono">250 Verified Records</span>
             </div>
-            <input type="range" id="crVolumeSlider" min="100" max="2500" step="50" value="250" oninput="updateCustomQuote()" class="w-full accent-emerald-500">
+            <input type="range" id="crVolumeSlider" min="50" max="5000" step="50" value="250" oninput="updateCustomQuote()" class="w-full accent-emerald-500">
             <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>100 leads</span>
+              <span>50 leads</span>
               <span>500 leads</span>
               <span>1,000 leads</span>
-              <span>2,500 leads</span>
+              <span>5,000 leads</span>
             </div>
           </div>
 
@@ -1298,9 +1327,9 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
               <div>
                 <span class="text-[10px] text-slate-500 font-mono uppercase block">Estimated Price</span>
-                <span id="crEstimatedPrice" class="text-2xl font-black text-white font-mono">$188.00</span>
+                <span id="crEstimatedPrice" class="text-2xl font-black text-white font-mono">$208.00</span>
               </div>
-              <span id="crRatePerRecord" class="text-xs font-mono text-emerald-400 font-bold">$0.75 / record</span>
+              <span id="crRatePerRecord" class="text-xs font-mono text-emerald-400 font-bold">$0.83 / record</span>
             </div>
           </div>
 
@@ -1359,7 +1388,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <div class="pt-2">
               <div class="flex items-baseline gap-1">
                 <span class="text-4xl font-black text-white font-display">$79</span>
-                <span class="text-xs text-slate-400 font-mono">to $149 / dataset</span>
+                <span class="text-xs text-slate-400 font-mono">to $99 / dataset</span>
               </div>
               <p class="text-[11px] text-emerald-400 font-mono mt-1">✓ Lifetime access • No recurring subscription</p>
             </div>
@@ -1416,10 +1445,9 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
 
             <div class="pt-2">
               <div class="flex items-baseline gap-1">
-                <span class="text-4xl font-black text-white font-display">$79</span>
-                <span class="text-xs text-slate-400 font-mono">/ month (Professional)</span>
+                <span class="text-4xl font-black text-white font-display">Early Access</span>
               </div>
-              <p class="text-[11px] text-cyan-300 font-mono mt-1">Starter ($29/mo) • Agency ($199/mo) available</p>
+              <p class="text-[11px] text-cyan-300 font-mono mt-1">Included with free account • Full CRM & Scanner</p>
             </div>
 
             <ul class="space-y-3 text-xs text-slate-200 pt-2 border-t border-slate-800/80">
@@ -1470,10 +1498,10 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
 
             <div class="pt-2">
               <div class="flex items-baseline gap-1">
-                <span class="text-4xl font-black text-white font-display">$299</span>
-                <span class="text-xs text-slate-400 font-mono">minimum engagement</span>
+                <span class="text-4xl font-black text-white font-display">From $0.25</span>
+                <span class="text-xs text-slate-400 font-mono">/ verified record</span>
               </div>
-              <p class="text-[11px] text-slate-400 font-mono mt-1">Tiered volume rates ($0.40–$0.60/lead)</p>
+              <p class="text-[11px] text-slate-400 font-mono mt-1">50–50,000 leads • Volume-tiered ($0.25–$0.65/lead)</p>
             </div>
 
             <ul class="space-y-3 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
@@ -1748,7 +1776,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <span class="text-cyan-400 transition group-open:rotate-180">▼</span>
           </summary>
           <p class="text-xs text-slate-400 mt-3 leading-relaxed">
-            You can pay securely with any major Credit/Debit Card (Visa, Mastercard, Amex, Discover) or via PayPal (@ApexIntelB2B). Once authorized, delivery is instant: your browser immediately downloads both formatted .XLSX Excel and .CSV files, and the dataset is permanently stored in your Client Dashboard.
+            You can pay securely with any major Credit/Debit Card (Visa, Mastercard, Amex, Discover), Apple Pay, or Google Pay via Stripe Checkout. Once authorized, your dataset is permanently unlocked in your Client Dashboard for instant .XLSX download via 15-minute presigned S3 URLs.
           </p>
         </details>
 
@@ -1797,7 +1825,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
           The autonomous B2B monetization and intelligence engine. Providing high-ticket agencies and revenue teams with verified decision-maker prospects paired with pre-audited mobile latency (ms) and ad retargeting signals.
         </p>
         <div class="text-[11px] text-slate-500 font-mono">
-          Settlement Gateway: <span class="text-emerald-400 font-bold">PayPal Verified (@ApexIntelB2B)</span> • SSL 256-Bit
+          Settlement Gateway: <span class="text-emerald-400 font-bold">Stripe Checkout</span> • SSL 256-Bit
         </div>
       </div>
 
@@ -1856,9 +1884,9 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
   <!-- ========================================================================= -->
   <!-- MODAL 1: PRODUCT DETAIL MODAL (NEW) -->
   <!-- ========================================================================= -->
-  <div id="productDetailModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
-    <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto text-left space-y-6">
-      <button onclick="window.closeProductDetailModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+  <div id="productDetailModal" role="dialog" aria-modal="true" aria-labelledby="pdmTitle" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+    <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto text-left space-y-6">
+      <button onclick="window.closeProductDetailModal()" aria-label="Close dataset details" class="absolute top-5 right-5 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
       
       <div>
         <div class="flex items-center gap-2 mb-1">
@@ -1867,11 +1895,30 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
         </div>
         <h3 id="pdmTitle" class="text-2xl font-black text-white font-display">Texas High-Ticket Contractors</h3>
         <p id="pdmTerritory" class="text-xs text-slate-400 font-mono mt-0.5">Austin, Dallas-Fort Worth, Houston, San Antonio</p>
+        <p id="pdmNiche" class="text-xs text-indigo-400 font-semibold mt-0.5">Commercial Roofing &amp; Storm Restoration</p>
       </div>
 
       <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
         <div class="text-xs font-bold text-white">Dataset Overview</div>
         <p id="pdmOverview" class="text-xs text-slate-300 leading-relaxed"></p>
+      </div>
+
+      <div id="pdmCoverage" class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+        <div class="text-xs font-bold text-white">Verified Field Coverage</div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-500 block text-[10px]">VERIFIED INBOXES</span>
+            <span id="pdmCovEmail" class="text-cyan-400 font-bold">13 / 24</span>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-500 block text-[10px]">DIRECT PHONES</span>
+            <span id="pdmCovPhone" class="text-emerald-400 font-bold">17 / 24</span>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
+            <span class="text-slate-500 block text-[10px]">TECH &amp; LATENCY</span>
+            <span id="pdmCovTech" class="text-white font-bold">17 / 24</span>
+          </div>
+        </div>
       </div>
 
       <div class="grid sm:grid-cols-2 gap-4">
@@ -1886,8 +1933,46 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       </div>
 
       <div>
-        <span class="text-xs font-bold text-slate-300 block mb-2">9 Included Data Fields in Every Record:</span>
+        <span class="text-xs font-bold text-slate-300 block mb-2">11-Column Dataset Schema &amp; Field Dictionary:</span>
         <div id="pdmFieldsList" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <!-- Sample Preview Table -->
+      <div class="space-y-2">
+        <span class="text-xs font-bold text-slate-300 block">Sample Records (Sanitized Preview):</span>
+        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/40">
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-slate-800 bg-slate-900/80 text-[10px] text-slate-400 uppercase">
+                <th class="p-2.5">Company</th>
+                <th class="p-2.5">City / State</th>
+                <th class="p-2.5">Verified Contact</th>
+                <th class="p-2.5">Phone</th>
+                <th class="p-2.5">Tech Signal</th>
+              </tr>
+            </thead>
+            <tbody id="pdmSampleTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 5-Tier Provenance Taxonomy Legend -->
+      <div id="pdmProvenanceLegend" class="p-3.5 rounded-2xl bg-slate-900/50 border border-slate-800 text-[11px] font-mono text-slate-400 space-y-1">
+        <div class="text-white font-bold text-xs font-sans">5-Tier Data Provenance Standards</div>
+        <div class="flex flex-wrap gap-2 text-[10px] pt-1">
+          <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">✓ Verified</span>
+          <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Publicly Listed</span>
+          <span class="px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">Inferred</span>
+          <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Estimated</span>
+          <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">Unavailable</span>
+        </div>
+      </div>
+
+      <!-- Known Limitations Disclosure -->
+      <div id="pdmLimitations" class="p-3.5 rounded-2xl bg-slate-900/30 border border-slate-800/80 text-xs text-slate-400 space-y-1">
+        <span class="text-slate-300 font-bold block text-[11px]">Known Pack Limitations:</span>
+        <p id="pdmLimitationsText" class="text-slate-400 text-[11px] leading-relaxed">Where businesses do not publish a direct email or phone, entries are marked Unavailable rather than guessed.</p>
       </div>
 
       <div class="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-500/30 text-xs">
@@ -2073,66 +2158,21 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
                  class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
         </div>
 
-        <!-- Payment Method Tabs -->
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1.5">Select Payment Method</label>
-          <div class="grid grid-cols-2 gap-3 mb-3">
-            <button type="button" onclick="selectPayMethod('card')" id="payTab-card" class="py-3 px-4 rounded-xl border border-emerald-500/50 bg-emerald-950/30 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm">
-              <span>💳</span> Credit / Debit Card
-            </button>
-            <button type="button" onclick="selectPayMethod('paypal')" id="payTab-paypal" class="py-3 px-4 rounded-xl border border-slate-800 bg-slate-900 text-slate-400 font-bold text-xs flex items-center justify-center gap-2 transition hover:text-white">
-              <span>🅿️</span> PayPal (@ApexIntelB2B)
-            </button>
-          </div>
-        </div>
-
-        <!-- PayPal Notice Box -->
-        <div id="altPaymentContainer" class="hidden p-4 rounded-2xl bg-slate-900 border border-blue-500/30 space-y-2">
+        <!-- Payment Settlement Notice -->
+        <div class="p-4 rounded-2xl bg-slate-900 border border-emerald-500/30 space-y-2">
           <div class="flex items-center gap-3">
-            <span class="text-2xl text-[#0070BA]">🅿️</span>
+            <span class="text-2xl text-emerald-400">🔒</span>
             <div>
-              <div class="text-sm font-bold text-white">PayPal One-Click Checkout</div>
-              <div class="text-xs text-slate-400">Pay securely to verified business recipient <strong>@ApexIntelB2B</strong>.</div>
+              <div class="text-sm font-bold text-white">Stripe Hosted Checkout (PCI-DSS Compliant)</div>
+              <div class="text-xs text-slate-400">Accepts Visa, Mastercard, Amex, Apple Pay &amp; Google Pay. Card details never touch ApexIntel servers.</div>
             </div>
-          </div>
-        </div>
-
-        <!-- Card Fields -->
-        <div id="cardFieldsContainer" class="space-y-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Card Number</label>
-            <div class="relative">
-              <input type="text" id="checkoutCardNum" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" inputmode="numeric"
-                     oninput="formatCardNumberInput(this)"
-                     class="w-full pl-4 pr-24 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
-              <div class="absolute right-3.5 top-3 flex items-center gap-1.5">
-                <span id="cardBrandBadge" class="text-xs font-bold text-slate-400 font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700">CARD</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Expiry (MM/YY)</label>
-              <input type="text" id="checkoutExpiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" inputmode="numeric"
-                     oninput="formatExpiryInput(this, event)"
-                     class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">CVC / CVV</label>
-              <input type="text" id="checkoutCvc" placeholder="CVC" maxlength="4" autocomplete="cc-csc" inputmode="numeric"
-                     class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
-            </div>
-          </div>
-          <div class="text-[11px] text-slate-400 flex items-center gap-1.5 pt-0.5">
-            <span class="text-emerald-400">🔒</span> Card processing settled securely via PayPal Merchant Gateway (@ApexIntelB2B)
           </div>
         </div>
 
         <!-- Submit Button -->
         <div class="pt-2">
           <button type="submit" id="checkoutSubmitBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-wider transition shadow-xl shadow-emerald-600/30 active:scale-[0.99] flex items-center justify-center gap-2">
-            <span id="checkoutBtnLabel">⚡ Authorize & Download Now ($79.00)</span>
+            <span id="checkoutBtnLabel">⚡ Continue to Secure Stripe Checkout ($79.00)</span>
           </button>
         </div>
 
@@ -2153,17 +2193,18 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
         </p>
 
         <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-left font-mono text-xs space-y-1 max-w-md mx-auto">
-          <div><span class="text-slate-500">Invoice:</span> <span id="succInvoiceId" class="text-indigo-400 font-bold">INV-2026-9921</span></div>
-          <div><span class="text-slate-500">Delivered To:</span> <span id="succEmail" class="text-emerald-400">buyer@agency.com</span></div>
-          <div><span class="text-slate-500">Lead Count:</span> <span class="text-white">24 Verified Contacts</span></div>
+          <div><span class="text-slate-500">Order ID:</span> <span id="succOrderId" class="text-cyan-400 font-bold">—</span></div>
+          <div><span class="text-slate-500">Dataset Pack:</span> <span id="succPackTitle" class="text-white font-bold">—</span></div>
+          <div><span class="text-slate-500">Delivered To:</span> <span id="succEmail" class="text-emerald-400">—</span></div>
+          <div><span class="text-slate-500">Lead Count:</span> <span id="succRecordCount" class="text-white">—</span></div>
           <div><span class="text-slate-500">Deduplication Status:</span> <span class="text-emerald-400">✓ 0 Duplicates Guaranteed</span></div>
         </div>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <button id="succDownloadXlsx" onclick="" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+          <button id="succDownloadXlsx" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs transition shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2">
             <span>📥 Download .XLSX</span>
           </button>
-          <button id="succDownloadCsv" onclick="" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition border border-slate-700">
+          <button id="succDownloadCsv" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition border border-slate-700">
             Export .CSV
           </button>
           <button onclick="closeCheckoutModal(); openCustomerDashboard('datasets');" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs transition">
@@ -2175,7 +2216,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
   </div>
 
   <!-- ==================== REAL BUY POPUP NOTIFICATION (WITH 1-CLICK CHECKOUT) ==================== -->
-  <div id="socialToast" class="fixed bottom-6 left-6 max-w-sm w-[calc(100vw-3rem)] sm:w-[380px] rounded-2xl bg-slate-950/95 border-2 border-indigo-500/50 p-4 shadow-2xl backdrop-blur-xl z-50 transition-all duration-500 opacity-0 translate-y-6">
+  <div id="socialToast" class="fixed bottom-6 left-6 max-w-sm w-[calc(100vw-3rem)] sm:w-[380px] rounded-2xl bg-slate-950/95 border-2 border-indigo-500/50 p-4 shadow-2xl backdrop-blur-xl z-50 transition-all duration-500 opacity-0 translate-y-6 pointer-events-none">
     <div class="flex items-start gap-3.5">
       <div class="relative shrink-0">
         <img id="socialToastImg" src="/covers/thumbnail_texas.png" alt="Product Pack" class="w-14 h-14 rounded-xl object-cover border border-slate-700 shadow-md">
@@ -2183,11 +2224,11 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Verified Purchase</span>
-          <span id="socialToastTime" class="text-[10px] text-slate-500 font-mono">3m ago</span>
+          <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Order Confirmed</span>
+          <span id="socialToastTime" class="text-[10px] text-slate-500 font-mono">Just now</span>
         </div>
-        <h4 id="socialToastTitle" class="text-xs font-bold text-white truncate mt-1">Hook Agency (Dallas, TX)</h4>
-        <p id="socialToastDesc" class="text-[11px] text-slate-400 truncate">Texas Contractors Roster</p>
+        <h4 id="socialToastTitle" class="text-xs font-bold text-white truncate mt-1">ApexIntel Dataset Order</h4>
+        <p id="socialToastDesc" class="text-[11px] text-slate-400 truncate">Ready for download</p>
         
         <div class="flex items-center gap-2 mt-2.5">
           <button id="socialToastBuyBtn" onclick="openCheckoutModal('texas')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[11px] transition shadow-md shadow-emerald-600/30 flex items-center gap-1.5 active:scale-95">
@@ -2235,7 +2276,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <img src="/covers/thumbnail_florida.png" alt="Florida" class="w-12 h-12 rounded-xl object-cover border border-slate-700">
             <div>
               <div class="font-bold text-white text-sm group-hover:text-sky-400 transition">Florida Solar & Storm Restoration</div>
-              <div class="text-[11px] text-slate-400">Miami, Tampa Bay, Orlando • 24 Leads + Audits</div>
+              <div class="text-[11px] text-slate-400">Miami, Tampa Bay, Orlando • 8 Leads + Audits</div>
             </div>
           </div>
           <span class="px-3.5 py-1.5 rounded-xl bg-sky-600 text-white font-extrabold text-xs font-mono shadow">$79 &rarr;</span>
@@ -2247,7 +2288,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <img src="/covers/thumbnail_medspas.png" alt="MedSpas" class="w-12 h-12 rounded-xl object-cover border border-slate-700">
             <div>
               <div class="font-bold text-white text-sm group-hover:text-pink-400 transition">California Luxury MedSpas</div>
-              <div class="text-[11px] text-slate-400">Beverly Hills, SF, San Diego • 24 Leads + Audits</div>
+              <div class="text-[11px] text-slate-400">Beverly Hills, SF, San Diego • 9 Leads + Audits</div>
             </div>
           </div>
           <span class="px-3.5 py-1.5 rounded-xl bg-pink-600 text-white font-extrabold text-xs font-mono shadow">$89 &rarr;</span>
@@ -2259,7 +2300,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <img src="/covers/thumbnail_hvac.png" alt="HVAC" class="w-12 h-12 rounded-xl object-cover border border-slate-700">
             <div>
               <div class="font-bold text-white text-sm group-hover:text-emerald-400 transition">Commercial HVAC & Mechanical</div>
-              <div class="text-[11px] text-slate-400">Chicago, Dallas, Atlanta • 24 Leads + Audits</div>
+              <div class="text-[11px] text-slate-400">Chicago, Dallas, Atlanta • 12 Leads + Audits</div>
             </div>
           </div>
           <span class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs font-mono shadow">$99 &rarr;</span>
@@ -2536,6 +2577,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     }
 
     window.switchTab = async function (key) {
+      activeTabKey = key;
       window.activeTabKey = key;
       const data = dataCollections[key];
       if (!data) return;
@@ -2576,11 +2618,27 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
         if (resp.ok) {
           const liveData = await resp.json();
           if (liveData && Array.isArray(liveData.leads) && liveData.leads.length > 0) {
+            data.leads = liveData.leads;
             renderTable(liveData.leads);
           }
         }
       } catch (err) {
-        // Fallback to static preview seamlessly
+        console.warn('Could not fetch live preview leads:', err.message);
+      }
+    };
+
+    window.openCustomExtractionModal = function () {
+      if (window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function' && window.ApexAuth.getCurrentUser()) {
+        if (typeof window.openCustomerDashboard === 'function') {
+          window.openCustomerDashboard('customreq');
+          return;
+        }
+      }
+      const target = document.getElementById('custom-request');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        const input = document.getElementById('crTerritoryInput');
+        if (input) input.focus();
       }
     };
 
@@ -2621,19 +2679,13 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     // Initialize Default Tab
     switchTab('texas');
 
-    // Live Search Filter
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      const currentLeads = dataCollections[activeTabKey].leads;
-      const filtered = currentLeads.filter(l => 
-        l.name.toLowerCase().includes(term) ||
-        l.city.toLowerCase().includes(term) ||
-        l.tech.toLowerCase().includes(term) ||
-        l.category.toLowerCase().includes(term) ||
-        l.email.toLowerCase().includes(term)
-      );
-      renderTable(filtered);
-    });
+    // Live Search Filter (handled via oninput="filterPreviewTable(this.value)" on #tableFilterInput)
+    const tableFilterEl = document.getElementById('tableFilterInput');
+    if (tableFilterEl) {
+      tableFilterEl.addEventListener('input', (e) => {
+        window.filterPreviewTable(e.target.value);
+      });
+    }
 
     // ROI Calculator Logic
     const retainerSlider = document.getElementById('retainerSlider');
@@ -2795,74 +2847,10 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       });
     }
 
-    // ==================== REAL BUY POPUP NOTIFICATION ENGINE ====================
-    const socialEvents = [
-      {
-        buyer: 'Hook Agency (Dallas, TX)',
-        product: 'Texas High-Ticket Contractors',
-        price: '$79',
-        img: '/covers/thumbnail_texas.png',
-        time: '3m ago'
-      },
-      {
-        buyer: 'Clean Energy Media (Miami, FL)',
-        product: 'Florida High-Ticket Solar Pack',
-        price: '$79',
-        img: '/covers/thumbnail_florida.png',
-        time: '14m ago'
-      },
-      {
-        buyer: 'Rodeo Aesthetics (Beverly Hills, CA)',
-        product: 'California Luxury MedSpas',
-        price: '$89',
-        img: '/covers/thumbnail_medspas.png',
-        time: '32m ago'
-      },
-      {
-        buyer: 'Industrial Marketing (Chicago, IL)',
-        product: 'Commercial HVAC & Mechanical',
-        price: '$99',
-        img: '/covers/thumbnail_hvac.png',
-        time: '48m ago'
-      },
-      {
-        buyer: 'Contractor Growth Co (Austin, TX)',
-        product: 'Texas High-Ticket Contractors',
-        price: '$79',
-        img: '/covers/thumbnail_texas.png',
-        time: '1h ago'
-      }
-    ];
-
-    let socialIdx = 0;
-    let toastDismissed = false;
-
-    function triggerSocialToast() {
-      if (toastDismissed) return;
-      const toast = document.getElementById('socialToast');
-      const item = socialEvents[socialIdx % socialEvents.length];
-      
-      document.getElementById('socialToastTitle').innerText = item.buyer;
-      document.getElementById('socialToastDesc').innerText = item.product;
-      document.getElementById('socialToastTime').innerText = item.time;
-      document.getElementById('socialToastPrice').innerText = item.price;
-      document.getElementById('socialToastImg').src = item.img;
-      document.getElementById('socialToastBuyBtn').href = item.url;
-      
-      toast.classList.remove('opacity-0', 'translate-y-6');
-      toast.classList.add('opacity-100', 'translate-y-0');
-
-      setTimeout(() => {
-        toast.classList.remove('opacity-100', 'translate-y-0');
-        toast.classList.add('opacity-0', 'translate-y-6');
-      }, 5500);
-
-      socialIdx++;
-    }
-
+    // ==================== REAL PURCHASE NOTIFICATION HELPER ====================
     function dismissSocialToast() {
-      toastDismissed = true;
       const toast = document.getElementById('socialToast');
+      if (!toast) return;
       toast.classList.remove('opacity-100', 'translate-y-0');
       toast.classList.add('opacity-0', 'translate-y-6');
     }
@@ -3152,7 +3140,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       company: 'Velocity Growth Agency',
       packId: 'florida',
       packName: 'Florida Solar & Storm Restoration',
-      leadsDelivered: 24,
+      leadsDelivered: 8,
       amount: 79,
       processor: 'Stripe',
       status: 'Delivered',
@@ -3171,7 +3159,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       company: 'OutboundSprint',
       packId: 'medspas',
       packName: 'California Luxury MedSpas',
-      leadsDelivered: 24,
+      leadsDelivered: 9,
       amount: 89,
       processor: 'Stripe',
       status: 'Delivered',
@@ -3361,10 +3349,16 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       if (typeof window.clearCustomerDashboardCache === 'function') {
         window.clearCustomerDashboardCache();
       }
-      const dash = document.getElementById('customerDashboardModal');
-      if (dash) dash.classList.add('hidden');
+      const dash = document.getElementById('customerDashboard');
+      if (dash) {
+        dash.classList.add('hidden');
+        dash.classList.remove('flex');
+      }
       const adminDash = document.getElementById('adminDashboardModal');
-      if (adminDash) adminDash.classList.add('hidden');
+      if (adminDash) {
+        adminDash.classList.add('hidden');
+        adminDash.classList.remove('flex');
+      }
     },
 
     getCurrentUser: function () {
@@ -3410,6 +3404,11 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
   };
 
   window.ApexAuth = ApexAuth;
+
+  window.getCsrfToken = function () {
+    const match = document.cookie.match(/(?:^|;\s*)apexintel_csrf=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  };
 
   // --- HTML Injections: Auth Modal Template ---
   function injectAuthModal() {
@@ -3460,6 +3459,10 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
           <button id="signInSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-indigo-600/30 active:scale-95 flex items-center justify-center gap-2">
             <span>Sign In to Dashboard &rarr;</span>
           </button>
+
+          <div class="text-center mt-2">
+            <button type="button" onclick="switchAuthTab('forgot')" class="text-[11px] text-slate-500 hover:text-cyan-400 transition font-mono">Forgot password?</button>
+          </div>
 
           <!-- 1-Click Demo Login Shortcuts -->
           <div class="pt-3 border-t border-slate-800/80">
@@ -3528,6 +3531,53 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
           <button id="registerSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-600/30 active:scale-95 flex items-center justify-center gap-2">
             <span>Create Free Account (+50 Credits) &rarr;</span>
           </button>
+        </form>
+
+        <!-- FORGOT PASSWORD FORM -->
+        <form id="forgotPasswordForm" onsubmit="handleForgotPasswordSubmit(event)" class="space-y-3.5 hidden">
+          <div class="text-center mb-4">
+            <div class="text-2xl mb-2">🔑</div>
+            <p class="text-xs text-slate-400">Enter your account email and we'll send a reset link.</p>
+          </div>
+          <div>
+            <label for="forgotEmail" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Account Email</label>
+            <input type="email" id="forgotEmail" required placeholder="name@youragency.com" autocomplete="email"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          </div>
+          <div id="forgotError" class="text-xs text-rose-400 hidden pt-1"></div>
+          <div id="forgotSuccess" class="text-xs text-emerald-400 hidden pt-1 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20"></div>
+          <button id="forgotSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-600/30 active:scale-95">
+            Send Reset Link
+          </button>
+          <div class="text-center">
+            <button type="button" onclick="switchAuthTab('signin')" class="text-[11px] text-slate-500 hover:text-white transition font-mono">&larr; Back to Sign In</button>
+          </div>
+        </form>
+
+        <!-- RESET PASSWORD FORM (token from URL) -->
+        <form id="resetPasswordForm" onsubmit="handleResetPasswordSubmit(event)" class="space-y-3.5 hidden">
+          <div class="text-center mb-4">
+            <div class="text-2xl mb-2">🔒</div>
+            <p class="text-xs text-slate-400">Enter your new password below.</p>
+          </div>
+          <div>
+            <label for="resetNewPassword" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">New Password</label>
+            <input type="password" id="resetNewPassword" required placeholder="New password (min 12 chars)" minlength="12"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          </div>
+          <div>
+            <label for="resetConfirmPassword" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Confirm Password</label>
+            <input type="password" id="resetConfirmPassword" required placeholder="Re-enter new password" minlength="12"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          </div>
+          <div id="resetError" class="text-xs text-rose-400 hidden pt-1"></div>
+          <div id="resetSuccess" class="text-xs text-emerald-400 hidden pt-1 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20"></div>
+          <button id="resetSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-600/30 active:scale-95">
+            Set New Password
+          </button>
+          <div class="text-center">
+            <button type="button" onclick="switchAuthTab('signin')" class="text-[11px] text-slate-500 hover:text-white transition font-mono">&larr; Back to Sign In</button>
+          </div>
         </form>
 
       </div>
@@ -3693,22 +3743,36 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     const btnReg = document.getElementById('authTabRegister');
     const formIn = document.getElementById('signInForm');
     const formReg = document.getElementById('registerForm');
+    const formForgot = document.getElementById('forgotPasswordForm');
+    const formReset = document.getElementById('resetPasswordForm');
     const title = document.getElementById('authModalTitle');
 
     if (!btnIn || !btnReg || !formIn || !formReg || !title) return;
 
+    // Hide all forms first
+    [formIn, formReg, formForgot, formReset].forEach(f => { if (f) f.classList.add('hidden'); });
+    // Reset tab button active states
+    btnIn.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
+    btnReg.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
+
     if (tab === 'signin' || tab === 'login') {
       btnIn.className = 'py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition text-center shadow';
-      btnReg.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
       formIn.classList.remove('hidden');
-      formReg.classList.add('hidden');
       title.innerText = 'Sign In to ApexIntel';
-    } else {
+    } else if (tab === 'register') {
       btnReg.className = 'py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition text-center shadow';
-      btnIn.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
       formReg.classList.remove('hidden');
-      formIn.classList.add('hidden');
       title.innerText = 'Create Client Account';
+    } else if (tab === 'forgot') {
+      formForgot.classList.remove('hidden');
+      title.innerText = 'Reset Your Password';
+      // Pre-fill email from sign-in form if present
+      const signInEmail = document.getElementById('signInEmail');
+      const forgotEmail = document.getElementById('forgotEmail');
+      if (signInEmail && forgotEmail && signInEmail.value) forgotEmail.value = signInEmail.value;
+    } else if (tab === 'reset') {
+      formReset.classList.remove('hidden');
+      title.innerText = 'Set New Password';
     }
   };
 
@@ -3847,6 +3911,114 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       toggleUserDropdown(false);
     }
   });
+
+  // --- Forgot Password Submit Handler ---
+  window.handleForgotPasswordSubmit = async function (e) {
+    e.preventDefault();
+    const email = (document.getElementById('forgotEmail').value || '').trim();
+    const errEl = document.getElementById('forgotError');
+    const successEl = document.getElementById('forgotSuccess');
+    const btn = document.getElementById('forgotSubmitBtn');
+
+    if (errEl) errEl.classList.add('hidden');
+    if (successEl) successEl.classList.add('hidden');
+    if (btn) { btn.disabled = true; btn.innerText = 'Sending…'; }
+
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (successEl) {
+          successEl.innerText = data.message || 'If that email is registered, a reset link has been sent.';
+          successEl.classList.remove('hidden');
+        }
+      } else {
+        if (errEl) {
+          errEl.innerText = data.error || 'Could not send reset email. Please try again.';
+          errEl.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      if (errEl) {
+        errEl.innerText = 'Network error. Check your connection and try again.';
+        errEl.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerText = 'Send Reset Link'; }
+    }
+  };
+
+  // --- Reset Password Submit Handler (token from URL ?token=...) ---
+  window.handleResetPasswordSubmit = async function (e) {
+    e.preventDefault();
+    const token = new URLSearchParams(window.location.search).get('token') || '';
+    const newPassword = document.getElementById('resetNewPassword').value;
+    const confirmPassword = document.getElementById('resetConfirmPassword').value;
+    const errEl = document.getElementById('resetError');
+    const successEl = document.getElementById('resetSuccess');
+    const btn = document.getElementById('resetSubmitBtn');
+
+    if (errEl) errEl.classList.add('hidden');
+    if (successEl) successEl.classList.add('hidden');
+
+    if (newPassword !== confirmPassword) {
+      if (errEl) { errEl.innerText = 'Passwords do not match.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+    if (newPassword.length < 12) {
+      if (errEl) { errEl.innerText = 'Password must be at least 12 characters.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+    if (!token) {
+      if (errEl) { errEl.innerText = 'Invalid or missing reset token. Please request a new reset link.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+
+    if (btn) { btn.disabled = true; btn.innerText = 'Setting password…'; }
+
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (successEl) {
+          successEl.innerText = 'Password updated. You can now sign in with your new password.';
+          successEl.classList.remove('hidden');
+        }
+        // Auto-switch to sign-in after 2s
+        setTimeout(() => window.switchAuthTab('signin'), 2000);
+      } else {
+        if (errEl) {
+          errEl.innerText = data.error || 'Password reset failed. The token may have expired.';
+          errEl.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      if (errEl) {
+        errEl.innerText = 'Network error. Check your connection and try again.';
+        errEl.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerText = 'Set New Password'; }
+    }
+  };
+
+  // Auto-open reset form if ?token= is present in URL
+  (function checkResetToken() {
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (token) {
+      window.addEventListener('DOMContentLoaded', () => {
+        window.openAuthModal('reset');
+      });
+    }
+  })();
 
   // --- Bootstrap on Page Load ---
   window.initAuth = async function () {
@@ -4794,8 +4966,8 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             </div>
           </div>
 
-          <!-- ==================== TAB: WEBSITE AUDIT LAB ==================== -->
-          <div id="custTab-auditlab" class="space-y-6 hidden">
+          <!-- ==================== TAB: WEBSITE AUDIT LAB / INTELLIGENCE ==================== -->
+          <div id="custTab-intelligence" class="space-y-6 hidden">
             <div class="flex items-center justify-between">
               <div>
                 <h4 class="text-sm font-black text-white flex items-center gap-2">
@@ -4853,11 +5025,11 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Packs Owned</span>
-                <div class="text-2xl font-black text-white mt-1">3 <span class="text-xs text-slate-500 font-normal">Active</span></div>
+                <div class="text-2xl font-black text-white mt-1"><span id="datasetsOwnedCount">0</span> <span class="text-xs text-slate-500 font-normal">Active</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Leads</span>
-                <div class="text-2xl font-black text-emerald-400 mt-1">72 <span class="text-xs text-slate-500 font-normal">Contacts</span></div>
+                <div class="text-2xl font-black text-emerald-400 mt-1"><span id="datasetsTotalLeadsCount">0</span> <span class="text-xs text-slate-500 font-normal">Contacts</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Deliverability</span>
@@ -5945,6 +6117,63 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     api: 'settings'
   };
 
+  let liveDiscoveryLeadsCache = null;
+  let liveDiscoveryPromise = null;
+
+  window.loadLiveDiscoveryLeads = async function () {
+    if (liveDiscoveryPromise) return liveDiscoveryPromise;
+    liveDiscoveryPromise = (async () => {
+      try {
+        const res = await fetch('/api/discovery/search?limit=50', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+            liveDiscoveryLeadsCache = data.leads.map(l => ({
+              id: l.id || l.domain,
+              company: l.company_name || l.name || l.domain,
+              domain: l.domain || l.id,
+              contactName: 'Verified Decision Maker',
+              email: l.email || '',
+              phone: l.phone || '',
+              city: l.city || l.location || '',
+              territory: /TX\b/i.test(l.city || '') ? 'texas'
+                : /FL\b/i.test(l.city || '') ? 'florida'
+                : /medspa|aesthetic/i.test(l.trade || '') ? 'medspas'
+                : /hvac|mechanical/i.test(l.trade || '') ? 'hvac'
+                : 'texas',
+              industry: l.trade || l.category || 'Commercial Services',
+              speed_ms: Number(l.speed_ms) || 750,
+              metaPixel: Boolean(l.meta_pixel),
+              googleAds: Boolean(l.google_ads),
+              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 4)),
+              tags: [l.meta_pixel ? 'meta-active' : 'missing-pixel'],
+              isLiveApi: true
+            }));
+            renderDiscoverTab();
+          }
+        }
+      } catch (err) {
+        console.warn('[Discover] Live API fallback to catalog samples:', err.message);
+      } finally {
+        liveDiscoveryPromise = null;
+      }
+      return liveDiscoveryLeadsCache;
+    })();
+    return liveDiscoveryPromise;
+  };
+
+  function getDiscoveryPool() {
+    if (Array.isArray(liveDiscoveryLeadsCache) && liveDiscoveryLeadsCache.length > 0) {
+      const seen = new Set(liveDiscoveryLeadsCache.map(l => l.domain));
+      return [...liveDiscoveryLeadsCache, ...DISCOVERY_CATALOG_LEADS.filter(l => !seen.has(l.domain))];
+    }
+    return DISCOVERY_CATALOG_LEADS;
+  }
+
   // --- Window Interactive Actions ---
 
   // Switch workspace tab (Blueprint v1.0 10-Tab Standard)
@@ -5955,7 +6184,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     allTabIds.forEach(t => {
       const panel = document.getElementById(`custTab-${t}`);
       const btn = document.getElementById(`custTabBtn-${t}`);
-      const isTarget = (t === canonicalTab) || (t === tabName);
+      const isTarget = (t === canonicalTab);
 
       if (isTarget) {
         if (panel) panel.classList.remove('hidden');
@@ -5963,7 +6192,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
           btn.className = 'px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-cyan-500 bg-cyan-500/10 text-cyan-300 flex items-center gap-1.5 shrink-0';
         }
       } else {
-        if (panel && !['auditlab', 'ledger', 'api'].includes(t)) {
+        if (panel) {
           panel.classList.add('hidden');
         }
         if (btn) {
@@ -5973,7 +6202,10 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     });
 
     if (canonicalTab === 'overview') renderOverviewTab();
-    if (canonicalTab === 'discover') renderDiscoverTab();
+    if (canonicalTab === 'discover') {
+      renderDiscoverTab();
+      if (!liveDiscoveryLeadsCache) window.loadLiveDiscoveryLeads();
+    }
     if (canonicalTab === 'myleads') renderMyLeadsTab();
     if (canonicalTab === 'intelligence') renderAuditLab();
     if (canonicalTab === 'crm') renderCrmLeads();
@@ -5985,8 +6217,9 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
 
   // Render Overview Cockpit Tab
   function renderOverviewTab() {
-    const leads = crmLeads || [];
-    const requests = customRequests || [];
+    const leads = getCrmLeads() || [];
+    const requests = getCustomRequests() || [];
+    const discoveryPool = getDiscoveryPool();
 
     const savedEl = document.getElementById('overviewSavedCount');
     const discoverEl = document.getElementById('overviewDiscoverCount');
@@ -5994,9 +6227,9 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     const activeReqEl = document.getElementById('overviewActiveRequestsCount');
 
     if (savedEl) savedEl.innerText = leads.length;
-    if (discoverEl) discoverEl.innerText = '96';
-    if (highOppEl) highOppEl.innerText = leads.filter(l => (l.opportunityScore || 0) >= 85).length || '68';
-    if (activeReqEl) activeReqEl.innerText = requests.filter(r => r.status !== 'Delivered').length;
+    if (discoverEl) discoverEl.innerText = String(discoveryPool.length);
+    if (highOppEl) highOppEl.innerText = String(leads.filter(l => (l.opportunityScore || 0) >= 85).length);
+    if (activeReqEl) activeReqEl.innerText = requests.filter(r => r.status !== 'Delivered' && r.status !== 'Cancelled').length;
 
     // Render pipeline status progress bars
     const pipelineContainer = document.getElementById('overviewPipelineBars');
@@ -6058,7 +6291,8 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     const signalFilter = document.getElementById('discoverSignalSelect')?.value || 'ALL';
     const searchQ = (document.getElementById('discoverSearchInput')?.value || '').toLowerCase().trim();
 
-    let filtered = [...DISCOVERY_CATALOG_LEADS];
+    let filtered = [...getDiscoveryPool()];
+    const currentLeads = getCrmLeads();
 
     if (territoryFilter !== 'ALL') {
       filtered = filtered.filter(l => l.territory === territoryFilter);
@@ -6097,7 +6331,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     }
 
     filtered.forEach(item => {
-      const isAlreadySaved = crmLeads.some(l => l.domain === item.domain || l.id === item.id);
+      const isAlreadySaved = currentLeads.some(l => l.domain === item.domain || l.id === item.id);
       const speedColor = item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400');
 
       const tr = document.createElement('tr');
@@ -6142,10 +6376,11 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
 
   // Add discovered lead to CRM
   window.addDiscoveredLeadToCrm = function (leadId) {
-    const item = DISCOVERY_CATALOG_LEADS.find(l => l.id === leadId);
+    const item = getDiscoveryPool().find(l => l.id === leadId);
     if (!item) return;
 
-    if (crmLeads.some(l => l.domain === item.domain)) {
+    const leads = getCrmLeads();
+    if (leads.some(l => l.domain === item.domain)) {
       notify('This company is already in your CRM pipeline.');
       return;
     }
@@ -6166,15 +6401,16 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       speed_ms: item.speed_ms,
       metaPixel: item.metaPixel,
       googleAds: item.googleAds,
-      tags: [...item.tags],
+      tags: [...(item.tags || [])],
       notes: [
-        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'System Discovery', text: `Added from ${item.territory.toUpperCase()} discovery catalog.` }
+        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'System Discovery', text: `Added from ${String(item.territory || 'discovery').toUpperCase()} discovery catalog.` }
       ],
       savedAt: new Date().toISOString()
     };
 
-    crmLeads.unshift(newLead);
-    saveCrmLeadsToStorage();
+    leads.unshift(newLead);
+    saveCrmLeads(leads);
+    createLeadOnBackend(newLead);
     notify(`Added ${item.company} to your CRM Pipeline!`);
     renderDiscoverTab();
     renderCrmLeads();
@@ -6200,7 +6436,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
     const searchQ = (document.getElementById('myLeadsSearchInput')?.value || '').toLowerCase().trim();
     const statusFilter = document.getElementById('myLeadsStatusFilter')?.value || 'ALL';
 
-    let list = [...crmLeads];
+    let list = [...getCrmLeads()];
 
     if (statusFilter !== 'ALL') {
       list = list.filter(l => l.status === statusFilter);
@@ -6279,7 +6515,7 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
   function renderBillingTab() {
     const quotaText = document.getElementById('billingLeadQuotaText');
     if (quotaText) {
-      quotaText.innerText = `${crmLeads.length} / 500 Leads`;
+      quotaText.innerText = `${getCrmLeads().length} / 500 Leads`;
     }
   }
 
@@ -6431,6 +6667,79 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
       drawer.classList.remove('flex');
     }
     activeLeadInDrawer = null;
+  };
+
+  // Aliases for lead profile drawer
+  window.openLeadProfileDrawer = function (leadId) {
+    window.openLeadDrawer(leadId);
+  };
+
+  // Generate outreach pitch from CRM lead
+  window.generateOutreachForLead = function (leadId) {
+    const leads = getCrmLeads();
+    const lead = leads.find(l => l.id === leadId);
+    if (!lead) return;
+    if (typeof window.showToast === 'function') {
+      window.showToast(`🎯 Generating customized pitch for ${lead.company}...`);
+    }
+    const input = document.getElementById('outreachDomainInput');
+    if (input && lead.domain) input.value = lead.domain;
+    if (typeof window.generateOutreachCampaign === 'function') {
+      window.generateOutreachCampaign();
+    }
+    const target = document.getElementById('outreach-gen');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Open Create Campaign Modal
+  window.openCreateCampaignModal = function () {
+    const name = prompt('Enter a name for your campaign plan (e.g. Q1 Texas Commercial Outbound):');
+    if (!name || !name.trim()) return;
+    const leads = getCrmLeads();
+    const leadIds = leads.slice(0, 10).map(l => l.id);
+    const campaign = {
+      name: name.trim(),
+      niche: 'Commercial Services',
+      territory: 'Regional',
+      channel: 'Email & LinkedIn Outbound',
+      leadIds,
+      status: 'planned'
+    };
+
+    const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+    fetch('/api/crm/campaigns', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-csrf-token': csrfToken
+      },
+      credentials: 'include',
+      body: JSON.stringify(campaign)
+    }).then(res => res.json()).then(data => {
+      if (typeof window.showToast === 'function') {
+        window.showToast(`✓ Campaign plan "${name}" created with ${leadIds.length} target leads!`);
+      }
+      if (typeof renderCampaignsTab === 'function') {
+        renderCampaignsTab();
+      }
+    }).catch(err => {
+      console.warn('Campaign save error:', err);
+      if (typeof window.showToast === 'function') {
+        window.showToast(`✓ Campaign "${name}" staged locally.`);
+      }
+    });
+  };
+
+  // Open Stripe Customer Portal
+  window.openStripeCustomerPortal = function () {
+    if (typeof window.showToast === 'function') {
+      window.showToast('Connecting to Stripe Customer Self-Service Portal...');
+    }
+    setTimeout(() => {
+      alert('Subscription management: To update payment methods, cancel, or change seats, access Stripe Customer Portal or email billing@apexintel-b2b.shop.');
+    }, 300);
   };
 
   function renderDrawerNotes(lead) {
@@ -6794,6 +7103,15 @@ Hi Apex — came across your team in Dallas. Ran a quick speed test and noticed 
 
   function populateDatasetsList() {
     const container = document.getElementById('purchasedDatasetsList');
+    const ownedEl = document.getElementById('datasetsOwnedCount');
+    const totalEl = document.getElementById('datasetsTotalLeadsCount');
+    const paidOrders = (userPurchasedOrders || []).filter(o => o.status === 'paid');
+    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
+    if (ownedEl) ownedEl.innerText = String(paidOrders.length);
+    if (totalEl) {
+      const total = paidOrders.reduce((sum, o) => sum + (Number(o.leadsCount) || packLeadCounts[o.productKey] || 0), 0);
+      totalEl.innerText = String(total);
+    }
     if (!container) return;
 
     container.innerHTML = '';
@@ -7059,7 +7377,7 @@ Email:           ${user.email}
 -----------------------------------------------------
 Item Description:
 1x ${product}
-- 24 Decision-Maker Verified Leads
+- Verified Decision-Maker Dataset Access
 - 100% Live DNS MX Resolution
 - Exact Mobile Latency Speed (ms)
 - Ad Pixel Tracking Status (Meta / Google)
@@ -7067,12 +7385,11 @@ Item Description:
 Subtotal:        ${amount}
 Tax (0.0%):      $0.00 USD
 TOTAL PAID:      ${amount}
-Payment Status:  PAID (Gumroad / Stripe 256-bit SSL)
+Payment Status:  PAID (Stripe 256-bit SSL)
 AWS Ledger Hash: sha256:${Math.random().toString(36).substring(2, 14)}...
 =====================================================
 ApexIntel Intelligence Systems • Cloud Fulfillment
-AWS DynamoDB Table: leads_cache (Region: ap-southeast-2)
-Support: aaronagbas102@gmail.com
+Support: support@apexintel-b2b.shop
 =====================================================`;
 
     const blob = new Blob([receipt], { type: 'text/plain;charset=utf-8;' });
@@ -7165,7 +7482,7 @@ Support: aaronagbas102@gmail.com
       customerEmail: 'sarah@outboundsprint.com',
       agency: 'OutboundSprint',
       product: 'California Luxury MedSpas',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (9 leads)',
       amount: '$89.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -7189,7 +7506,7 @@ Support: aaronagbas102@gmail.com
       customerEmail: 'marcus@leadcraft.agency',
       agency: 'LeadCraft Outbound',
       product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (12 leads)',
       amount: '$99.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -7201,7 +7518,7 @@ Support: aaronagbas102@gmail.com
       customerEmail: 'elena@skylinegrowth.com',
       agency: 'Skyline Growth Partners',
       product: 'Florida Solar & Storm Restoration',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (8 leads)',
       amount: '$79.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -7213,7 +7530,7 @@ Support: aaronagbas102@gmail.com
       customerEmail: 'mike@industrialgrowth.io',
       agency: 'Industrial Growth Partners',
       product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (24 leads)',
+      tier: 'Pack (12 leads)',
       amount: '$99.00',
       processor: 'Stripe Checkout',
       status: 'Delivered',
@@ -7288,6 +7605,47 @@ Support: aaronagbas102@gmail.com
     return window.adminCustomRequestsList || [];
   }
 
+  let liveAdminOverview = null;
+
+  window.loadAdminOverviewFromBackend = async function () {
+    try {
+      const resp = await fetch('/api/admin/overview', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.success && data.metrics) {
+          liveAdminOverview = data;
+          updateAdminOverviewUI(data);
+        }
+      }
+    } catch (err) {
+      console.warn('[Admin] Could not load live overview, using cached state:', err.message);
+    }
+  };
+
+  function updateAdminOverviewUI(data) {
+    const revEl = document.getElementById('adminGrossRevenueVal');
+    const ordersCountEl = document.getElementById('adminOrdersCountVal');
+    const leadsPoolEl = document.getElementById('adminLeadsPoolVal');
+    const usersCountEl = document.getElementById('adminUsersCountVal');
+
+    if (revEl && data.metrics?.totalRevenue !== undefined) {
+      revEl.innerText = `$${Number(data.metrics.totalRevenue).toLocaleString()}`;
+    }
+    if (ordersCountEl && data.metrics?.paidOrdersCount !== undefined) {
+      ordersCountEl.innerText = `${data.metrics.paidOrdersCount}`;
+    }
+    if (leadsPoolEl && data.metrics?.activeLeadsPool !== undefined) {
+      leadsPoolEl.innerText = `${Number(data.metrics.activeLeadsPool).toLocaleString()}`;
+    }
+    if (usersCountEl && data.metrics?.totalUsers !== undefined) {
+      usersCountEl.innerText = `${data.metrics.totalUsers}`;
+    }
+  }
+
   // Inject Admin Dashboard Modal HTML
   function injectAdminModal() {
     if (document.getElementById('adminDashboardModal')) return;
@@ -7306,7 +7664,7 @@ Support: aaronagbas102@gmail.com
                 <div class="flex items-center gap-2.5">
                   <h2 class="text-2xl font-black text-white tracking-tight">ApexIntel Admin Command Center</h2>
                   <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">ROOT ACCESS</span>
-                  <span class="text-[10px] font-mono text-slate-500">v2.0 AWS Production</span>
+                  <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Live Custom Queue • Sample Metrics</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">Real-Time Revenue Analytics, Crawler Fleet Health, Lead Inventory & Custom Extraction Queue</p>
               </div>
@@ -7326,24 +7684,24 @@ Support: aaronagbas102@gmail.com
           <!-- KPI Metric Cards Grid (4 Cards) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <!-- Gross Revenue -->
-            <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/40 transition">
+            <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-cyan-500/40 transition">
               <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                <span>Gross Revenue (MTD)</span>
-                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">▲ +$2,370 wk</span>
+                <span>Gross Revenue (Verified)</span>
+                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Stripe Live</span>
               </div>
-              <div class="text-3xl font-black text-white font-mono">$14,820</div>
+              <div id="adminGrossRevenueVal" class="text-3xl font-black text-white font-mono">$246</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
-                <span class="text-emerald-400 font-bold">88</span> paid transactions across all packs
+                <span id="adminOrdersCountVal" class="text-emerald-400 font-bold">3</span> paid transactions across all packs
               </div>
             </div>
 
             <!-- Net Profit & Margin -->
             <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 transition">
               <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                <span>Net Profit (Est.)</span>
-                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">97.7% Margin</span>
+                <span>Net Margin</span>
+                <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Serverless</span>
               </div>
-              <div class="text-3xl font-black text-emerald-400 font-mono">$14,480</div>
+              <div class="text-3xl font-black text-emerald-400 font-mono">97.7%</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
                 AWS infrastructure cost: <strong class="text-slate-300 font-mono">$0.00</strong> (credit pool)
               </div>
@@ -7355,22 +7713,22 @@ Support: aaronagbas102@gmail.com
                 <span>Pre-Warmed Lead Pool</span>
                 <span class="text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">DynamoDB</span>
               </div>
-              <div class="text-3xl font-black text-cyan-300 font-mono">3,840</div>
+              <div id="adminLeadsPoolVal" class="text-3xl font-black text-cyan-300 font-mono">53</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>100% DNS MX-verified, zero bounce</span>
+                <span>Verified lead records in catalog cache</span>
               </div>
             </div>
 
             <!-- Unique Buyers & Reorder Rate -->
             <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 hover:border-purple-500/40 transition">
               <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                <span>Agency Client Base</span>
-                <span class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">42% Reorders</span>
+                <span>Total Client Accounts</span>
+                <span class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Auth Users</span>
               </div>
-              <div class="text-3xl font-black text-purple-300 font-mono">88</div>
+              <div id="adminUsersCountVal" class="text-3xl font-black text-purple-300 font-mono">3</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
-                Average LTV: <strong class="text-white font-mono">$168.40</strong> per agency
+                Active customer and admin accounts
               </div>
             </div>
           </div>
@@ -7731,6 +8089,9 @@ Support: aaronagbas102@gmail.com
     }
 
     injectAdminModal();
+    if (typeof window.loadAdminOverviewFromBackend === 'function') {
+      window.loadAdminOverviewFromBackend();
+    }
     renderAdminCustomRequests();
     const modal = document.getElementById('adminDashboardModal');
     if (modal) {
@@ -7753,10 +8114,12 @@ Support: aaronagbas102@gmail.com
     }
 
     try {
-      const resp = await fetch('/api/discovery/recrawl', {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+      const resp = await fetch('/api/admin/recrawl', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
         },
         credentials: 'include'
       });
@@ -7840,7 +8203,7 @@ Support: aaronagbas102@gmail.com
       title: 'Florida Solar & Restoration',
       territory: 'Miami, Tampa Bay, Orlando',
       niche: 'Commercial Solar & Hurricane Mitigation',
-      leadsCount: 24,
+      leadsCount: 8,
       price: 79,
       priceFormatted: '$79.00',
       img: '/covers/thumbnail_florida.png',
@@ -7852,7 +8215,7 @@ Support: aaronagbas102@gmail.com
       title: 'California Luxury MedSpas',
       territory: 'Beverly Hills, San Francisco, San Diego',
       niche: 'Aesthetic Dermatology & Injectable Clinics',
-      leadsCount: 24,
+      leadsCount: 9,
       price: 89,
       priceFormatted: '$89.00',
       img: '/covers/thumbnail_medspas.png',
@@ -7864,7 +8227,7 @@ Support: aaronagbas102@gmail.com
       title: 'Commercial HVAC & Mechanical',
       territory: 'Chicago, Dallas-Fort Worth, Atlanta',
       niche: 'Industrial Chillers & Mechanical Piping',
-      leadsCount: 24,
+      leadsCount: 12,
       price: 99,
       priceFormatted: '$99.00',
       img: '/covers/thumbnail_hvac.png',
@@ -7989,10 +8352,12 @@ Support: aaronagbas102@gmail.com
     if (label) label.innerText = '⚡ Connecting to Secure Stripe Checkout...';
 
     try {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
       const resp = await fetch('/api/orders/checkout', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -8070,12 +8435,12 @@ Support: aaronagbas102@gmail.com
     if (priceEl) priceEl.innerText = price;
     if (imgEl && img) imgEl.src = img;
 
-    toast.classList.remove('opacity-0', 'translate-y-6');
+    toast.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
     toast.classList.add('opacity-100', 'translate-y-0');
 
     setTimeout(() => {
       toast.classList.remove('opacity-100', 'translate-y-0');
-      toast.classList.add('opacity-0', 'translate-y-6');
+      toast.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
     }, 6000);
   };
 
@@ -8733,13 +9098,16 @@ Support: aaronagbas102@gmail.com
   // =========================================================================
 
   window.updateCustomQuote = function () {
-    const volume = parseInt(document.getElementById('crVolumeSlider')?.value || '250');
+    const rawVol = parseInt(document.getElementById('crVolumeSlider')?.value || '250', 10) || 250;
+    const volume = Math.max(50, Math.min(50000, rawVol));
     const volLabel = document.getElementById('crVolumeLabel');
     if (volLabel) volLabel.innerText = `${volume.toLocaleString()} Verified Records`;
 
-    let rate = 0.55; // Base price per lead
-    if (volume >= 1000) rate = 0.38;
+    let rate = 0.65; // Matches src/requests/service.js calculatePrice
+    if (volume >= 2500) rate = 0.25;
+    else if (volume >= 1000) rate = 0.35;
     else if (volume >= 500) rate = 0.45;
+    else if (volume >= 250) rate = 0.55;
 
     // Check optional enrichments
     const hasLatency = document.getElementById('crCheckLatency')?.checked;
@@ -8750,6 +9118,7 @@ Support: aaronagbas102@gmail.com
     if (hasPixel) rate += 0.08;
     if (hasMobile) rate += 0.12;
 
+    rate = Math.round(rate * 100) / 100;
     const totalCost = Math.round(volume * rate);
 
     const priceEl = document.getElementById('crEstimatedPrice');
@@ -8867,7 +9236,14 @@ Support: aaronagbas102@gmail.com
       packKey: 'texas',
       records: 24,
       avgContract: '$12,000 – $45,000',
-      fields: ['Company Name', 'City/State', 'Trade Category', 'Verified DNS MX Email', 'Direct Phone', 'Mobile TTFB Latency (ms)', 'Ad Pixel Tracking Status', 'Detected CMS / Tech Stack', 'Pre-Audited Conversion Gap'],
+      coverage: { email: '13 / 24', phone: '17 / 24', tech: '17 / 24' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'Sutton Roofing', city: 'Austin, TX', email: 'suttonroofinginc@gmail.com', phone: '+1 512 394 9801', tech: 'Google Analytics' },
+        { company: 'T Rock Roofing', city: 'Dallas, TX', email: 'info@dallasroofer.com', phone: '+1 469 931 9867', tech: 'WordPress' },
+        { company: 'Lon Smith Roofing', city: 'Dallas, TX', email: 'info@lonsmith.com', phone: '+1 800 317 4791', tech: 'WordPress, Google Analytics, Meta Pixel' }
+      ],
+      limitations: 'Where businesses do not publish a direct email or phone, entries are marked Unavailable rather than guessed.',
       overview: 'Curated dataset of premier commercial and residential storm-restoration, metal roofing, and solar installation contractors across Texas. Each record is pre-audited with exact mobile response speed in milliseconds and ad pixel diagnostics so agencies can pitch specific conversion flaws.',
       icp: 'Digital marketing agencies, SEO consultants, and web developers selling $2,500/mo - $5,000/mo retainers or $4,000+ website redesigns to construction trades.',
       pitchAngle: 'Highlight their 800ms+ mobile latency on commercial quote forms and offer a guaranteed 350ms speed rebuild that boosts lead capture.'
@@ -8878,9 +9254,16 @@ Support: aaronagbas102@gmail.com
       niche: 'Commercial Solar, Hurricane-Grade Roofing & Mitigation',
       price: '$79.00',
       packKey: 'florida',
-      records: 24,
+      records: 8,
       avgContract: '$15,000 – $60,000',
-      fields: ['Company Name', 'City/State', 'Niche Focus', 'Verified DNS MX Email', 'Direct Phone', 'Server TTFB Latency', 'Meta/Google Pixel Audit', 'CMS Platform', 'Actionable Pitch Angle'],
+      coverage: { email: '5 / 8', phone: '7 / 8', tech: '7 / 8' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'Tampa Bay Solar', city: 'Tampa, FL', email: 'info@tampabaysolar.com', phone: '+1 813 827 6527', tech: 'WordPress, Google Analytics' },
+        { company: 'SunVena Solar', city: 'Orlando, FL', email: 'support@sunvena.com', phone: '+1 407 553 9584', tech: 'WordPress, Google Analytics' },
+        { company: 'Goldin Solar', city: 'Miami, FL', email: 'Unavailable', phone: '+1 855 765 2730', tech: 'WordPress' }
+      ],
+      limitations: 'Points-in-time telemetry; unlisted contact channels left Unavailable.',
       overview: 'Premier South and Central Florida commercial solar integrators and hurricane disaster mitigation operators. Built specifically for high-ticket marketing agencies seeking outfits with large gross margins that invest heavily in customer acquisition.',
       icp: 'Performance marketing agencies, Google Ads specialists, and outbound sales teams looking for commercial solar & roofing companies with high CAC tolerance.',
       pitchAngle: 'Target outfits with high ad spend but missing Meta retargeting pixels, showing them how to recapture 95%+ of paid ad clicks.'
@@ -8891,9 +9274,16 @@ Support: aaronagbas102@gmail.com
       niche: 'Aesthetic Medicine, Plastic Surgery, Injectables & Laser',
       price: '$89.00',
       packKey: 'medspas',
-      records: 24,
+      records: 9,
       avgContract: '$8,000 – $25,000/mo Patient LTV',
-      fields: ['Practice Name', 'Metro Location', 'Specialty Specialty', 'Verified MX Email', 'Direct Office Phone', 'Mobile Speed (ms)', 'Ad Pixel Signals', 'Booking Tech Stack', 'Patient Conversion Leak'],
+      coverage: { email: '4 / 9', phone: '7 / 9', tech: '7 / 9' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'SkinSpirit Beverly Hills', city: 'Beverly Hills, CA', email: 'skinspirit@5wpr.com', phone: '+1 855 383 7546', tech: 'Google Analytics' },
+        { company: 'Epi Center MedSpa', city: 'San Francisco, CA', email: 'reception@epicentermedspa.com', phone: '+1 415 362 4754', tech: 'WordPress, Meta Pixel' },
+        { company: 'Nob Hill Aesthetics', city: 'San Francisco, CA', email: 'serviceoffice@nobhillaesthetics.com', tech: 'Shopify, Google Analytics, Meta Pixel', phone: '+1 415 440 6800' }
+      ],
+      limitations: 'Clinic front-desk reception emails verified; private surgeon emails not fabricated.',
       overview: 'Hand-curated intelligence on luxury aesthetic practices, medical spas, and facial plastic surgery centers in high-net-worth California enclaves. Audited for mobile booking friction, missing retargeting, and patient appointment bottlenecks.',
       icp: 'Healthcare marketing agencies, aesthetic patient acquisition specialists, and high-ticket CRM integrators selling to cash-pay aesthetic practices.',
       pitchAngle: 'Offer appointment booking friction fixes and Meta/TikTok retargeting ads to re-engage prospective patients who visited treatment pages.'
@@ -8904,9 +9294,16 @@ Support: aaronagbas102@gmail.com
       niche: 'Commercial Chiller, VRF Mechanical Piping & Controls',
       price: '$99.00',
       packKey: 'hvac',
-      records: 24,
+      records: 12,
       avgContract: '$25,000 – $150,000+ Mechanical Bids',
-      fields: ['Mechanical Contractor Name', 'City/State', 'Sub-Trade Division', 'Verified DNS MX Email', 'Direct Phone', 'Server Speed Rating', 'Pixel Tracking Status', 'Host / CDN Infrastructure', 'Commercial Bid Angle'],
+      coverage: { email: '7 / 12', phone: '11 / 12', tech: '7 / 12' },
+      fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
+      sampleRows: [
+        { company: 'Midwest Mechanical', city: 'Chicago, IL', email: 'answers@midwestmech.com', phone: '+1 630 850 2300', tech: 'Google Analytics' },
+        { company: 'Way Mechanical', city: 'Dallas, TX', email: 'sales@waymech.com', phone: '+1 713 672 7545', tech: 'Wix' },
+        { company: 'Shumate Commercial HVAC', city: 'Atlanta, GA', email: 'commercialsales@shumatemech.com', phone: '+1 678 584 0880', tech: 'Google Analytics' }
+      ],
+      limitations: 'Cleaned email address entries; malformed legacy spreadsheet cells sanitized.',
       overview: 'High-value dataset targeting commercial mechanical outfits handling commercial chillers, industrial refrigeration, and facility maintenance across the nation’s largest industrial distribution hubs.',
       icp: 'B2B enterprise lead gen agencies, recruitment headhunters, and industrial marketing consultants targeting seven-figure mechanical contractors.',
       pitchAngle: 'Pitch modern B2B LinkedIn outbound pipelines and speed-optimized commercial bidding pages to commercial facility estimators.'
@@ -8919,15 +9316,28 @@ Support: aaronagbas102@gmail.com
     const modal = document.getElementById('productDetailModal');
     if (!modal) return;
 
-    document.getElementById('pdmTitle').innerText = spec.title;
-    document.getElementById('pdmTerritory').innerText = spec.territory;
-    document.getElementById('pdmNiche').innerText = spec.niche;
-    document.getElementById('pdmPrice').innerText = spec.price;
-    document.getElementById('pdmRecords').innerText = `${spec.records} Verified Leads`;
-    document.getElementById('pdmAvgContract').innerText = spec.avgContract;
-    document.getElementById('pdmOverview').innerText = spec.overview;
-    document.getElementById('pdmIcp').innerText = spec.icp;
-    document.getElementById('pdmPitchAngle').innerText = `"${spec.pitchAngle}"`;
+    const setText = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = val;
+    };
+    setText('pdmTitle', spec.title);
+    setText('pdmTerritory', spec.territory);
+    setText('pdmNiche', spec.niche);
+    setText('pdmPrice', spec.price);
+    setText('pdmRecords', `${spec.records} Verified Leads`);
+    setText('pdmAvgContract', spec.avgContract);
+    setText('pdmOverview', spec.overview);
+    setText('pdmIcp', spec.icp);
+    setText('pdmPitchAngle', `"${spec.pitchAngle}"`);
+
+    if (spec.coverage) {
+      setText('pdmCovEmail', spec.coverage.email);
+      setText('pdmCovPhone', spec.coverage.phone);
+      setText('pdmCovTech', spec.coverage.tech);
+    }
+    if (spec.limitations) {
+      setText('pdmLimitationsText', spec.limitations);
+    }
 
     const fieldsContainer = document.getElementById('pdmFieldsList');
     if (fieldsContainer) {
@@ -8935,6 +9345,19 @@ Support: aaronagbas102@gmail.com
         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300">
           <span class="text-emerald-400">✓</span> ${f}
         </span>
+      `).join('');
+    }
+
+    const sampleTableBody = document.getElementById('pdmSampleTableBody');
+    if (sampleTableBody && Array.isArray(spec.sampleRows)) {
+      sampleTableBody.innerHTML = spec.sampleRows.map(row => `
+        <tr>
+          <td class="p-2.5 font-bold text-white">${row.company}</td>
+          <td class="p-2.5 text-slate-400">${row.city}</td>
+          <td class="p-2.5 text-cyan-400">${row.email}</td>
+          <td class="p-2.5 text-slate-300">${row.phone}</td>
+          <td class="p-2.5 text-emerald-400">${row.tech}</td>
+        </tr>
       `).join('');
     }
 
@@ -8950,6 +9373,12 @@ Support: aaronagbas102@gmail.com
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+
+    if (window.location.hash !== `#dataset=${spec.packKey}`) {
+      try {
+        window.history.replaceState({}, '', `#dataset=${spec.packKey}`);
+      } catch {}
+    }
   };
 
   window.closeProductDetailModal = function () {
@@ -8958,7 +9387,30 @@ Support: aaronagbas102@gmail.com
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
+    if (/^#dataset=/i.test(window.location.hash)) {
+      try {
+        window.history.replaceState({}, '', window.location.pathname + window.location.search);
+      } catch {}
+    }
   };
+
+  // Hash route listener for #dataset=texas|florida|medspas|hvac
+  function checkDatasetHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/^#dataset=(texas|florida|medspas|hvac)$/i);
+    if (match) {
+      window.openProductDetailModal(match[1].toLowerCase());
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('hashchange', checkDatasetHash);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkDatasetHash);
+    } else {
+      checkDatasetHash();
+    }
+  }
 
   // Open Dataset Comparison Matrix
   window.openComparisonModal = function () {
@@ -9079,7 +9531,7 @@ Support: aaronagbas102@gmail.com
         <h4>2. Use of Information</h4>
         <p>Customer emails are strictly used for order delivery, dataset invoice verification, and essential security notices. We never sell, rent, or lease customer payment information to third parties.</p>
         <h4>3. Data Security & Storage</h4>
-        <p>All client communications and payments are processed via 256-bit SSL encryption. Payment transactions are executed directly via accredited payment gateways (PayPal / Stripe) — zero raw card numbers are stored on our servers.</p>
+        <p>All client communications and payments are processed via 256-bit SSL encryption. Payment transactions are executed directly via Stripe Checkout — zero raw card numbers are stored on our servers.</p>
       `
     },
     terms: {

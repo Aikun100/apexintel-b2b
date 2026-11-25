@@ -31,6 +31,18 @@ export const CRM_TABLE_NAME = process.env.DYNAMODB_CRM_TABLE || 'apexintel_user_
 export class InMemoryCrmRepository {
   constructor() {
     this.leadsByKey = new Map(); // Key: `${userId}#${leadId}`
+    this.campaignsByUserId = new Map(); // Key: userId -> array
+  }
+
+  async getUserCampaigns(userId) {
+    return [...(this.campaignsByUserId.get(userId) || [])];
+  }
+
+  async saveUserCampaign(userId, campaign) {
+    const list = this.campaignsByUserId.get(userId) || [];
+    list.unshift({ ...campaign });
+    this.campaignsByUserId.set(userId, list);
+    return campaign;
   }
 
   _compositeKey(userId, leadId) {

@@ -57,6 +57,7 @@ const LAMBDA_CONFIGS = [
     zipName: 'apexintel-crm-lambda.zip',
     handlerFile: 'lambda-crm-handler.mjs',
     srcDirs: ['crm', 'auth'],
+    extraSrcFiles: ['tools/opportunity-scorer.js'],
     extraAwsFiles: [],
     dependencies: BASE_DEPS,
     description: 'ApexIntel B2B Multi-Tenant CRM Backend Service'
@@ -66,6 +67,7 @@ const LAMBDA_CONFIGS = [
     zipName: 'apexintel-payments-lambda.zip',
     handlerFile: 'lambda-payments-handler.mjs',
     srcDirs: ['payments', 'auth'],
+    extraSrcFiles: [],
     extraAwsFiles: [],
     dependencies: PAYMENTS_DEPS,
     description: 'ApexIntel B2B Payments & S3 Presigned URL Fulfillment Service'
@@ -75,6 +77,7 @@ const LAMBDA_CONFIGS = [
     zipName: 'apexintel-crawler-lambda.zip',
     handlerFile: 'lambda-crawler-handler.mjs',
     srcDirs: ['discovery', 'auth'],
+    extraSrcFiles: ['tools/opportunity-scorer.js', 'payments/repository.js', 'requests/repository.js'],
     extraAwsFiles: ['deduplication-engine.mjs'],
     dependencies: BASE_DEPS,
     description: 'ApexIntel B2B Lead Crawler & Ingestion Pipeline'
@@ -162,6 +165,21 @@ export { handler } from './aws/${config.handlerFile}';
     const destPath = path.join(stagingDir, 'src', srcDirName);
     if (fs.existsSync(srcPath)) {
       copyDirRecursive(srcPath, destPath);
+    }
+  }
+
+  // Copy extra individual src files
+  if (Array.isArray(config.extraSrcFiles)) {
+    for (const extraFile of config.extraSrcFiles) {
+      const srcFilePath = path.join(rootDir, 'src', extraFile);
+      const destFilePath = path.join(stagingDir, 'src', extraFile);
+      const destFileDir = path.dirname(destFilePath);
+      if (fs.existsSync(srcFilePath)) {
+        if (!fs.existsSync(destFileDir)) {
+          fs.mkdirSync(destFileDir, { recursive: true });
+        }
+        fs.copyFileSync(srcFilePath, destFilePath);
+      }
     }
   }
 

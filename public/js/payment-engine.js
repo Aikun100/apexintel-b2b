@@ -31,7 +31,7 @@
       title: 'Florida Solar & Restoration',
       territory: 'Miami, Tampa Bay, Orlando',
       niche: 'Commercial Solar & Hurricane Mitigation',
-      leadsCount: 24,
+      leadsCount: 8,
       price: 79,
       priceFormatted: '$79.00',
       img: '/covers/thumbnail_florida.png',
@@ -43,7 +43,7 @@
       title: 'California Luxury MedSpas',
       territory: 'Beverly Hills, San Francisco, San Diego',
       niche: 'Aesthetic Dermatology & Injectable Clinics',
-      leadsCount: 24,
+      leadsCount: 9,
       price: 89,
       priceFormatted: '$89.00',
       img: '/covers/thumbnail_medspas.png',
@@ -55,7 +55,7 @@
       title: 'Commercial HVAC & Mechanical',
       territory: 'Chicago, Dallas-Fort Worth, Atlanta',
       niche: 'Industrial Chillers & Mechanical Piping',
-      leadsCount: 24,
+      leadsCount: 12,
       price: 99,
       priceFormatted: '$99.00',
       img: '/covers/thumbnail_hvac.png',
@@ -180,10 +180,12 @@
     if (label) label.innerText = '⚡ Connecting to Secure Stripe Checkout...';
 
     try {
+      const csrfToken = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
       const resp = await fetch('/api/orders/checkout', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -261,12 +263,12 @@
     if (priceEl) priceEl.innerText = price;
     if (imgEl && img) imgEl.src = img;
 
-    toast.classList.remove('opacity-0', 'translate-y-6');
+    toast.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
     toast.classList.add('opacity-100', 'translate-y-0');
 
     setTimeout(() => {
       toast.classList.remove('opacity-100', 'translate-y-0');
-      toast.classList.add('opacity-0', 'translate-y-6');
+      toast.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
     }, 6000);
   };
 

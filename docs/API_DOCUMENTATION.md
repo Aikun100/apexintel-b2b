@@ -1,139 +1,77 @@
 # ApexIntel B2B — API & Integration Specification
-**Document ID:** `API-2026-v2.0`  
-**Classification:** Developer & API Architecture  
-**Base URL:** `https://apexintel-b2b.shop`  
-**Authentication:** Bearer Token via Header `Authorization: Bearer <API_KEY>`  
+
+- **Production Base URL:** `https://apexintel-b2b.shop`
+- **Local Dev Server:** `http://localhost:3000` (`node serve.js`)
+- **Authentication:** `HttpOnly` session cookie (`apexintel_session`) + CSRF `Origin` check and double-submit `x-csrf-token` header (`apexintel_csrf` cookie) for mutating requests.
+- **Edge-to-Origin Header:** `x-apexintel-worker-secret` (injected by `src/worker.js` in production).
 
 ---
 
-## 1. Overview & Authentication
+## 1. Authentication (`/api/auth/*`)
 
-ApexIntel B2B provides REST and edge endpoints designed for automated lead syndication into outbound CRM platforms (GoHighLevel, HubSpot, Smartlead, Instantly, Clay).
+Handled by `src/auth/router.js` and `aws/lambda-auth-handler.mjs`:
 
-### Header Convention:
-```http
-Authorization: Bearer apex_live_sec_xxxxxxxxxxxx2026
-Content-Type: application/json
-Accept: application/json
-```
-
----
-
-## 2. API Endpoints
-
-### 2.1 Health & Service Telemetry
-- **Endpoint:** `GET /api/health`
-- **Auth:** Optional
-- **Description:** Verifies Cloudflare edge worker status, AWS DynamoDB latency, and current crawler version.
-- **Response (200 OK):**
-```json
-{
-  "status": "operational",
-  "version": "2.0.0",
-  "edge_region": "SYD",
-  "aws_dynamodb_status": "connected",
-  "timestamp": "2026-11-22T19:55:00.000Z"
-}
-```
-
-### 2.2 Website Intelligence Scanner
-- **Endpoint:** `POST /api/scan`
-- **Auth:** Bearer Token or Session Cookie
-- **Request Body:**
-```json
-{
-  "domain": "precisionroof.com"
-}
-```
-- **Response (200 OK):**
-```json
-{
-  "domain": "precisionroof.com",
-  "status": "completed",
-  "metrics": {
-    "speed_ms": 980,
-    "speed_rating": "Moderate Latency",
-    "cms": "WordPress / Apache",
-    "meta_pixel": false,
-    "google_ads": true,
-    "mx_status": "Active & Verified",
-    "icp_score": 85,
-    "priority": "P1 - High Opportunity"
-  },
-  "recommended_angle": "Prospect is actively spending on Google Ads without retargeting pixels, dropping 35%+ of ad clicks."
-}
-```
-
-### 2.3 Lead Inventory & Territory Export
-- **Endpoint:** `GET /api/leads`
-- **Auth:** Mandatory
-- **Query Parameters:**
-  - `territory`: `texas` | `florida` | `medspas` | `hvac`
-  - `limit`: `integer` (default 24, max 500)
-  - `min_score`: `integer` (e.g. 75)
-- **Response (200 OK):**
-```json
-{
-  "territory": "texas",
-  "count": 24,
-  "leads": [
-    {
-      "id": "tx_001",
-      "company_name": "T Rock Roofing & Restoration",
-      "domain": "dallasroofer.com",
-      "city": "Dallas, TX",
-      "email": "info@dallasroofer.com",
-      "phone": "+1 469 931 9867",
-      "opportunity_score": 92,
-      "priority": "P1"
-    }
-  ]
-}
-```
-
-### 2.4 Custom Extraction Request Webhook
-- **Endpoint:** `POST /api/custom-request`
-- **Auth:** Mandatory
-- **Request Body:**
-```json
-{
-  "customer_email": "agency@velocitygrowth.io",
-  "industry": "Commercial Solar & Roofing",
-  "geography": "Phoenix & Scottsdale, AZ",
-  "target_volume": 250,
-  "tech_filter": "Google Ads Active, Missing Meta Pixel",
-  "quoted_budget": 299.00
-}
-```
-- **Response (201 Created):**
-```json
-{
-  "success": true,
-  "request_id": "REQ-2026-4491",
-  "status": "Submitted",
-  "estimated_fulfillment_hours": 24
-}
-```
+- `POST /api/auth/register` — Create customer account (min 12-char password, scrypt hashed, role locked to `customer`). Sets `HttpOnly` session cookie.
+- `POST /api/auth/login` — Authenticate email/password with rate limiting and timing-safe verification.
+- `POST /api/auth/logout` — Revoke server-side session and clear cookie.
+- `GET /api/auth/me` — Return authenticated user profile (`401` if unauthenticated).
+- `POST /api/auth/change-password` — Update password for authenticated user and rotate sessions.
+- `POST /api/auth/forgot-password` — Request password reset token.
+- `POST /api/auth/reset-password` — Reset password using valid token.
+- `PUT /api/auth/profile` — Update user name and company.
+- `GET /api/auth/api-key` — Retrieve active API key metadata for authenticated user.
+- `POST /api/auth/api-key/rotate` — Generate and persist new API key.
 
 ---
 
-## 3. Webhook Integration for Outbound Platforms
+## 2. Multi-Tenant CRM (`/api/crm/*`)
 
-Users can configure webhooks to receive real-time JSON payloads whenever a new lead batch is unlocked or an order is confirmed.
+Handled by `src/crm/router.js` (requires authenticated session; strictly scoped to `user.userId`):
 
-### Event: `lead.delivered`
-```json
-{
-  "event": "lead.delivered",
-  "account_id": "acc_velocity_01",
-  "delivery_id": "del_99812",
-  "lead": {
-    "company": "Freedom Solar Power",
-    "domain": "freedomsolar.com",
-    "email": "contact@freedomsolar.com",
-    "phone": "+1 512 759 8320",
-    "city": "Austin, TX",
-    "tags": ["solar", "texas", "p1"]
-  }
-}
-```
+- `GET /api/crm/leads` — List customer's saved CRM leads (`?limit=` supported).
+- `POST /api/crm/leads` — Create single lead or batch seed leads (`{ leads: [...] }`).
+- `GET /api/crm/leads/:leadId` — Get single lead owned by user.
+- `PUT /api/crm/leads/:leadId` — Update status, priority, notes, tags, or follow-up date.
+- `DELETE /api/crm/leads/:leadId` — Delete lead owned by user.
+- `GET /api/crm/campaigns` — List user's outreach campaigns.
+- `POST /api/crm/campaigns` — Create new outreach campaign.
+
+---
+
+## 3. Payments, Webhooks & S3 Downloads (`/api/orders*`, `/api/webhooks/*`, `/api/downloads/*`)
+
+Handled by `src/payments/router.js`:
+
+- `POST /api/orders/checkout` — Create Stripe Checkout session from server-authoritative `productKey` (authenticated).
+- `GET /api/orders` — List orders belonging to authenticated user.
+- `POST /api/webhooks/payment` — Stripe webhook endpoint (`stripe-signature` HMAC-SHA256 verified against raw body; enforces `session.id`, `amount_total`, `currency`, and idempotent event deduplication).
+- `GET /api/downloads/signed-url?orderId=...` — Verify order ownership and `paid` status, then generate a 15-minute Amazon S3 presigned download URL.
+
+---
+
+## 4. Discovery & Crawler (`/api/discovery/*`, `/api/admin/*`)
+
+Handled by `src/discovery/router.js`:
+
+- `GET /api/discovery/search` — Filter business records in `leads_cache` by trade, city/territory, opportunity signals, and keyword.
+- `GET /api/admin/overview` — Admin-only endpoint returning system-wide counts for users, orders, revenue, custom requests, and lead inventory.
+- `POST /api/admin/recrawl` — Admin-only endpoint to trigger crawler ingestion/refresh.
+
+---
+
+## 5. Website Intelligence Scanner (`/api/tools/*`)
+
+Handled by `src/tools/router.js`:
+
+- `POST /api/tools/scan-website` — Validate domain via `src/tools/ssrf-guard.js` (blocks private IPv4/IPv6, loopback, IMDSv2 metadata), inspect TLS certificate chain, measure TTFB latency, resolve DNS MX records, detect tracking pixels, and cache results in `apexintel_scans_cache`.
+
+---
+
+## 6. Custom Research Requests (`/api/requests/*`)
+
+Handled by `src/requests/router.js`:
+
+- `POST /api/requests/custom` — Calculate server-authoritative price via `RequestsService.calculatePrice`, validate territory/industry/volume (`50`–`50,000`), and persist request with ID `REQ-2026-<HEX>`.
+- `GET /api/requests/custom` — List requests for the authenticated customer (or all requests when role is `admin`).
+- `GET /api/requests/custom/:id/download` — Authorized download of delivered research dataset.
+- `PATCH /api/requests/custom/:requestId` — Admin-only status transition (`Submitted` -> `Reviewing` -> `Mining` -> `Delivered` / `Cancelled`).

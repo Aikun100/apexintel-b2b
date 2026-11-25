@@ -8,12 +8,26 @@
  * - SameSite=Lax cookie defense + Origin/Referer verification
  */
 
-export const ALLOWED_ORIGINS = [
+const baseAllowed = [
   'https://apexintel-b2b.shop',
   'https://www.apexintel-b2b.shop',
   'http://localhost:3000',
   'http://127.0.0.1:3000'
 ];
+
+if (process.env.ALLOWED_ORIGINS) {
+  const extras = process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean);
+  for (const extra of extras) {
+    if (!baseAllowed.includes(extra)) baseAllowed.push(extra);
+  }
+}
+
+if (process.env.PORT && process.env.PORT !== '3000') {
+  baseAllowed.push(`http://localhost:${process.env.PORT}`);
+  baseAllowed.push(`http://127.0.0.1:${process.env.PORT}`);
+}
+
+export const ALLOWED_ORIGINS = baseAllowed;
 
 export const MAX_BODY_BYTES = 64 * 1024; // 64 KB max payload for auth
 

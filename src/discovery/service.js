@@ -61,8 +61,16 @@ export class DiscoveryService {
    */
   async searchLeads(params = {}) {
     const limit = Math.min(Math.max(parseInt(params.limit, 10) || 20, 1), 50);
-    const trade = params.trade ? String(params.trade).trim() : null;
-    const location = params.location ? String(params.location).trim() : null;
+    const rawTrade = params.trade ? String(params.trade).trim() : null;
+    let trade = rawTrade;
+    let location = params.location ? String(params.location).trim() : null;
+    if (rawTrade) {
+      const alias = rawTrade.toLowerCase();
+      if (alias === 'texas') { trade = null; location = location || ', TX'; }
+      else if (alias === 'florida') { trade = null; location = location || ', FL'; }
+      else if (alias === 'medspas') { trade = 'MedSpas'; }
+      else if (alias === 'hvac') { trade = 'HVAC'; }
+    }
     const verified = params.verified === true || params.verified === 'true';
     const cursor = params.cursor || null;
 

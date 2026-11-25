@@ -29,7 +29,7 @@ node serve.js
 
 ## 2. Automated Test Execution
 
-The authentication system includes 37 automated unit and integration tests using Node.js 20+ native test runner.
+The authentication system includes 60 automated unit, integration, and IAM policy tests using Node.js 20+ native test runner.
 
 ### Run All Authentication Tests:
 ```bash
@@ -37,25 +37,10 @@ node scripts/run-auth-tests.mjs
 ```
 Or directly via Node:
 ```bash
-node --test tests/auth/auth.test.js tests/auth/password-reset-and-admin.test.js
+node --test tests/auth/*.test.js
 ```
 
-**Expected Output:**
-```
-🧪 Starting ApexIntel B2B Authentication Test Suite...
-TAP version 13
-ok 1 - Password Cryptography: enforces policy and handles scrypt hashing
-ok 2 - Registration Suite: input validation, uniqueness, and role immutability
-ok 3 - Login Suite: authentication, error safety, and abuse prevention
-ok 4 - Session Lifecycle: hashing, validation, idle timeouts, and revocation
-ok 5 - HTTP Router & CSRF: Origin checks, headers, and Set-Cookie compliance
-ok 6 - Password Change Suite
-ok 7 - Password Reset Suite
-# tests 37
-# pass 37
-# fail 0
-✨ All authentication tests passed successfully (0 failures).
-```
+**Expected Result:** 60/60 tests pass with 0 failures (`auth.test.js`, `password-reset-and-admin.test.js`, `iam-policy.test.js`).
 
 ---
 

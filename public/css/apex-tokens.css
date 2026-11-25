@@ -1,11 +1,13 @@
 /**
  * ApexIntel B2B — Premium Design System & Semantic Token Architecture
- * Version: 2.0 (Phase 2 Standard)
+ * Version: 2.1 (Dark Obsidian / Cyan / Emerald Standard)
  */
 
 :root {
-  /* Canvas & Surfaces */
+  /* Canvas & Obsidian Surfaces */
   --apex-canvas: #070B14;
+  --apex-obsidian: #0B0F19;
+  --apex-obsidian-elevated: #0D1424;
   --apex-surface-deep: #0B111E;
   --apex-surface: #0E1626;
   --apex-surface-elevated: #152238;
@@ -16,13 +18,14 @@
   --apex-border-medium: rgba(255, 255, 255, 0.12);
   --apex-border-focus: rgba(6, 182, 212, 0.5);
 
-  /* Core Brand Colors */
+  /* Core Brand Colors (Obsidian / Cyan / Sky / Emerald) */
   --apex-cyan: #06B6D4;
+  --apex-cyan-bright: #22D3EE;
   --apex-cyan-glow: rgba(6, 182, 212, 0.18);
+  --apex-sky: #0EA5E9;
   --apex-emerald: #10B981;
+  --apex-emerald-bright: #34D399;
   --apex-emerald-glow: rgba(16, 185, 129, 0.18);
-  --apex-indigo: #6366F1;
-  --apex-indigo-glow: rgba(99, 102, 241, 0.2);
   --apex-amber: #F59E0B;
   --apex-rose: #F43F5E;
 
@@ -45,6 +48,12 @@
   --apex-radius-xl: 20px;
 }
 
+/* Global Accessible Focus Ring */
+:focus-visible {
+  outline: 2px solid var(--apex-cyan);
+  outline-offset: 2px;
+}
+
 /* Background Grids & Ambient Glow */
 .apex-canvas {
   background-color: var(--apex-canvas);
@@ -53,9 +62,22 @@
 
 .apex-grid-bg {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.apex-nav-glass {
+  background: rgba(7, 11, 20, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.apex-gradient-text {
+  background: linear-gradient(90deg, var(--apex-cyan-bright) 0%, var(--apex-sky) 50%, var(--apex-emerald) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Surface Cards */
@@ -85,7 +107,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #06B6D4 0%, #0284C7 100%);
+  background: linear-gradient(135deg, var(--apex-cyan) 0%, #0284C7 100%);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.875rem;
@@ -99,7 +121,7 @@
 }
 
 .apex-btn-primary:hover {
-  background: linear-gradient(135deg, #22D3EE 0%, #0EA5E9 100%);
+  background: linear-gradient(135deg, var(--apex-cyan-bright) 0%, var(--apex-sky) 100%);
   box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
   transform: translateY(-1px);
 }
@@ -136,7 +158,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--apex-emerald) 0%, #059669 100%);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 0.875rem;
@@ -149,9 +171,31 @@
 }
 
 .apex-btn-emerald:hover {
-  background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+  background: linear-gradient(135deg, var(--apex-emerald-bright) 0%, var(--apex-emerald) 100%);
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
   transform: translateY(-1px);
+}
+
+/* Pill Tabs */
+.apex-pill-tab {
+  background: var(--apex-obsidian-elevated);
+  color: var(--apex-text-secondary);
+  border: 1px solid var(--apex-border-hairline);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.apex-pill-tab:hover {
+  color: var(--apex-text-primary);
+  background: var(--apex-surface-elevated);
+  border-color: var(--apex-border-medium);
+}
+
+.apex-pill-tab-active {
+  background: linear-gradient(135deg, #0284C7 0%, var(--apex-cyan) 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.28);
 }
 
 /* Badges */
@@ -168,13 +212,13 @@
 
 .apex-badge-cyan {
   background: rgba(6, 182, 212, 0.12);
-  color: #22D3EE;
+  color: var(--apex-cyan-bright);
   border: 1px solid rgba(6, 182, 212, 0.25);
 }
 
 .apex-badge-emerald {
   background: rgba(16, 185, 129, 0.12);
-  color: #34D399;
+  color: var(--apex-emerald-bright);
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
@@ -182,6 +226,12 @@
   background: rgba(245, 158, 11, 0.12);
   color: #FBBF24;
   border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.apex-badge-rose {
+  background: rgba(244, 63, 94, 0.12);
+  color: #FB7185;
+  border: 1px solid rgba(244, 63, 94, 0.25);
 }
 
 .apex-badge-slate {
@@ -242,7 +292,7 @@
   background: rgba(21, 34, 56, 0.4);
 }
 
-/* Modal Backdrop */
+/* Modal Backdrop & Panel */
 .apex-modal-overlay {
   position: fixed;
   inset: 0;
@@ -250,10 +300,16 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 50;
-  display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
+}
+
+.apex-modal-panel {
+  background: var(--apex-obsidian);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
 }
 
 /* Accessibility: Respect Reduced Motion */

@@ -89,7 +89,7 @@ export async function dispatchAuthRoute(reqObj, service = authService) {
   const sessionToken = cookies[SESSION_CONFIG.COOKIE_NAME] || null;
 
   // CSRF & Header checks on mutation operations
-  if (method === 'POST') {
+  if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
     const origin = headers.origin || headers.Origin || null;
     const referer = headers.referer || headers.Referer || null;
     const originCheck = validateRequestOrigin(origin, referer);
@@ -102,7 +102,7 @@ export async function dispatchAuthRoute(reqObj, service = authService) {
     }
 
     const contentType = headers['content-type'] || headers['Content-Type'] || '';
-    if (!validateJsonContentType(contentType)) {
+    if ((method === 'POST' || method === 'PUT') && !validateJsonContentType(contentType)) {
       return {
         statusCode: 415,
         headers: { 'Content-Type': 'application/json' },
@@ -215,6 +215,62 @@ export async function dispatchAuthRoute(reqObj, service = authService) {
       };
     }
 
+    // 8. PUT /api/auth/profile
+    if (method === 'PUT' && path === '/api/auth/profile') {
+      const user = await service.getMe(sessionToken);
+      const updates = {};
+      const allowed = ['name', 'company', 'targetNiche', 'plan'];
+      for (const key of allowed) {
+        if (reqObj.body && reqObj.body[key] !== undefined) {
+          updates[key] = String(reqObj.body[key]).trim();
+        }
+      }
+      const updatedUser = await service.repo.updateUser(user.userId, updates);
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          success: true,
+          message: 'Profile updated successfully.',
+          user: AuthService.sanitizeUser(updatedUser || { ...user, ...updates })
+        }
+      };
+    }
+
+    // 9. GET /api/auth/api-key
+    if (method === 'GET' && path === '/api/auth/api-key') {
+      const user = await service.getMe(sessionToken);
+      const fullUser = await service.repo.findUserById(user.userId);
+      let key = fullUser?.apiKey;
+      if (!key) {
+        key = `apex_live_sec_${crypto.randomBytes(16).toString('hex')}`;
+        await service.repo.updateUser(user.userId, { apiKey: key });
+      }
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          success: true,
+          apiKey: key
+        }
+      };
+    }
+
+    // 10. POST /api/auth/api-key/rotate
+    if (method === 'POST' && path === '/api/auth/api-key/rotate') {
+      const user = await service.getMe(sessionToken);
+      const newKey = `apex_live_sec_${crypto.randomBytes(16).toString('hex')}`;
+      await service.repo.updateUser(user.userId, { apiKey: newKey });
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          success: true,
+          apiKey: newKey
+        }
+      };
+    }
+
     // Unknown Auth Subroute
     return {
       statusCode: 404,
@@ -245,7 +301,7 @@ export async function handleNodeHttpRequest(req, res, service = authService) {
   const pathname = urlObj.pathname;
 
   let body = {};
-  if (req.method === 'POST') {
+  if (req.method === 'POST' || req.method === 'PUT') {
     try {
       const rawBody = await new Promise((resolve, reject) => {
         let data = '';

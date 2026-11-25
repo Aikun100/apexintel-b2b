@@ -30,25 +30,52 @@ function applySecurityHeaders(headers, isHtml = false) {
   return headers;
 }
 
+export function resolveBackendTarget(pathname, env = {}) {
+  const fallbackUrl = env.BACKEND_API_URL || env.BACKEND_AUTH_URL || env.AWS_LAMBDA_AUTH_URL;
+
+  let service = null;
+  let targetBaseUrl = null;
+
+  if (pathname === '/api/auth' || pathname.startsWith('/api/auth/')) {
+    service = 'auth';
+    targetBaseUrl = env.BACKEND_AUTH_URL || env.AWS_LAMBDA_AUTH_URL || fallbackUrl;
+  } else if (pathname === '/api/crm' || pathname.startsWith('/api/crm/')) {
+    service = 'crm';
+    targetBaseUrl = env.BACKEND_CRM_URL || fallbackUrl;
+  } else if (
+    pathname === '/api/orders' || pathname.startsWith('/api/orders/') ||
+    pathname === '/api/webhooks' || pathname.startsWith('/api/webhooks/') ||
+    pathname === '/api/downloads' || pathname.startsWith('/api/downloads/')
+  ) {
+    service = 'payments';
+    targetBaseUrl = env.BACKEND_PAYMENTS_URL || fallbackUrl;
+  } else if (
+    pathname === '/api/discovery' || pathname.startsWith('/api/discovery/') ||
+    pathname === '/api/admin' || pathname.startsWith('/api/admin/')
+  ) {
+    service = 'discovery';
+    targetBaseUrl = env.BACKEND_DISCOVERY_URL || fallbackUrl;
+  } else if (pathname === '/api/tools' || pathname.startsWith('/api/tools/')) {
+    service = 'tools';
+    targetBaseUrl = env.BACKEND_TOOLS_URL || fallbackUrl;
+  } else if (pathname === '/api/requests' || pathname.startsWith('/api/requests/')) {
+    service = 'requests';
+    targetBaseUrl = env.BACKEND_REQUESTS_URL || fallbackUrl;
+  }
+
+  return { service, targetBaseUrl };
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     // 1. API Route Interception & Forwarding
     if (url.pathname.startsWith('/api/')) {
-      const isKnownApiRoute = 
-        url.pathname.startsWith('/api/auth/') || 
-        url.pathname.startsWith('/api/crm/') || 
-        url.pathname.startsWith('/api/orders') || 
-        url.pathname.startsWith('/api/webhooks/') || 
-        url.pathname.startsWith('/api/downloads/') || 
-        url.pathname.startsWith('/api/discovery/') || 
-        url.pathname.startsWith('/api/admin/') || 
-        url.pathname.startsWith('/api/tools/') || 
-        url.pathname.startsWith('/api/requests/');
+      const { service, targetBaseUrl } = resolveBackendTarget(url.pathname, env);
 
       // Unknown /api/* route -> fail closed with 404 JSON
-      if (!isKnownApiRoute) {
+      if (!service) {
         const errorHeaders = new Headers({ 'Content-Type': 'application/json' });
         applySecurityHeaders(errorHeaders, false);
         return new Response(JSON.stringify({
@@ -60,11 +87,16 @@ export default {
         });
       }
 
-      const backendUrl = env.BACKEND_AUTH_URL || env.AWS_LAMBDA_AUTH_URL || env.BACKEND_API_URL;
-
-      // In production with configured backend: proxy request directly to AWS Lambda / API Gateway
-      if (backendUrl) {
-        const targetUrl = new URL(url.pathname + url.search, backendUrl);
+      // In production or configured worker: proxy request directly to AWS Lambda / API Gateway
+      if (targetBaseUrl) {
+        let targetUrl;
+        try {
+          const base = new URL(targetBaseUrl);
+          const basePath = base.pathname.replace(/\/+$/, '');
+          targetUrl = new URL(basePath + url.pathname + url.search, base.origin);
+        } catch {
+          targetUrl = new URL(url.pathname + url.search, targetBaseUrl);
+        }
         const headers = new Headers(request.headers);
 
         // Security: Trusted Client IP Forwarding

@@ -1,43 +1,31 @@
 # ApexIntel B2B — Product Changelog & Release History
-**Document ID:** `CHANGELOG-2026`  
-**Repository:** `browser-agent / apexintel-b2b`  
 
 ---
 
-## [v2.0.0] - 2026-11-22 (Current Master Release)
-### Added
-- **Prospect CRM & Pipeline Workspace (`customer-dashboard.js`):**
-  - Interactive 11-stage pipeline (`New`, `Qualified`, `Ready to Contact`, `Contacted`, `Follow-Up`, `Responded`, `Meeting Scheduled`, `Proposal`, `Won`, `Lost`, `Not Qualified`).
-  - Dual view toggle: Interactive Data Table and Visual Kanban Board.
-  - "Save to CRM" quick-action on live dataset preview rows.
-  - Lead Profile Drawer with contact details, speed latency, pixel status, notes journal, tag manager, and follow-up scheduler.
-- **Campaign Management & Follow-up Queue:**
-  - Campaign creator and real progress tracker.
-  - Actionable Follow-up Reminders queue with overdue flagging, mark complete, and 48-hour snooze.
-  - Direct integration between CRM lead cards and Cold Outreach Generator.
-- **Website Audit Lab:**
-  - Historical domain scan archive with latency diagnostics and pixel audit.
-  - Exportable formatted client audit report.
-- **Custom Data Extraction Lifecycle:**
-  - Customer workspace request tracker (`Submitted` $\to$ `Delivered`).
-  - Admin Command Center fulfillment manager.
-- **Comprehensive Documentation Suite (`/docs`):**
-  - `PROJECT_AUDIT.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `AWS_ARCHITECTURE.md`, `AWS_COST_ESTIMATE.md`, `SECURITY.md`, `DATA_PIPELINE.md`, `API_DOCUMENTATION.md`, `DATABASE_SCHEMA.md`, `DEPLOYMENT.md`, `TESTING.md`, `CHANGELOG.md`.
+## [Unreleased] - 2026-11-25
+### Documentation & Quality
+- Consolidated overlapping documentation across `docs/apexintel/`, `docs/product/`, `docs/audits/`, and root `.md` files into a single conflict-free `docs/` source of truth aligned with `src/`, `public/`, and `output/*.xlsx`.
+- Verified 192/192 automated tests across 7 suites (`scripts/run-all-tests.mjs`) and 46/46 Auth Lambda package checks (`scripts/verify-auth-lambda-package.mjs`).
 
 ---
 
-## [v1.5.0] - 2026-11-21
+## [v2.1.0] - 2026-11-23 (Tasks 01–07 Serverless Transformation)
 ### Added
-- Cloudflare Workers static asset hosting at `https://apexintel-b2b.shop`.
-- Automated script compiler (`scripts/bundle-all.js`) to eliminate privacy extension script blocking.
-- Credit/Debit Card input auto-formatter with real-time brand detection (VISA, Mastercard, AMEX, Discover).
-- Dedicated product modals, comparison matrix, and 4 outbound playbooks.
-- Strict PayPal merchant gateway routing with order confirmation gate.
+- **Server-Authoritative Auth (`src/auth/`, `aws/lambda-auth-handler.mjs`):** Scrypt password hashing, SHA-256 `HttpOnly` cookie sessions, CSRF protection, rate limiting, and audit logging.
+- **Multi-Tenant CRM (`src/crm/`):** DynamoDB-backed prospect persistence isolated by `userId`.
+- **Stripe Checkout & S3 Fulfillment (`src/payments/`):** Authoritative product catalog (`catalog.js`), HMAC-SHA256 webhook verification with idempotent deduplication, and 15-minute S3 presigned download URLs.
+- **Discovery & SSRF-Hardened Scanner (`src/discovery/`, `src/tools/`):** IPv4/IPv6 SSRF firewall, TLS trust validation, DNS MX verification, and DynamoDB scan caching.
+- **Custom Research API (`src/requests/`):** Volume-tiered pricing engine and admin lifecycle queue.
+- **Cloudflare Edge Proxy (`src/worker.js`):** `/api/*` routing, `x-apexintel-worker-secret` injection, and security headers.
+
+---
+
+## [v2.0.0] - 2026-11-22
+### Added
+- 11-stage CRM Workspace (`public/js/customer-dashboard.js`), Kanban & Table views, Audit Lab, and bundled SPA build (`scripts/bundle-all.js`).
 
 ---
 
 ## [v1.0.0] - 2026-11-20
 ### Initial Release
-- Texas, Florida, MedSpa, and HVAC B2B intelligence datasets.
-- Interactive website scanner and ROI calculator.
-- Client download generation engine.
+- Initial B2B datasets (Texas, Florida, MedSpas, HVAC) and static showcase.

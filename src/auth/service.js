@@ -402,29 +402,41 @@ export class AuthService {
       throw err;
     }
 
+    let devResetToken = null;
     const user = await this.repo.findUserByNormalizedEmail(normalizedEmail);
     if (user && user.accountStatus === 'active') {
       const rawResetToken = crypto.randomBytes(32).toString('hex');
       const tokenHash = crypto.createHash('sha256').update(rawResetToken).digest('hex');
       const now = new Date();
       const expiresAt = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour
+      const ttl = Math.floor(expiresAt.getTime() / 1000);
 
       await this.repo.createPasswordResetToken({
         tokenHash,
         userId: user.userId,
         status: 'active',
+        ttl,
         createdAt: now.toISOString(),
         expiresAt: expiresAt.toISOString()
       });
 
       this.auditLogger.log('AUTH_PASSWORD_RESET_REQUEST', { userId: user.userId, email: normalizedEmail, ip });
+
+      const isNonProd = process.env.NODE_ENV !== 'production' && !process.env.AWS_LAMBDA_FUNCTION_NAME;
+      if (isNonProd) {
+        devResetToken = rawResetToken;
+      }
     }
 
     // Always return identical generic message to prevent account enumeration
-    return {
+    const result = {
       success: true,
       message: 'If an account matches that email address, password reset instructions have been dispatched.'
     };
+    if (devResetToken) {
+      result.devResetToken = devResetToken;
+    }
+    return result;
   }
 
   /**

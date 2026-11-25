@@ -1,147 +1,40 @@
 # ApexIntel B2B — Database & Storage Schema Specification
-**Document ID:** `DB-2026-v2.0`  
-**Classification:** Data Modeling & Schema Design  
-**Storage Engines:** Amazon DynamoDB (Cloud) & Relational LocalStorage / IndexedDB (Client)  
+
+**Region:** `ap-southeast-2` (Sydney)  
+**Storage Engines:** Amazon DynamoDB (On-Demand) & Private Amazon S3 (`apexintel-datasets-production`)
 
 ---
 
-## 1. Amazon DynamoDB Schema
+## 1. Amazon DynamoDB Tables
 
-### 1.1 Primary Table: `leads_cache`
-- **Table Name:** `leads_cache`
-- **Billing Mode:** PAY_PER_REQUEST (On-Demand)
-- **Partition Key (`PK`):** `id` (String - Canonical Domain Name, e.g. `dallasroofer.com`)
-- **Global Secondary Index 1 (`GSI_Territory`):**
-  - Partition Key: `territory` (String)
-  - Sort Key: `opportunity_score` (Number - Descending)
-- **Global Secondary Index 2 (`GSI_Created`):**
-  - Partition Key: `trade` (String)
-  - Sort Key: `created_at` (String - ISO 8601)
+Table names below match `src/*/repository.js` defaults (overridable via environment variables):
 
-#### Document Attribute Definition:
-```json
-{
-  "id": "dallasroofer.com",
-  "company_name": "T Rock Roofing & Restoration",
-  "trade": "Roofing & Storm Restoration",
-  "territory": "texas",
-  "city": "Dallas-Fort Worth, TX",
-  "state": "TX",
-  "email": "info@dallasroofer.com",
-  "phone": "+1 469 931 9867",
-  "address": "123 Commerce St, Dallas, TX 75201",
-  "speed_ms": 1473,
-  "cms": "WordPress / Apache",
-  "meta_pixel": false,
-  "google_ads": true,
-  "mx_verified": true,
-  "opportunity_score": 92,
-  "priority": "P1",
-  "delivered_to": [
-    "alex@velocitygrowth.io",
-    "marcus@leadcraft.agency"
-  ],
-  "created_at": "2026-11-20T10:15:00.000Z",
-  "last_crawled_at": "2026-11-22T00:00:00.000Z"
-}
-```
+| Table Name | Env Variable | Primary Key | GSIs / Purpose | Source Module |
+| :--- | :--- | :--- | :--- | :--- |
+| `apexintel_users` | `DYNAMODB_USERS_TABLE` | `userId` (S) | `normalizedEmail-index`: Accounts, scrypt hashes, roles, plans, credits | `src/auth/repository.js` |
+| `apexintel_sessions` | `DYNAMODB_SESSIONS_TABLE` | `tokenHash` (S) | `userId-index`: SHA-256 hashed session tokens with TTL expiration | `src/auth/repository.js` |
+| `apexintel_rate_limits` | `DYNAMODB_RATE_LIMITS_TABLE` | `key` (S) | Sliding-window auth/scanner/request abuse rate limits with TTL | `src/auth/repository.js` |
+| `apexintel_password_resets` | `DYNAMODB_RESETS_TABLE` | `tokenHash` (S) | Single-use hashed password reset tokens with TTL | `src/auth/repository.js` |
+| `apexintel_user_crm` | `DYNAMODB_CRM_TABLE` | `userId` (PK), `leadId` (SK) | Multi-tenant customer CRM leads, pipeline stage, priority, notes, tags | `src/crm/repository.js` |
+| `apexintel_orders` | `DYNAMODB_ORDERS_TABLE` | `orderId` (S) | `userId-createdAt-index`, `stripeSessionId-index`: Stripe orders, `paid` status, S3 keys | `src/payments/repository.js` |
+| `apexintel_custom_requests` | `CUSTOM_REQUESTS_TABLE_NAME` | `requestId` (S) | `userId-createdAt-index`: Custom research orders and lifecycle statuses | `src/requests/repository.js` |
+| `apexintel_scans_cache` | `SCANS_TABLE_NAME` | `domain` (S) | Cached website intelligence audit results (TTFB, TLS, MX, pixels) with TTL | `src/tools/repository.js` |
+| `leads_cache` | `DYNAMODB_LEADS_TABLE` | `id` (S, domain) | `trade-createdAt-index`, `city-createdAt-index`: Discovered B2B records & delivery ledger | `src/discovery/repository.js` |
 
 ---
 
-## 2. Client-Side Relational LocalStorage Schema
+## 2. Amazon S3 Private Dataset Bucket
 
-The client workspace maintains structured relational collections inside the browser:
+- **Bucket:** `apexintel-datasets-production` (Block Public Access enabled; private ACL)
+- **Fulfillment Objects (`src/payments/catalog.js`):**
+  - `datasets/Texas_HighTicket_Contractors_Enriched_Audited.xlsx`
+  - `datasets/Florida_HighTicket_Solar_Restoration_Enriched.xlsx`
+  - `datasets/California_Luxury_MedSpas_Enriched_Audited.xlsx`
+  - `datasets/Commercial_HVAC_Mechanical_Enriched_Audited.xlsx`
+- **Access Control:** Objects are never publicly readable. Downloads are served only after `order.status === 'paid'` and `order.userId === user.userId` via a 15-minute S3 presigned URL.
 
-### 2.1 Collection: `apexintel_crm_leads`
-Array of prospect lead records managed in the CRM workspace.
+---
 
-```typescript
-interface CrmLead {
-  id: string;               // e.g. "crm_lead_1732274400_abc"
-  company: string;          // e.g. "T Rock Roofing & Restoration"
-  domain: string;           // e.g. "dallasroofer.com"
-  contactName?: string;     // e.g. "Operations Manager"
-  email: string;            // e.g. "info@dallasroofer.com"
-  phone: string;            // e.g. "+1 469 931 9867"
-  city: string;             // e.g. "Dallas, TX"
-  territory: string;        // e.g. "texas"
-  industry: string;         // e.g. "Roofing"
-  status: PipelineStatus;   // One of 11 pipeline statuses
-  priority: 'P1' | 'P2' | 'P3';
-  opportunityScore: number; // 0 - 100
-  speed_ms: number;
-  metaPixel: boolean;
-  googleAds: boolean;
-  campaignId?: string;      // Foreign key to apexintel_crm_campaigns
-  tags: string[];           // e.g. ["urgent", "call-first", "solar"]
-  notes: LeadNote[];        // Journal of timestamps and notes
-  followUpDate?: string;    // YYYY-MM-DD
-  savedAt: string;          // ISO 8601
-  updatedAt: string;        // ISO 8601
-}
+## 3. Client-Side Fallback / UI State (`localStorage`)
 
-type PipelineStatus = 
-  | 'New'
-  | 'Qualified'
-  | 'Ready to Contact'
-  | 'Contacted'
-  | 'Follow-Up'
-  | 'Responded'
-  | 'Meeting Scheduled'
-  | 'Proposal'
-  | 'Won'
-  | 'Lost'
-  | 'Not Qualified';
-
-interface LeadNote {
-  id: string;
-  timestamp: string;
-  author: string;
-  text: string;
-}
-```
-
-### 2.2 Collection: `apexintel_crm_campaigns`
-```typescript
-interface CrmCampaign {
-  id: string;               // e.g. "camp_tx_outbound_q4"
-  title: string;            // e.g. "Texas Q4 High-Ticket Roofers"
-  territory: string;        // e.g. "Texas"
-  targetCount: number;      // e.g. 50
-  status: 'Draft' | 'Active' | 'Paused' | 'Completed';
-  createdAt: string;        // ISO 8601
-}
-```
-
-### 2.3 Collection: `apexintel_audit_scans`
-```typescript
-interface AuditScanRecord {
-  id: string;
-  domain: string;
-  scannedAt: string;
-  speed_ms: number;
-  cms: string;
-  metaPixel: boolean;
-  googleAds: boolean;
-  mxVerified: boolean;
-  icpScore: number;
-  pitch: string;
-}
-```
-
-### 2.4 Collection: `apexintel_custom_requests`
-```typescript
-interface CustomRequestRecord {
-  id: string;               // e.g. "REQ-2026-8910"
-  customerEmail: string;
-  industry: string;
-  territory: string;
-  volume: number;
-  budget: number;
-  techFilters: string;
-  notes: string;
-  status: 'Draft' | 'Submitted' | 'Reviewing' | 'Mining' | 'Delivered';
-  submittedAt: string;
-  deliverableUrl?: string;  // Downloadable CSV link once delivered
-}
-```
+Authenticated CRM leads, orders, and custom requests sync to backend APIs. Secondary UI preferences/showcase helpers in `public/js/customer-dashboard.js` and `public/js/auth.js` use `localStorage` keys such as `apexintel_crm_campaigns`, `apexintel_audit_scans`, `apexintel_api_key`, and `apexintel_orders` when offline or unauthenticated.

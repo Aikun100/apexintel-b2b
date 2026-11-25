@@ -45,7 +45,7 @@ Before creating or modifying cloud resources, verify local prerequisites:
 ```bash
 node scripts/run-auth-tests.mjs
 ```
-*Expected Result:* 52/52 tests pass with 0 failures.
+*Expected Result:* 60/60 tests pass with 0 failures.
 
 ### `[READ-ONLY]` Step 2.2 — Verify AWS CLI Identity & Region
 ```bash

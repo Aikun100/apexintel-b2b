@@ -104,6 +104,49 @@ export async function dispatchCrmRoute(reqObj, service = crmService, authSvc = u
     }
 
     // -------------------------------------------------------------
+    // Route 1b: GET /api/crm/campaigns & POST /api/crm/campaigns
+    // -------------------------------------------------------------
+    if (path === '/api/crm/campaigns') {
+      if (method === 'GET') {
+        const campaigns = (await service.repo.getUserCampaigns?.(userId)) || [];
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
+          body: {
+            success: true,
+            campaigns
+          }
+        };
+      }
+      if (method === 'POST') {
+        const body = reqObj.body || {};
+        const campaign = {
+          campaignId: `cmp_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
+          userId,
+          name: String(body.name || 'Untitled Campaign').trim(),
+          niche: String(body.niche || 'Commercial Services').trim(),
+          territory: String(body.territory || 'National').trim(),
+          channel: String(body.channel || 'Email & Phone').trim(),
+          leadIds: Array.isArray(body.leadIds) ? body.leadIds : [],
+          status: 'planned',
+          createdAt: new Date().toISOString()
+        };
+        if (typeof service.repo.saveUserCampaign === 'function') {
+          await service.repo.saveUserCampaign(userId, campaign);
+        }
+        return {
+          statusCode: 201,
+          headers: { 'Content-Type': 'application/json' },
+          body: {
+            success: true,
+            message: 'Campaign plan saved successfully.',
+            campaign
+          }
+        };
+      }
+    }
+
+    // -------------------------------------------------------------
     // Route 2: GET /api/crm/leads/:id
     // -------------------------------------------------------------
     const getMatch = path.match(/^\/api\/crm\/leads\/([a-zA-Z0-9_\-]+)$/);

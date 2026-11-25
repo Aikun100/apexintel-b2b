@@ -623,13 +623,16 @@
   // =========================================================================
 
   window.updateCustomQuote = function () {
-    const volume = parseInt(document.getElementById('crVolumeSlider')?.value || '250');
+    const rawVol = parseInt(document.getElementById('crVolumeSlider')?.value || '250', 10) || 250;
+    const volume = Math.max(50, Math.min(50000, rawVol));
     const volLabel = document.getElementById('crVolumeLabel');
     if (volLabel) volLabel.innerText = `${volume.toLocaleString()} Verified Records`;
 
-    let rate = 0.55; // Base price per lead
-    if (volume >= 1000) rate = 0.38;
+    let rate = 0.65; // Matches src/requests/service.js calculatePrice
+    if (volume >= 2500) rate = 0.25;
+    else if (volume >= 1000) rate = 0.35;
     else if (volume >= 500) rate = 0.45;
+    else if (volume >= 250) rate = 0.55;
 
     // Check optional enrichments
     const hasLatency = document.getElementById('crCheckLatency')?.checked;
@@ -640,6 +643,7 @@
     if (hasPixel) rate += 0.08;
     if (hasMobile) rate += 0.12;
 
+    rate = Math.round(rate * 100) / 100;
     const totalCost = Math.round(volume * rate);
 
     const priceEl = document.getElementById('crEstimatedPrice');

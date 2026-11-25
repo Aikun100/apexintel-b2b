@@ -1,117 +1,63 @@
 # ApexIntel B2B — Platform Architecture Specification
-**Document ID:** `ARCH-2026-v2.0`  
-**Classification:** Technical System Architecture  
-**Date:** November 22, 2026  
 
 ---
 
 ## 1. System Architecture Overview
 
-ApexIntel B2B is built on an ultra-low-latency, resilient, and cost-efficient hybrid cloud architecture combining **Cloudflare Workers (Edge Engine)** for static frontend delivery with an **AWS Serverless Backend (Lambda, DynamoDB, EventBridge)** for asynchronous data mining, verification, and lead deduplication.
+ApexIntel B2B runs on a hybrid serverless stack combining **Cloudflare Workers** (`src/worker.js`) for edge security and static SPA hosting with **AWS Lambda (Node.js 20 ESM)**, **Amazon DynamoDB**, **Amazon S3**, and **Stripe**.
 
 ```mermaid
-graph TD
-    subgraph Client["Client Browser / End User"]
-        SPA["Single Page App (HTML5 / Tailwind / Vanilla ES6+)"]
-        CRM["Client-Side Prospect CRM & Kanban"]
-        Tools["Diagnostic Tools Suite"]
-        Storage["Relational LocalStorage & Session Cache"]
-    end
+flowchart TD
+    Client["Client Browser (Vanilla ES6+ SPA / Tailwind CSS)"]
+    CF["Cloudflare Worker Edge (src/worker.js)"]
+    Lambda["AWS Lambda Node.js 20 ESM Handlers (aws/, src/)"]
+    DDB[("Amazon DynamoDB (9 Tables in ap-southeast-2)")]
+    S3[("Amazon S3 (apexintel-datasets-production)")]
+    Stripe["Stripe Checkout & HMAC Webhooks"]
 
-    subgraph Edge["Cloudflare Edge Network"]
-        CF_Worker["Cloudflare Worker (Static Assets Engine)"]
-        CF_DNS["Cloudflare DNS (DNSSEC, TLS 1.3, DDoS Defense)"]
-        CustomDomain["apexintel-b2b.shop & www"]
-    end
-
-    subgraph AWS["AWS Serverless Cloud (ap-southeast-2)"]
-        Cron["EventBridge Scheduled Rule (Daily Crawler)"]
-        Lambda["AWS Lambda (apex-web-app)"]
-        Dynamo["Amazon DynamoDB (leads_cache)"]
-        S3["Amazon S3 (Lead Datasets Lake)"]
-    end
-
-    subgraph Payments["Payment & Gateway Systems"]
-        PayPal["PayPal Merchant Gateway (Direct Card / Wallet)"]
-    end
-
-    Client -->|HTTPS / TLS 1.3| CF_DNS
-    CF_DNS --> CF_Worker
-    CF_Worker --> SPA
-    SPA --> Tools
-    SPA --> CRM
-    CRM <--> Storage
-    SPA -->|Order & Checkout Flow| PayPal
-    Cron -->|Scheduled Trigger| Lambda
-    Lambda -->|DNS MX Verification & Dedup| Dynamo
-    Lambda -->|Territory CSV/JSON Sync| S3
+    Client -->|"HTTPS / TLS 1.3"| CF
+    CF -->|"Static SPA from public/"| Client
+    CF -->|"/api/* + x-apexintel-worker-secret + CF-Connecting-IP"| Lambda
+    Lambda -->|"Users, Sessions, CRM, Orders, Requests, Scans, Discovery"| DDB
+    Lambda -->|"15-min Presigned Download URLs"| S3
+    Client -->|"Hosted Checkout"| Stripe
+    Stripe -->|"POST /api/webhooks/payment (stripe-signature)"| CF
 ```
 
 ---
 
-## 2. Frontend Subsystems Architecture
+## 2. Frontend Layer (`public/`)
 
-The client application is intentionally designed with zero heavy framework bloat (no React, Next.js, or Vue runtime dependencies) to ensure:
-- Sub-500ms initial load times worldwide.
-- Flawless offline-first and edge-cached execution.
-- Total protection against runtime hydrate crashes and version mismatches.
-- High resilience against privacy extension script blocking.
+The client is built with modular Vanilla JavaScript (ES6+) and Tailwind CSS (zero React/Next.js/Vue runtime overhead), compiled into `public/index.html` via `scripts/bundle-all.js`:
 
-### Core Frontend Subsystem Modules:
-
-```
-public/
-├── index.html                   # Master SPA shell with dark-first SaaS UI & bundled scripts
-├── css/
-│   └── (Tailwind Play CDN with dark utility configuration)
-└── js/
-    ├── auth.js                  # Authentication, session tokens, demo user state
-    ├── customer-dashboard.js    # Client Workspace, Prospect CRM, Pipeline, Campaigns, Audit Lab
-    ├── admin-dashboard.js       # Executive Command Center, Revenue Metrics, AWS Fleet Monitor
-    ├── payment-engine.js        # Dataset catalog, Card modal with auto-format, PayPal checkout
-    ├── tools-suite.js           # 6 interactive tools (Scanner, ROI, Outreach, ICP, Catalog, Custom)
-    └── modals-and-knowledge.js  # Product detail modals, comparison matrix, 4 outbound playbooks
-```
+- `public/js/auth.js`: Cookie-backed authentication (`/api/auth/*`), dynamic navbar, auth modal.
+- `public/js/customer-dashboard.js`: 10-tab customer workspace, 11-stage CRM, Kanban/Table views, custom requests, S3 downloads.
+- `public/js/admin-dashboard.js`: Role-gated admin command center for custom research queue and operations.
+- `public/js/payment-engine.js`: Dataset checkout initiation (`/api/orders/checkout`) and order status flows.
+- `public/js/tools-suite.js`: Website scanner (`/api/tools/scan-website`), ROI calculator, outreach generator, ICP scorer, dataset preview, custom request estimator.
+- `public/js/modals-and-knowledge.js`: Product detail modals, dataset comparison matrix, playbooks, policy modals.
+- `public/css/apex-tokens.css`: Standardized Dark Obsidian CSS design tokens.
 
 ---
 
-## 3. Bundling & Distribution Architecture
+## 3. Edge Proxy Layer (`src/worker.js`)
 
-To prevent ad-blockers, tracking shields (Brave Shields, uBlock Origin), and network firewalls from blocking scripts named `auth.js` or `tools.js`, a discrete build pipeline compiles all modules directly into `public/index.html`:
-
-```mermaid
-flowchart LR
-    M1["auth.js"] --> B["scripts/bundle-all.js"]
-    M2["customer-dashboard.js"] --> B
-    M3["admin-dashboard.js"] --> B
-    M4["payment-engine.js"] --> B
-    M5["tools-suite.js"] --> B
-    M6["modals-and-knowledge.js"] --> B
-    B --> OUT["public/index.html (Production Ready)"]
-    OUT --> WRANGLER["Wrangler Deploy"]
-    WRANGLER --> CF["Cloudflare Global Edge"]
-```
+- Intercepts `/api/auth/*`, `/api/crm/*`, `/api/orders*`, `/api/webhooks/*`, `/api/downloads/*`, `/api/discovery/*`, `/api/admin/*`, `/api/tools/*`, `/api/requests/*`.
+- Fails closed with `404 JSON` on unknown `/api/*` paths.
+- Injects `x-apexintel-worker-secret` (`env.WORKER_BACKEND_SECRET`) and overwrites `X-Forwarded-For` with `CF-Connecting-IP`.
+- Preserves raw request body for Stripe webhook cryptographic verification and preserves `Set-Cookie` headers.
+- Applies security headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Strict-Transport-Security`, `Referrer-Policy`, `Content-Security-Policy`).
 
 ---
 
-## 4. State Management & Relational Client Storage
+## 4. Compute & Service Modules (`src/`, `aws/`)
 
-ApexIntel uses structured `localStorage` partitions for high responsiveness, privacy-first data handling, and instant UI state changes without blocking network round-trips:
+- `aws/lambda-auth-handler.mjs` — Lambda Function URL / API Gateway v2 entry handler for authentication.
+- `src/auth/` — Scrypt password hashing, SHA-256 session tokens in `HttpOnly` cookies, CSRF origin/token checks, rate limiting, audit logging.
+- `src/crm/` — Multi-tenant prospect CRUD, pipeline stage validation, notes, tags.
+- `src/payments/` — Server-authoritative catalog (`catalog.js`), Stripe Checkout session creation, HMAC-SHA256 webhook fulfillment, idempotent order records, 15-minute S3 presigned URL generation.
+- `src/discovery/` — Discovery search & filtering over `leads_cache` + crawler ingestion endpoints.
+- `src/tools/` — SSRF-hardened (`ssrf-guard.js`) live TLS/TTFB/DNS MX/ad-pixel website diagnostic scanner with DynamoDB scan caching.
+- `src/requests/` — Custom research pricing calculation, request intake, and admin lifecycle queue (`Submitted` -> `Reviewing` -> `Mining` -> `Delivered`).
 
-| Key | Type | Description |
-|---|---|---|
-| `apexintel_session` | Object | Active user profile, plan tier, remaining credits |
-| `apexintel_api_key` | String | Bearer token for CRM and external API integrations |
-| `apexintel_crm_leads` | Array | CRM lead database (contact details, status, notes, tags) |
-| `apexintel_crm_campaigns` | Array | Active outbound campaigns, target quotas, lead links |
-| `apexintel_audit_scans` | Array | Scanned prospect domains, diagnostic audit results |
-| `apexintel_custom_requests`| Array | Inbound custom extraction requests and specifications |
-| `apexintel_purchases` | Array | Unlocked datasets, download tokens, invoices |
-
----
-
-## 5. Security Architecture
-- **Content Security Policy**: Restricts script execution to approved CDNs (Tailwind, Lucide, FontAwesome).
-- **Safe Link Formatting**: External URLs sanitize protocol and use `rel="noopener noreferrer"`.
-- **Payment Token Separation**: Credit card inputs do not touch any backend server; formatted client-side and routed securely through PayPal's merchant payment rail.
-- **SSRF Hardening**: URL scanner strips dangerous protocols and validates domain structure against RFC standards before execution.
+In local development (`node serve.js`) and automated tests (`USE_MOCK_STORAGE=true`), each repository transparently supports isolated in-memory adapters.

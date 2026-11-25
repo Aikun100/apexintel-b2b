@@ -260,12 +260,19 @@ export function getRequestsRepository() {
 
   const isProduction = process.env.NODE_ENV === 'production' || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
 
-  if (isProduction) {
+  if (process.env.USE_MOCK_STORAGE === 'true' || process.env.NODE_ENV === 'test') {
+    currentRequestsRepo = new InMemoryRequestsRepository();
+  } else if (isProduction) {
     currentRequestsRepo = new DynamoDBRequestsRepository();
-    return currentRequestsRepo;
+  } else {
+    try {
+      currentRequestsRepo = new DynamoDBRequestsRepository();
+    } catch (err) {
+      console.warn(`[getRequestsRepository] DynamoDB initialization failed in development: ${err.message}. Falling back to InMemoryRequestsRepository.`);
+      currentRequestsRepo = new InMemoryRequestsRepository();
+    }
   }
 
-  currentRequestsRepo = new InMemoryRequestsRepository();
   return currentRequestsRepo;
 }
 

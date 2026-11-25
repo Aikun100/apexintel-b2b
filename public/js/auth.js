@@ -44,7 +44,7 @@
       company: 'Velocity Growth Agency',
       packId: 'florida',
       packName: 'Florida Solar & Storm Restoration',
-      leadsDelivered: 24,
+      leadsDelivered: 8,
       amount: 79,
       processor: 'Stripe',
       status: 'Delivered',
@@ -63,7 +63,7 @@
       company: 'OutboundSprint',
       packId: 'medspas',
       packName: 'California Luxury MedSpas',
-      leadsDelivered: 24,
+      leadsDelivered: 9,
       amount: 89,
       processor: 'Stripe',
       status: 'Delivered',
@@ -253,10 +253,16 @@
       if (typeof window.clearCustomerDashboardCache === 'function') {
         window.clearCustomerDashboardCache();
       }
-      const dash = document.getElementById('customerDashboardModal');
-      if (dash) dash.classList.add('hidden');
+      const dash = document.getElementById('customerDashboard');
+      if (dash) {
+        dash.classList.add('hidden');
+        dash.classList.remove('flex');
+      }
       const adminDash = document.getElementById('adminDashboardModal');
-      if (adminDash) adminDash.classList.add('hidden');
+      if (adminDash) {
+        adminDash.classList.add('hidden');
+        adminDash.classList.remove('flex');
+      }
     },
 
     getCurrentUser: function () {
@@ -302,6 +308,11 @@
   };
 
   window.ApexAuth = ApexAuth;
+
+  window.getCsrfToken = function () {
+    const match = document.cookie.match(/(?:^|;\s*)apexintel_csrf=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  };
 
   // --- HTML Injections: Auth Modal Template ---
   function injectAuthModal() {
@@ -352,6 +363,10 @@
           <button id="signInSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-indigo-600/30 active:scale-95 flex items-center justify-center gap-2">
             <span>Sign In to Dashboard &rarr;</span>
           </button>
+
+          <div class="text-center mt-2">
+            <button type="button" onclick="switchAuthTab('forgot')" class="text-[11px] text-slate-500 hover:text-cyan-400 transition font-mono">Forgot password?</button>
+          </div>
 
           <!-- 1-Click Demo Login Shortcuts -->
           <div class="pt-3 border-t border-slate-800/80">
@@ -420,6 +435,53 @@
           <button id="registerSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-emerald-600/30 active:scale-95 flex items-center justify-center gap-2">
             <span>Create Free Account (+50 Credits) &rarr;</span>
           </button>
+        </form>
+
+        <!-- FORGOT PASSWORD FORM -->
+        <form id="forgotPasswordForm" onsubmit="handleForgotPasswordSubmit(event)" class="space-y-3.5 hidden">
+          <div class="text-center mb-4">
+            <div class="text-2xl mb-2">🔑</div>
+            <p class="text-xs text-slate-400">Enter your account email and we'll send a reset link.</p>
+          </div>
+          <div>
+            <label for="forgotEmail" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Account Email</label>
+            <input type="email" id="forgotEmail" required placeholder="name@youragency.com" autocomplete="email"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          </div>
+          <div id="forgotError" class="text-xs text-rose-400 hidden pt-1"></div>
+          <div id="forgotSuccess" class="text-xs text-emerald-400 hidden pt-1 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20"></div>
+          <button id="forgotSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-600/30 active:scale-95">
+            Send Reset Link
+          </button>
+          <div class="text-center">
+            <button type="button" onclick="switchAuthTab('signin')" class="text-[11px] text-slate-500 hover:text-white transition font-mono">&larr; Back to Sign In</button>
+          </div>
+        </form>
+
+        <!-- RESET PASSWORD FORM (token from URL) -->
+        <form id="resetPasswordForm" onsubmit="handleResetPasswordSubmit(event)" class="space-y-3.5 hidden">
+          <div class="text-center mb-4">
+            <div class="text-2xl mb-2">🔒</div>
+            <p class="text-xs text-slate-400">Enter your new password below.</p>
+          </div>
+          <div>
+            <label for="resetNewPassword" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">New Password</label>
+            <input type="password" id="resetNewPassword" required placeholder="New password (min 12 chars)" minlength="12"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          </div>
+          <div>
+            <label for="resetConfirmPassword" class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Confirm Password</label>
+            <input type="password" id="resetConfirmPassword" required placeholder="Re-enter new password" minlength="12"
+                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          </div>
+          <div id="resetError" class="text-xs text-rose-400 hidden pt-1"></div>
+          <div id="resetSuccess" class="text-xs text-emerald-400 hidden pt-1 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20"></div>
+          <button id="resetSubmitBtn" type="submit" class="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider transition shadow-lg shadow-cyan-600/30 active:scale-95">
+            Set New Password
+          </button>
+          <div class="text-center">
+            <button type="button" onclick="switchAuthTab('signin')" class="text-[11px] text-slate-500 hover:text-white transition font-mono">&larr; Back to Sign In</button>
+          </div>
         </form>
 
       </div>
@@ -585,22 +647,36 @@
     const btnReg = document.getElementById('authTabRegister');
     const formIn = document.getElementById('signInForm');
     const formReg = document.getElementById('registerForm');
+    const formForgot = document.getElementById('forgotPasswordForm');
+    const formReset = document.getElementById('resetPasswordForm');
     const title = document.getElementById('authModalTitle');
 
     if (!btnIn || !btnReg || !formIn || !formReg || !title) return;
 
+    // Hide all forms first
+    [formIn, formReg, formForgot, formReset].forEach(f => { if (f) f.classList.add('hidden'); });
+    // Reset tab button active states
+    btnIn.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
+    btnReg.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
+
     if (tab === 'signin' || tab === 'login') {
       btnIn.className = 'py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition text-center shadow';
-      btnReg.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
       formIn.classList.remove('hidden');
-      formReg.classList.add('hidden');
       title.innerText = 'Sign In to ApexIntel';
-    } else {
+    } else if (tab === 'register') {
       btnReg.className = 'py-2 text-xs font-bold rounded-lg bg-indigo-600 text-white transition text-center shadow';
-      btnIn.className = 'py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition text-center';
       formReg.classList.remove('hidden');
-      formIn.classList.add('hidden');
       title.innerText = 'Create Client Account';
+    } else if (tab === 'forgot') {
+      formForgot.classList.remove('hidden');
+      title.innerText = 'Reset Your Password';
+      // Pre-fill email from sign-in form if present
+      const signInEmail = document.getElementById('signInEmail');
+      const forgotEmail = document.getElementById('forgotEmail');
+      if (signInEmail && forgotEmail && signInEmail.value) forgotEmail.value = signInEmail.value;
+    } else if (tab === 'reset') {
+      formReset.classList.remove('hidden');
+      title.innerText = 'Set New Password';
     }
   };
 
@@ -739,6 +815,114 @@
       toggleUserDropdown(false);
     }
   });
+
+  // --- Forgot Password Submit Handler ---
+  window.handleForgotPasswordSubmit = async function (e) {
+    e.preventDefault();
+    const email = (document.getElementById('forgotEmail').value || '').trim();
+    const errEl = document.getElementById('forgotError');
+    const successEl = document.getElementById('forgotSuccess');
+    const btn = document.getElementById('forgotSubmitBtn');
+
+    if (errEl) errEl.classList.add('hidden');
+    if (successEl) successEl.classList.add('hidden');
+    if (btn) { btn.disabled = true; btn.innerText = 'Sending…'; }
+
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (successEl) {
+          successEl.innerText = data.message || 'If that email is registered, a reset link has been sent.';
+          successEl.classList.remove('hidden');
+        }
+      } else {
+        if (errEl) {
+          errEl.innerText = data.error || 'Could not send reset email. Please try again.';
+          errEl.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      if (errEl) {
+        errEl.innerText = 'Network error. Check your connection and try again.';
+        errEl.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerText = 'Send Reset Link'; }
+    }
+  };
+
+  // --- Reset Password Submit Handler (token from URL ?token=...) ---
+  window.handleResetPasswordSubmit = async function (e) {
+    e.preventDefault();
+    const token = new URLSearchParams(window.location.search).get('token') || '';
+    const newPassword = document.getElementById('resetNewPassword').value;
+    const confirmPassword = document.getElementById('resetConfirmPassword').value;
+    const errEl = document.getElementById('resetError');
+    const successEl = document.getElementById('resetSuccess');
+    const btn = document.getElementById('resetSubmitBtn');
+
+    if (errEl) errEl.classList.add('hidden');
+    if (successEl) successEl.classList.add('hidden');
+
+    if (newPassword !== confirmPassword) {
+      if (errEl) { errEl.innerText = 'Passwords do not match.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+    if (newPassword.length < 12) {
+      if (errEl) { errEl.innerText = 'Password must be at least 12 characters.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+    if (!token) {
+      if (errEl) { errEl.innerText = 'Invalid or missing reset token. Please request a new reset link.'; errEl.classList.remove('hidden'); }
+      return;
+    }
+
+    if (btn) { btn.disabled = true; btn.innerText = 'Setting password…'; }
+
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (successEl) {
+          successEl.innerText = 'Password updated. You can now sign in with your new password.';
+          successEl.classList.remove('hidden');
+        }
+        // Auto-switch to sign-in after 2s
+        setTimeout(() => window.switchAuthTab('signin'), 2000);
+      } else {
+        if (errEl) {
+          errEl.innerText = data.error || 'Password reset failed. The token may have expired.';
+          errEl.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      if (errEl) {
+        errEl.innerText = 'Network error. Check your connection and try again.';
+        errEl.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerText = 'Set New Password'; }
+    }
+  };
+
+  // Auto-open reset form if ?token= is present in URL
+  (function checkResetToken() {
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (token) {
+      window.addEventListener('DOMContentLoaded', () => {
+        window.openAuthModal('reset');
+      });
+    }
+  })();
 
   // --- Bootstrap on Page Load ---
   window.initAuth = async function () {

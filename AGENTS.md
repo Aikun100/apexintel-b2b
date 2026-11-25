@@ -6,6 +6,22 @@
 
 ---
 
+## 0. START HERE — Token-Efficient Onboarding (Read Before Anything Else)
+
+**MANDATORY FIRST STEP:** Read `CONTEXT.md` (repo root) before opening any source file or running any command.
+
+`CONTEXT.md` contains the complete architecture, full file map, all table schemas, product catalog, routing map, quick verification commands, and known gotchas pre-compiled into a single reference. Reading it once eliminates the need to read individual source files for orientation.
+
+**Workflow for a new session:**
+1. `CONTEXT.md` → full architecture snapshot (1 read, replaces 20+ file reads)
+2. `git status --short` → current working state
+3. `git diff --stat` → what's changed since last commit
+4. Then plan and implement
+
+**Only read individual source files when you need to make a surgical edit to that specific file.**
+
+---
+
 ## 1. Planning Before Implementation
 
 For every complex task, follow this strict 8-step workflow before altering code:
