@@ -226,12 +226,12 @@
         <h4>The 3-Part Technical Angle Framework:</h4>
         <ol>
           <li><strong>The Objective Observation:</strong> "I was testing mobile contractor sites in Dallas and noticed your page takes 940ms to respond on mobile."</li>
-          <li><strong>The Commercial Consequence:</strong> "In high-ticket commercial roofing, 900ms+ latency causes over 25% of mobile visitors to bounce before the contact form renders."</li>
+          <li><strong>The Commercial Consequence:</strong> "A slow mobile response can add friction to the inquiry process. Use the business's own analytics to quantify any conversion impact."</li>
           <li><strong>The Friction-Free Offer:</strong> "I put together a 2-minute Loom showing the two uncompressed scripts causing this. Mind if I send it over?"</li>
         </ol>
 
         <h4>Handling The Ad Pixel Angle</h4>
-        <p>If an outfit is running Google Ads or local search campaigns but has no Meta Pixel installed, they are effectively burning 97% of their paid visitors. Remind them: <em>"A homeowner who visited your commercial roofing estimate page won't see your brand on Instagram or Facebook unless your retargeting pixel is active."</em></p>
+        <p>A missing Meta Pixel may limit one retargeting channel. Check whether server-side events or other tags are configured before drawing conclusions about campaign performance. Remind them: <em>"A homeowner who visited your commercial roofing estimate page won't see your brand on Instagram or Facebook unless your retargeting pixel is active."</em></p>
       `
     },
     playbook2: {
@@ -239,18 +239,18 @@
       category: 'Data Engineering & Deliverability',
       readTime: '5 min read',
       content: `
-        <h4>What Does "100% DNS MX-Verified" Actually Mean?</h4>
-        <p>A basic scraped list simply extracts emails from raw HTML. Over 35% of those emails are dead, abandoned, or role accounts (like <code>jobs@</code> or <code>press@</code>) that cause high bounce rates and ruin your sending domain reputation.</p>
+        <h4>What Does a DNS MX Check Actually Confirm?</h4>
+        <p>Email addresses can be outdated, role-based, or invalid. Verification claims should identify exactly which syntax, domain, or mailbox checks were performed.</p>
         
         <h4>The 3-Step ApexIntel Verification Protocol:</h4>
         <ol>
-          <li><strong>Syntax & Domain Integrity:</strong> We ensure RFC 5322 compliance and filter out disposable mail providers (Mailinator, GuerillaMail, etc.).</li>
-          <li><strong>DNS MX Ping:</strong> We query authoritative nameservers for the target domain to ensure active Mail Exchange (MX) records exist (Google Workspace, Microsoft 365, etc.).</li>
-          <li><strong>Zero-Duplicate Ledger Check:</strong> Every record is hashed against our global database. If two agencies bought leads in Dallas, our deduplication ledger guarantees they never receive overlapping prospects.</li>
+          <li><strong>Contact field review:</strong> Dataset listings disclose the available contact fields and any documented validation status.</li>
+          <li><strong>DNS MX lookup:</strong> Where an email address is listed, the domain can be checked for published mail-exchange records. This does not prove the individual mailbox exists or guarantee inbox placement.</li>
+          <li><strong>Overlap policy:</strong> Any duplicate or territory policy is disclosed on the individual dataset listing. There is no universal platform-wide exclusivity guarantee.</li>
         </ol>
 
         <h4>Deliverability Best Practices:</h4>
-        <p>Always warm up your secondary sending domains, keep daily sending under 40 emails per inbox, and configure SPF, DKIM, and DMARC before launching outbound campaigns.</p>
+        <p>Follow your sending provider's rules, ramp sending gradually, configure SPF, DKIM, and DMARC, and honor opt-outs and applicable email-marketing laws.</p>
       `
     },
     playbook3: {
@@ -272,11 +272,11 @@
       readTime: '5 min read',
       content: `
         <h4>Understanding Cash-Pay Aesthetic Medicine</h4>
-        <p>Unlike traditional medical practices that bill health insurance, Medical Spas and Aesthetic clinics operate on 100% cash-pay, elective procedures (Botox, CoolSculpting, Morpheus8, dermal fillers).</p>
-        <p>A typical MedSpa patient has an annual lifetime value (LTV) exceeding <strong>$3,500 to $8,000</strong> due to recurring 3-month appointment cycles.</p>
+        <p>Unlike traditional medical practices that bill health insurance, Many aesthetic services are cash-pay, but billing varies by clinic, procedure, and patient.</p>
+        <p>Patient lifetime value varies widely by clinic, treatment mix, pricing, and retention. Use the clinic's own figures when building a business case.</p>
 
         <h4>The Number One Bottleneck in Aesthetic Sites</h4>
-        <p>Prospective patients browse treatment galleries on their iPhones. If the booking engine is slow or requires creating a password, patients bounce. Pitching friction-free SMS booking + Meta Retargeting ads is the highest-converting offer for this niche.</p>
+        <p>Prospective patients browse treatment galleries on their iPhones. If the booking engine is slow or requires creating a password, patients bounce. Potential opportunities include simpler booking flows, follow-up messaging, and appropriately configured retargeting.</p>
       `
     }
   };
