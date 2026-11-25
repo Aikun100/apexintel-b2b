@@ -1111,8 +1111,8 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-slate-400 uppercase font-bold mb-1">Contact Email *</label>
-              <input type="email" id="addLeadEmail" required placeholder="owner@company.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
+              <label class="block text-slate-400 uppercase font-bold mb-1">Contact Email (optional)</label>
+              <input type="email" id="addLeadEmail" placeholder="owner@company.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
             </div>
             <div>
               <label class="block text-slate-400 uppercase font-bold mb-1">Phone Number</label>
@@ -1129,8 +1129,8 @@
             <div>
               <label class="block text-slate-400 uppercase font-bold mb-1">Priority</label>
               <select id="addLeadPriority" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 focus:outline-none">
+                <option value="P2" selected>P2 - Moderate</option>
                 <option value="P1">P1 - High Priority</option>
-                <option value="P2">P2 - Moderate</option>
                 <option value="P3">P3 - Standard</option>
               </select>
             </div>
@@ -2443,7 +2443,7 @@
   };
 
 
-  window.submitNewManualLead = function (e) {
+  window.submitNewManualLead = async function (e) {
     e.preventDefault();
     const company = document.getElementById('addLeadCompany').value.trim();
     const domain = document.getElementById('addLeadDomain').value.trim().toLowerCase();
@@ -2456,34 +2456,37 @@
 
     const leads = getCrmLeads();
     const newLead = {
-      id: 'lead_' + Date.now(),
       company,
       domain,
-      contactName: 'Executive',
-      email,
-      phone: phone || '+1 555 0100',
+      contactName: null,
+      email: email || null,
+      phone: phone || null,
       city,
       territory: 'custom',
-      industry: 'B2B Client',
+      industry: 'Unclassified',
       status,
       priority,
-      opportunityScore: 88,
-      speed_ms: 650,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
+      opportunityScore: null,
+      speed_ms: null,
+      metaPixel: null,
+      googleAds: null,
+      campaignId: null,
       tags: ['manual-entry'],
-      notes: note ? [{ id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'User', text: note }] : [],
-      followUpDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-      savedAt: new Date().toISOString()
+      notes: note ? [{ id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: getUserData().name || 'User', text: note }] : [],
+      followUpDate: null
     };
 
-    leads.unshift(newLead);
-    saveCrmLeads(leads);
-    createLeadOnBackend(newLead);
-    window.closeAddLeadModal();
-    notify(`✓ Saved ${company} to CRM Pipeline!`);
-    renderCrmLeads();
+    try {
+      const savedLead = await createLeadOnBackend(newLead);
+      if (!savedLead) throw new Error('The server did not return a saved CRM record.');
+      saveCrmLeads([savedLead, ...getCrmLeads()]);
+      window.closeAddLeadModal();
+      notify('Business record saved to your CRM.');
+      renderCrmLeads();
+    } catch (error) {
+      console.warn('[CRM] Manual lead creation failed:', error);
+      notify(error.message || 'Unable to save this record. Please retry.');
+    }
   };
 
   window.exportCrmLeadsCsv = function () {
