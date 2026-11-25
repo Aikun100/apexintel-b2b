@@ -2068,48 +2068,56 @@
   };
 
   // Save lead to CRM from outside (Table / Scanner)
-  window.saveLeadToCrm = function (leadObj) {
+  window.saveLeadToCrm = async function (leadObj) {
+    if (!leadObj || !(leadObj.name || leadObj.company)) {
+      notify('This result does not contain a business name.');
+      return;
+    }
     const leads = getCrmLeads();
-    const domain = (leadObj.domain || (leadObj.email ? leadObj.email.split('@')[1] : '') || '').toLowerCase().trim();
-    
-    // Check if already in CRM
-    const existing = leads.find(l => l.domain === domain || (leadObj.name && l.company.toLowerCase() === leadObj.name.toLowerCase()));
+    const domain = String(leadObj.domain || (leadObj.email ? leadObj.email.split('@')[1] : '') || '').toLowerCase().trim();
+    const companyName = String(leadObj.name || leadObj.company);
+    const existing = leads.find(item =>
+      (domain && item.domain === domain) ||
+      ((item.company || '').toLowerCase() === companyName.toLowerCase())
+    );
     if (existing) {
-      notify(`ℹ️ ${existing.company} is already in your CRM (${existing.status})`);
+      notify(existing.company + ' is already in your CRM (' + (existing.status || 'New') + ').');
       window.openCustomerDashboard('crm');
-      window.openLeadDrawer(existing.id);
+      window.openLeadDrawer(existing.id || existing.leadId);
       return;
     }
 
     const newLead = {
-      id: 'lead_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-      company: leadObj.name || leadObj.company || 'New Prospect',
-      domain: domain || 'unknown.com',
-      contactName: leadObj.contactName || 'Managing Partner / Owner',
-      email: leadObj.email || `contact@${domain}`,
-      phone: leadObj.phone || '+1 555 0100',
-      city: leadObj.city || 'Dallas, TX',
-      territory: leadObj.territory || 'texas',
-      industry: leadObj.category || leadObj.industry || 'Commercial Services',
+      company: companyName,
+      domain: domain || null,
+      contactName: leadObj.contactName || null,
+      email: leadObj.email || null,
+      phone: leadObj.phone || null,
+      city: leadObj.city || null,
+      territory: leadObj.territory || null,
+      industry: leadObj.category || leadObj.industry || null,
       status: 'New',
-      priority: 'P1',
-      opportunityScore: 85,
-      speed_ms: parseInt(leadObj.speed) || 750,
-      metaPixel: (leadObj.pixel || '').toLowerCase().includes('meta'),
-      googleAds: (leadObj.pixel || '').toLowerCase().includes('google'),
-      campaignId: 'camp_tx_01',
-      tags: ['saved-from-table'],
-      notes: [
-        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'User', text: 'Saved from live dataset preview table.' }
-      ],
-      followUpDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-      savedAt: new Date().toISOString()
+      priority: 'P2',
+      opportunityScore: typeof leadObj.opportunityScore === 'number' ? leadObj.opportunityScore : null,
+      speed_ms: typeof leadObj.speed_ms === 'number' ? leadObj.speed_ms : null,
+      metaPixel: typeof leadObj.metaPixel === 'boolean' ? leadObj.metaPixel : null,
+      googleAds: typeof leadObj.googleAds === 'boolean' ? leadObj.googleAds : null,
+      campaignId: null,
+      tags: ['saved-from-discovery'],
+      notes: [],
+      followUpDate: null
     };
 
-    leads.unshift(newLead);
-    saveCrmLeads(leads);
-    createLeadOnBackend(newLead);
-    notify(`✓ Added ${newLead.company} to CRM Pipeline!`);
+    try {
+      const savedLead = await createLeadOnBackend(newLead);
+      saveCrmLeads([savedLead, ...getCrmLeads()]);
+      notify('Business record added to your CRM.');
+      window.openCustomerDashboard('crm');
+      renderCrmLeads();
+    } catch (error) {
+      console.warn('[CRM] Could not save discovery record:', error);
+      notify(error.message || 'Unable to save this record. Please retry.');
+    }
   };
 
   // Open Lead Profile Drawer
