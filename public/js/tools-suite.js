@@ -444,7 +444,7 @@
     const retEl = document.getElementById('roiRetainerVal');
     const monEl = document.getElementById('roiMonthsVal');
 
-    if (vEl) vEl.innerText = `${volume} Verified Leads`;
+    if (vEl) vEl.innerText = `${volume} Business Records`;
     if (rEl) rEl.innerText = `${(replyRate * 100).toFixed(1)}%`;
     if (mEl) mEl.innerText = `${(meetingRate * 100).toFixed(0)}%`;
     if (cEl) cEl.innerText = `${(closeRate * 100).toFixed(0)}%`;
