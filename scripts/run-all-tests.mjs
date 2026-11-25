@@ -2,15 +2,16 @@
 /**
  * ApexIntel B2B - Unified End-to-End Test Runner
  * 
- * Executes all 6 modular test suites across the ApexIntel serverless architecture:
+ * Executes all 7 modular test suites across the ApexIntel serverless architecture:
  * 1. Authentication & Session Lifecycle (60 tests)
  * 2. Multi-Tenant CRM Backend (24 tests)
- * 3. Stripe Payments & S3 Fulfillment (19 tests)
+ * 3. Stripe Payments & S3 Fulfillment (30 tests)
  * 4. Lead Discovery & Crawler Ingestion (15 tests)
- * 5. Website Scanner & SSRF Hardening (31 tests)
+ * 5. Website Scanner & SSRF Hardening (37 tests)
  * 6. Custom Extraction Requests & Admin Queue (17 tests)
+ * 7. End-to-End Customer Purchase Journey (9 tests)
  * 
- * Total Target: 158 automated tests, 0 failures.
+ * Total Target: 192 automated tests across 7 suites, 0 failures.
  */
 
 import { spawn } from 'node:child_process';
