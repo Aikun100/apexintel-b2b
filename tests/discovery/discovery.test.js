@@ -26,6 +26,8 @@ import { AuthService } from '../../src/auth/service.js';
 import { InMemoryAuthRepository, setAuthRepository } from '../../src/auth/repository.js';
 import { serializeSessionCookie } from '../../src/auth/session.js';
 import { processLeadIngestionBatch } from '../../aws/lambda-crawler-handler.mjs';
+import { InMemoryOrdersRepository, setOrdersRepository } from '../../src/payments/repository.js';
+import { InMemoryRequestsRepository, setRequestsRepository } from '../../src/requests/repository.js';
 
 // Setup Mock Repositories
 const authRepo = new InMemoryAuthRepository();
@@ -36,6 +38,10 @@ const discoveryRepo = new InMemoryDiscoveryRepository();
 setDiscoveryRepository(discoveryRepo);
 
 const discoveryService = new DiscoveryService({ repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
+const ordersRepo = new InMemoryOrdersRepository();
+setOrdersRepository(ordersRepo);
+const requestsRepo = new InMemoryRequestsRepository();
+setRequestsRepository(requestsRepo);
 
 function dispatch(reqObj) {
   return dispatchDiscoveryRoute(reqObj, discoveryService, authService);
@@ -360,5 +366,45 @@ test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
     // Verify repository now has ingested leads
     const searchRes = await discoveryRepo.searchLeads();
     assert.ok(searchRes.totalCount > 0);
+
+    await ordersRepo.createOrder({
+      orderId: 'ord_real_test_1',
+      userId: customerUser.user.userId,
+      userEmail: customerUser.user.email,
+      productKey: 'texas',
+      productName: 'Texas High-Ticket Contractors',
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'paid',
+      stripeSessionId: 'cs_test_real_order',
+      createdAt: '2026-11-25T10:00:00.000Z'
+    });
+    await requestsRepo.createRequest({
+      requestId: 'req_real_test_1',
+      userId: customerUser.user.userId,
+      status: 'Submitted',
+      industry: 'Roofing',
+      territory: 'Dallas, TX',
+      volume: 100,
+      createdAt: '2026-11-25T11:00:00.000Z'
+    });
+
+    const overview = await dispatch({
+      method: 'GET',
+      path: '/api/admin/overview',
+      headers: { cookie: adminUser.cookie }
+    });
+    assert.equal(overview.statusCode, 200);
+    assert.equal(overview.body.metrics.totalRevenue, 79);
+    assert.equal(overview.body.metrics.paidOrdersCount, 1);
+    assert.equal(overview.body.metrics.totalUsers, 2);
+    assert.equal(overview.body.metrics.activeLeadsPool, 1);
+    assert.equal(overview.body.metrics.customRequestsCount, 1);
+    assert.equal(overview.body.metrics.pendingCustomRequests, 1);
+    assert.equal(overview.body.recentOrders[0].id, 'ord_real_test_1');
+    assert.equal(overview.body.customRequests[0].requestId, 'req_real_test_1');
+    assert.equal(overview.body.inventorySummary.length, 4);
+    assert.ok(!JSON.stringify(overview.body).includes('alex@velocitygrowth.io'));
   });
 });
