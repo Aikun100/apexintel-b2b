@@ -258,6 +258,8 @@ export async function dispatchDiscoveryRoute(reqObj, service = discoveryService,
       const inventorySummary = listProducts().map(product => ({
         packKey: product.key,
         title: product.title,
+        territory: product.territory,
+        niche: product.niche,
         count: product.leadsCount,
         status: 'Catalogued'
       }));
