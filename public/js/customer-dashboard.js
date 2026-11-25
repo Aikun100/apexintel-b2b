@@ -1262,7 +1262,7 @@
           const cty = escapeHTML(l.city || '');
           const prio = escapeHTML(l.priority || 'P2');
           const fuDate = escapeHTML(l.followUpDate || '');
-          const score = typeof l.opportunityScore === 'number' ? l.opportunityScore : 80;
+          const score = typeof l.opportunityScore === 'number' ? l.opportunityScore : null;
 
           tr.innerHTML = `
             <td class="py-3 px-4" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
@@ -1612,10 +1612,10 @@
                 : 'other',
               industry: l.trade || l.category || 'Not specified',
               speed_ms: Number.isFinite(Number(l.speed_ms)) && Number(l.speed_ms) > 0 ? Number(l.speed_ms) : null,
-              metaPixel: Boolean(l.meta_pixel),
-              googleAds: Boolean(l.google_ads),
-              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 0)),
-              tags: [l.meta_pixel ? 'meta-active' : 'missing-pixel'],
+              metaPixel: typeof l.meta_pixel === 'boolean' ? l.meta_pixel : null,
+              googleAds: typeof l.google_ads === 'boolean' ? l.google_ads : null,
+              opportunityScore: typeof l.opportunityScore === 'number' ? l.opportunityScore : null,
+              tags: [l.meta_pixel === null || l.meta_pixel === undefined ? 'tracking-unknown' : (l.meta_pixel ? 'meta-active' : 'missing-pixel')],
               isLiveApi: true
             }));
             renderDiscoverTab();
@@ -1697,7 +1697,7 @@
 
     if (savedEl) savedEl.innerText = leads.length;
     if (discoverEl) discoverEl.innerText = String(discoveryPool.length);
-    if (highOppEl) highOppEl.innerText = String(leads.filter(l => (l.opportunityScore || 0) >= 85).length);
+    if (highOppEl) highOppEl.innerText = String(leads.filter(l => typeof l.opportunityScore === 'number' && l.opportunityScore >= 85).length);
     if (activeReqEl) activeReqEl.innerText = requests.filter(r => r.status !== 'Delivered' && r.status !== 'Cancelled').length;
 
     // Render pipeline status progress bars
@@ -1961,7 +1961,7 @@
           </span>
         </td>
         <td class="py-3 px-4 text-center">
-          <span class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-300 font-mono font-bold text-xs">${lead.opportunityScore || 90}</span>
+          <span class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-300 font-mono font-bold text-xs">${lead.opportunityScore == null ? 'Not scored' : lead.opportunityScore}</span>
         </td>
         <td class="py-3 px-4 font-mono text-[11px] text-slate-400">
           ${lead.followUpDate ? `📅 ${lead.followUpDate}` : '<span class="text-slate-600">—</span>'}
@@ -2168,7 +2168,7 @@
     document.getElementById('drawerEmailVal').innerText = lead.email;
     document.getElementById('drawerPhoneVal').innerText = lead.phone;
     document.getElementById('drawerSpeedVal').innerText = `${lead.speed_ms || 700}ms`;
-    document.getElementById('drawerScoreVal').innerText = `${lead.opportunityScore || 85}/100`;
+    document.getElementById('drawerScoreVal').innerText = `${lead.opportunityScore == null ? 'Not scored' : `${lead.opportunityScore}/100`}`;
     document.getElementById('drawerTrackingVal').innerText = `${lead.metaPixel ? 'Meta' : 'No Pixel'} / ${lead.googleAds ? 'Google Ads' : 'No Ads'}`;
 
     const statusSel = document.getElementById('drawerStatusSelect');
