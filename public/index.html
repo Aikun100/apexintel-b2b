@@ -737,7 +737,7 @@
             <div class="relative h-48 overflow-hidden bg-slate-950">
               <img src="/covers/thumbnail_medspas.png" alt="California MedSpas" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
               <span class="absolute top-3 right-3 text-[10px] font-mono font-bold bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-emerald-400 border border-emerald-500/30">
-                100% DNS MX
+                DNS MX status
               </span>
             </div>
             <div class="p-6 space-y-3">
@@ -772,7 +772,7 @@
             <div class="relative h-48 overflow-hidden bg-slate-950">
               <img src="/covers/thumbnail_hvac.png" alt="Commercial HVAC" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
               <span class="absolute top-3 right-3 text-[10px] font-mono font-bold bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-emerald-400 border border-emerald-500/30">
-                100% DNS MX
+                DNS MX status
               </span>
             </div>
             <div class="p-6 space-y-3">
@@ -3600,7 +3600,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
                   <span>📦</span> My Datasets & Downloads
                 </button>
                 <button onclick="openCustomerDashboard('ledger'); toggleUserDropdown(false);" class="w-full text-left px-3 py-2 rounded-xl text-slate-200 hover:bg-slate-900 hover:text-white flex items-center gap-2 transition">
-                  <span>🛡️</span> Zero-Duplicate Ledger
+                  <span>🛡️</span> Delivery History
                 </button>
                 <button onclick="openCustomerDashboard('api'); toggleUserDropdown(false);" class="w-full text-left px-3 py-2 rounded-xl text-slate-200 hover:bg-slate-900 hover:text-white flex items-center gap-2 transition">
                   <span>🔑</span> CRM & API Credentials
@@ -4691,7 +4691,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Deliverability</span>
-                <div class="text-2xl font-black text-indigo-400 mt-1">100% <span class="text-xs text-slate-500 font-normal">MX-OK</span></div>
+                <div class="text-2xl font-black text-indigo-400 mt-1">— <span class="text-xs text-slate-500 font-normal">MX status</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Export Formats</span>
@@ -4728,18 +4728,18 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="text-base font-black text-white">Zero-Duplicate Cloud Guarantee</h4>
-                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active & Syncing</span>
+                    <h4 class="text-base font-black text-white">Delivery History & Access</h4>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Backend tracked</span>
                   </div>
                   <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                    Every lead delivered to your agency is hashed and mapped into our <strong>Amazon DynamoDB</strong> ledger. When you order additional territories or renewal batches, our fulfillment engine automatically purges any lead you have ever received.
+                    The platform stores purchase and download records server-side. This panel displays delivery records only when they are returned by the backend. Check each dataset's listing for its specific overlap or exclusivity terms.
                   </p>
                 </div>
               </div>
               <div class="bg-slate-950/90 border border-slate-800 p-3 rounded-xl text-center shrink-0 w-full sm:w-auto">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Unique Records</span>
-                <span class="text-2xl font-black text-emerald-400 font-mono">72 / 72</span>
-                <span class="text-[10px] text-slate-500 block">0 Duplicates Sent</span>
+                <span class="text-2xl font-black text-emerald-400 font-mono">—</span>
+                <span class="text-[10px] text-slate-500 block">No records loaded</span>
               </div>
             </div>
 
@@ -6880,7 +6880,7 @@ Email:           ${user.email}
 Item Description:
 1x ${product}
 - Verified Decision-Maker Dataset Access
-- 100% Live DNS MX Resolution
+- DNS MX lookup where an email address is available
 - Exact Mobile Latency Speed (ms)
 - Ad Pixel Tracking Status (Meta / Google)
 -----------------------------------------------------
@@ -7677,7 +7677,7 @@ Support: support@apexintel-b2b.shop
 
     if (imgEl) imgEl.src = pack.img;
     if (titleEl) titleEl.innerText = pack.title;
-    if (descEl) descEl.innerText = `${pack.leadsCount} Leads • 100% DNS MX-Verified • ${pack.territory}`;
+    if (descEl) descEl.innerText = `${pack.leadsCount} Leads • Verification coverage shown • ${pack.territory}`;
     if (priceEl) priceEl.innerHTML = `$${pack.price}<span class="text-xs text-slate-400">.00</span>`;
     if (btnLabelEl) btnLabelEl.innerText = `⚡ Continue to Secure Stripe Checkout ($${pack.price}.00)`;
 
@@ -8170,7 +8170,7 @@ Support: support@apexintel-b2b.shop
             <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
               <span>💡</span> Auto-Generated Turnkey Cold Pitch Angle:
             </span>
-            <span class="text-[11px] text-indigo-400 font-mono">100% Ready for Outreach</span>
+            <span class="text-[11px] text-indigo-400 font-mono">Review before outreach</span>
           </div>
           <p id="scanPitchText" class="text-xs text-slate-300 font-mono bg-slate-900 p-4 rounded-xl border border-slate-800 leading-relaxed">
             "${suggestedPitch}"
@@ -8869,12 +8869,12 @@ Support: support@apexintel-b2b.shop
         <h4>The 3-Part Technical Angle Framework:</h4>
         <ol>
           <li><strong>The Objective Observation:</strong> "I was testing mobile contractor sites in Dallas and noticed your page takes 940ms to respond on mobile."</li>
-          <li><strong>The Commercial Consequence:</strong> "In high-ticket commercial roofing, 900ms+ latency causes over 25% of mobile visitors to bounce before the contact form renders."</li>
+          <li><strong>The Commercial Consequence:</strong> "A slow mobile response can add friction to the inquiry process. Use the business's own analytics to quantify any conversion impact."</li>
           <li><strong>The Friction-Free Offer:</strong> "I put together a 2-minute Loom showing the two uncompressed scripts causing this. Mind if I send it over?"</li>
         </ol>
 
         <h4>Handling The Ad Pixel Angle</h4>
-        <p>If an outfit is running Google Ads or local search campaigns but has no Meta Pixel installed, they are effectively burning 97% of their paid visitors. Remind them: <em>"A homeowner who visited your commercial roofing estimate page won't see your brand on Instagram or Facebook unless your retargeting pixel is active."</em></p>
+        <p>A missing Meta Pixel may limit one retargeting channel. Check whether server-side events or other tags are configured before drawing conclusions about campaign performance. Remind them: <em>"A homeowner who visited your commercial roofing estimate page won't see your brand on Instagram or Facebook unless your retargeting pixel is active."</em></p>
       `
     },
     playbook2: {
@@ -8882,18 +8882,18 @@ Support: support@apexintel-b2b.shop
       category: 'Data Engineering & Deliverability',
       readTime: '5 min read',
       content: `
-        <h4>What Does "100% DNS MX-Verified" Actually Mean?</h4>
-        <p>A basic scraped list simply extracts emails from raw HTML. Over 35% of those emails are dead, abandoned, or role accounts (like <code>jobs@</code> or <code>press@</code>) that cause high bounce rates and ruin your sending domain reputation.</p>
+        <h4>What Does a DNS MX Check Actually Confirm?</h4>
+        <p>Email addresses can be outdated, role-based, or invalid. Verification claims should identify exactly which syntax, domain, or mailbox checks were performed.</p>
         
         <h4>The 3-Step ApexIntel Verification Protocol:</h4>
         <ol>
-          <li><strong>Syntax & Domain Integrity:</strong> We ensure RFC 5322 compliance and filter out disposable mail providers (Mailinator, GuerillaMail, etc.).</li>
-          <li><strong>DNS MX Ping:</strong> We query authoritative nameservers for the target domain to ensure active Mail Exchange (MX) records exist (Google Workspace, Microsoft 365, etc.).</li>
-          <li><strong>Zero-Duplicate Ledger Check:</strong> Every record is hashed against our global database. If two agencies bought leads in Dallas, our deduplication ledger guarantees they never receive overlapping prospects.</li>
+          <li><strong>Contact field review:</strong> Dataset listings disclose the available contact fields and any documented validation status.</li>
+          <li><strong>DNS MX lookup:</strong> Where an email address is listed, the domain can be checked for published mail-exchange records. This does not prove the individual mailbox exists or guarantee inbox placement.</li>
+          <li><strong>Overlap policy:</strong> Any duplicate or territory policy is disclosed on the individual dataset listing. There is no universal platform-wide exclusivity guarantee.</li>
         </ol>
 
         <h4>Deliverability Best Practices:</h4>
-        <p>Always warm up your secondary sending domains, keep daily sending under 40 emails per inbox, and configure SPF, DKIM, and DMARC before launching outbound campaigns.</p>
+        <p>Follow your sending provider's rules, ramp sending gradually, configure SPF, DKIM, and DMARC, and honor opt-outs and applicable email-marketing laws.</p>
       `
     },
     playbook3: {
@@ -8915,11 +8915,11 @@ Support: support@apexintel-b2b.shop
       readTime: '5 min read',
       content: `
         <h4>Understanding Cash-Pay Aesthetic Medicine</h4>
-        <p>Unlike traditional medical practices that bill health insurance, Medical Spas and Aesthetic clinics operate on 100% cash-pay, elective procedures (Botox, CoolSculpting, Morpheus8, dermal fillers).</p>
-        <p>A typical MedSpa patient has an annual lifetime value (LTV) exceeding <strong>$3,500 to $8,000</strong> due to recurring 3-month appointment cycles.</p>
+        <p>Unlike traditional medical practices that bill health insurance, Many aesthetic services are cash-pay, but billing varies by clinic, procedure, and patient.</p>
+        <p>Patient lifetime value varies widely by clinic, treatment mix, pricing, and retention. Use the clinic's own figures when building a business case.</p>
 
         <h4>The Number One Bottleneck in Aesthetic Sites</h4>
-        <p>Prospective patients browse treatment galleries on their iPhones. If the booking engine is slow or requires creating a password, patients bounce. Pitching friction-free SMS booking + Meta Retargeting ads is the highest-converting offer for this niche.</p>
+        <p>Prospective patients browse treatment galleries on their iPhones. If the booking engine is slow or requires creating a password, patients bounce. Potential opportunities include simpler booking flows, follow-up messaging, and appropriately configured retargeting.</p>
       `
     }
   };
