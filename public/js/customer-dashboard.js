@@ -2622,7 +2622,7 @@
 
     <div class="pitch-box">
       <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #34D399; text-transform: uppercase;">Diagnostic Strategic Angle</h3>
-      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">"${audit.pitch}"</p>
+      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">"${safePitch}"</p>
     </div>
 
     <div class="footer">
