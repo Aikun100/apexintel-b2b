@@ -39,6 +39,49 @@ export function normalizeDomain(rawDomain) {
   return domain;
 }
 
+function buildDiscoveryRecord(leadData, existing, domain, deliveredTo, createdAt, now) {
+  const choose = (incoming, previous) =>
+    incoming !== undefined && incoming !== null && incoming !== '' ? incoming : (previous ?? null);
+
+  const speedMs = choose(leadData.speed_ms, existing?.speed_ms);
+  const metaPixel = typeof leadData.meta_pixel === 'boolean'
+    ? leadData.meta_pixel
+    : (typeof existing?.meta_pixel === 'boolean' ? existing.meta_pixel : null);
+  const googleAds = typeof leadData.google_ads === 'boolean'
+    ? leadData.google_ads
+    : (typeof existing?.google_ads === 'boolean' ? existing.google_ads : null);
+  const mxVerified = typeof leadData.mx_verified === 'boolean'
+    ? leadData.mx_verified
+    : (typeof existing?.mx_verified === 'boolean' ? existing.mx_verified : null);
+
+  return {
+    ...leadData,
+    id: domain,
+    domain,
+    company_name: choose(leadData.company_name || leadData.name, existing?.company_name || existing?.name),
+    name: choose(leadData.name || leadData.company_name, existing?.name || existing?.company_name),
+    trade: choose(leadData.trade || leadData.category, existing?.trade || existing?.category),
+    category: choose(leadData.category || leadData.trade, existing?.category || existing?.trade),
+    city: choose(leadData.city || leadData.location, existing?.city || existing?.location),
+    location: choose(leadData.location || leadData.city, existing?.location || existing?.city),
+    email: choose(leadData.email, existing?.email),
+    phone: choose(leadData.phone, existing?.phone),
+    speed_ms: speedMs,
+    speed: choose(leadData.speed, existing?.speed) || (speedMs !== null ? `${speedMs}ms` : null),
+    pixel: choose(leadData.pixel, existing?.pixel) || (metaPixel === null ? null : (metaPixel ? 'Meta Pixel' : 'No Pixel')),
+    meta_pixel: metaPixel,
+    google_ads: googleAds,
+    cms: choose(leadData.cms || leadData.tech, existing?.cms || existing?.tech),
+    tech: choose(leadData.tech || leadData.cms, existing?.tech || existing?.cms),
+    mx_verified: mxVerified,
+    delivered_to: deliveredTo,
+    createdAt,
+    created_at: createdAt,
+    updatedAt: now,
+    lastCrawledAt: now
+  };
+}
+
 /**
  * In-Memory Discovery Adapter for unit testing, CI/CD, and offline development.
  */
@@ -63,35 +106,14 @@ export class InMemoryDiscoveryRepository {
 
     const createdAt = existing?.createdAt || existing?.created_at || leadData.createdAt || leadData.created_at || now;
 
-    const record = {
-      ...leadData,
-      id: domain,
-      domain,
-      company_name: leadData.company_name || leadData.name || existing?.company_name || domain,
-      name: leadData.company_name || leadData.name || existing?.name || domain,
-      trade: leadData.trade || leadData.category || existing?.trade || 'Contractors',
-      category: leadData.trade || leadData.category || existing?.category || 'Contractors',
-      city: leadData.city || leadData.location || existing?.city || 'Texas',
-      location: leadData.city || leadData.location || existing?.location || 'Texas',
-      email: leadData.email || existing?.email || `info@${domain}`,
-      phone: leadData.phone || existing?.phone || '+1 555 000 0000',
-      speed_ms: leadData.speed_ms !== undefined ? leadData.speed_ms : (existing?.speed_ms ?? 750),
-      speed: leadData.speed || `${leadData.speed_ms || existing?.speed_ms || 750}ms`,
-      pixel: leadData.pixel || (leadData.meta_pixel ? 'Meta Pixel' : 'No Pixel'),
-      meta_pixel: leadData.meta_pixel !== undefined ? leadData.meta_pixel : (existing?.meta_pixel ?? false),
-      google_ads: leadData.google_ads !== undefined ? leadData.google_ads : (existing?.google_ads ?? false),
-      cms: leadData.cms || leadData.tech || existing?.cms || 'WordPress',
-      tech: leadData.cms || leadData.tech || existing?.tech || 'WordPress',
-      mx_verified: leadData.mx_verified !== undefined ? leadData.mx_verified : (existing?.mx_verified ?? true),
-      delivered_to: deliveredTo,
-      createdAt,
-      created_at: createdAt,
-      updatedAt: now,
-      lastCrawledAt: now
-    };
+    const record = buildDiscoveryRecord(leadData, existing, domain, deliveredTo, createdAt, now);
 
     this.leadsByDomain.set(domain, record);
     return { ...record };
+  }
+
+  async countLeads() {
+    return this.leadsByDomain.size;
   }
 
   async batchUpsertLeads(leads) {
@@ -214,32 +236,7 @@ export class DynamoDBDiscoveryRepository {
 
     const createdAt = existing?.createdAt || existing?.created_at || leadData.createdAt || leadData.created_at || now;
 
-    const record = {
-      ...leadData,
-      id: domain,
-      domain,
-      company_name: leadData.company_name || leadData.name || existing?.company_name || domain,
-      name: leadData.company_name || leadData.name || existing?.name || domain,
-      trade: leadData.trade || leadData.category || existing?.trade || 'Contractors',
-      category: leadData.trade || leadData.category || existing?.category || 'Contractors',
-      city: leadData.city || leadData.location || existing?.city || 'Texas',
-      location: leadData.city || leadData.location || existing?.location || 'Texas',
-      email: leadData.email || existing?.email || `info@${domain}`,
-      phone: leadData.phone || existing?.phone || '+1 555 000 0000',
-      speed_ms: leadData.speed_ms !== undefined ? leadData.speed_ms : (existing?.speed_ms ?? 750),
-      speed: leadData.speed || `${leadData.speed_ms || existing?.speed_ms || 750}ms`,
-      pixel: leadData.pixel || (leadData.meta_pixel ? 'Meta Pixel' : 'No Pixel'),
-      meta_pixel: leadData.meta_pixel !== undefined ? leadData.meta_pixel : (existing?.meta_pixel ?? false),
-      google_ads: leadData.google_ads !== undefined ? leadData.google_ads : (existing?.google_ads ?? false),
-      cms: leadData.cms || leadData.tech || existing?.cms || 'WordPress',
-      tech: leadData.cms || leadData.tech || existing?.tech || 'WordPress',
-      mx_verified: leadData.mx_verified !== undefined ? leadData.mx_verified : (existing?.mx_verified ?? true),
-      delivered_to: deliveredTo,
-      createdAt,
-      created_at: createdAt,
-      updatedAt: now,
-      lastCrawledAt: now
-    };
+    const record = buildDiscoveryRecord(leadData, existing, domain, deliveredTo, createdAt, now);
 
     await this.docClient.send(new PutCommand({
       TableName: this.tableName,
@@ -247,6 +244,21 @@ export class DynamoDBDiscoveryRepository {
     }));
 
     return record;
+  }
+
+  async countLeads() {
+    let count = 0;
+    let ExclusiveStartKey;
+    do {
+      const result = await this.docClient.send(new ScanCommand({
+        TableName: this.tableName,
+        Select: 'COUNT',
+        ExclusiveStartKey
+      }));
+      count += result.Count || 0;
+      ExclusiveStartKey = result.LastEvaluatedKey;
+    } while (ExclusiveStartKey);
+    return count;
   }
 
   async batchUpsertLeads(leads) {
