@@ -919,72 +919,22 @@
           <!-- ==================== TAB: SETTINGS ==================== -->
           <div id="custTab-settings" class="space-y-6 hidden">
             <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-4">
-              <h4 class="text-sm font-black text-white flex items-center gap-2">
-                <span>👤</span> Agency Profile & Billing Details
-              </h4>
+              <h4 class="text-sm font-black text-white flex items-center gap-2"><span>👤</span> Account Profile</h4>
+              <p class="text-xs text-slate-500">These details are read from your authenticated account. Profile editing is not available in this workspace yet.</p>
               <div class="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Full Name</label>
-                  <input type="text" id="custSettingName" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Agency / Company Name</label>
-                  <input type="text" id="custSettingCompany" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Account Email</label>
-                  <input type="email" id="custSettingEmail" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Active Plan Tier</label>
-                  <input type="text" id="custSettingPlan" readonly class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 font-mono">
-                </div>
-              </div>
-              <div class="flex justify-end pt-2">
-                <button onclick="window.saveCustomerSettingsProfile()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition shadow">
-                  Save Changes
-                </button>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Full Name</label><div id="custSettingNameDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">Account name unavailable</div></div>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Company</label><div id="custSettingCompanyDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">Company not set</div></div>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Account Email</label><div id="custSettingEmailDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">Email unavailable</div></div>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Account Plan</label><div id="custSettingPlanDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono">No plan assigned</div></div>
               </div>
             </div>
 
-            <!-- Invoices -->
-            <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-3">
-              <h4 class="text-sm font-black text-white flex items-center gap-2">
-                <span>🧾</span> Invoices & Transaction Receipts
-              </h4>
-              <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
-                <table class="w-full text-left text-xs">
-                  <thead>
-                    <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase bg-slate-900/50">
-                      <th class="py-2.5 px-3">Invoice #</th>
-                      <th class="py-2.5 px-3">Dataset / Product</th>
-                      <th class="py-2.5 px-3">Date</th>
-                      <th class="py-2.5 px-3">Amount</th>
-                      <th class="py-2.5 px-3 text-right">Receipt</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-800 font-mono text-slate-300">
-                    <tr>
-                      <td class="py-2.5 px-3 text-indigo-400">INV-2026-1022</td>
-                      <td class="text-white">California Luxury MedSpas</td>
-                      <td class="text-slate-400">Nov 20, 2026</td>
-                      <td class="text-emerald-400">$89.00</td>
-                      <td class="text-right py-2.5 px-3">
-                        <button onclick="window.downloadCustomerInvoice('INV-2026-1022', 'California Luxury MedSpas', '$89.00', 'Nov 20, 2026')" class="text-xs text-indigo-400 hover:underline">Download .txt</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-2.5 px-3 text-indigo-400">INV-2026-0944</td>
-                      <td class="text-white">Florida Solar & Restoration</td>
-                      <td class="text-slate-400">Nov 18, 2026</td>
-                      <td class="text-emerald-400">$79.00</td>
-                      <td class="text-right py-2.5 px-3">
-                        <button onclick="window.downloadCustomerInvoice('INV-2026-0944', 'Florida Solar & Restoration', '$79.00', 'Nov 18, 2026')" class="text-xs text-indigo-400 hover:underline">Download .txt</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h4 class="text-sm font-black text-white">Order &amp; Payment History</h4>
+                <p class="text-xs text-slate-400 mt-1">Your server-backed purchases and payment status are listed in the Billing tab.</p>
               </div>
+              <button onclick="window.switchCustomerTab('billing')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold">Open Billing</button>
             </div>
 
             <!-- Sign Out -->
@@ -1006,13 +956,13 @@
           <div class="flex items-center gap-3">
             <span class="flex items-center gap-1.5 text-emerald-400 font-bold">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Live CRM Sync Active
+              Server sync active
             </span>
             <span>•</span>
-            <span>AWS Region: <code>ap-southeast-2</code></span>
+            <span>Authenticated workspace</span>
           </div>
           <div>
-            Need custom leads? <a href="#custom-request" onclick="window.closeCustomerDashboard()" class="text-emerald-400 font-semibold underline">Request Extraction ($299+)</a>
+            Need additional data? <a href="#custom-request" onclick="window.closeCustomerDashboard()" class="text-emerald-400 font-semibold underline">Request custom research</a>
           </div>
         </div>
 
