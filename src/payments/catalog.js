@@ -34,9 +34,9 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
       'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'
     ]),
     sampleRows: Object.freeze([
-      { company: 'Sutton Roofing', niche: 'Roofing & Exterior', city: 'Austin, TX', phone: '+1 512 394 9801', email: 'suttonroofinginc@gmail.com', tech: 'Google Analytics' },
-      { company: 'T Rock Roofing', niche: 'Storm Restoration', city: 'Dallas, TX', phone: '+1 469 931 9867', email: 'info@dallasroofer.com', tech: 'WordPress' },
-      { company: 'Lon Smith Roofing', niche: 'Roofing & Gutters', city: 'Dallas, TX', phone: '+1 800 317 4791', email: 'info@lonsmith.com', tech: 'WordPress, Google Analytics, Meta Pixel' }
+      { company: 'Sutton Roofing', niche: 'Roofing & Exterior', city: 'Austin, TX', phone: '+1 512 *** 9801', email: 's***@gmail.com', tech: 'Google Analytics' },
+      { company: 'T Rock Roofing', niche: 'Storm Restoration', city: 'Dallas, TX', phone: '+1 469 *** 9867', email: 'in**@d***.com', tech: 'WordPress' },
+      { company: 'Lon Smith Roofing', niche: 'Roofing & Gutters', city: 'Dallas, TX', phone: '+1 800 *** 4791', email: 'in**@l***.com', tech: 'WordPress, Google Analytics, Meta Pixel' }
     ])
   }),
   florida: Object.freeze({
@@ -65,9 +65,9 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
       'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'
     ]),
     sampleRows: Object.freeze([
-      { company: 'Tampa Bay Solar', niche: 'Commercial & Residential Solar', city: 'Tampa, FL', phone: '+1 813 827 6527', email: 'info@tampabaysolar.com', tech: 'WordPress, Google Analytics' },
-      { company: 'SunVena Solar', niche: 'High-Efficiency Solar & Storage', city: 'Orlando, FL', phone: '+1 407 553 9584', email: 'support@sunvena.com', tech: 'WordPress, Google Analytics' },
-      { company: 'Goldin Solar', niche: 'Hurricane-Resistant Solar', city: 'Miami, FL', phone: '+1 855 765 2730', email: 'Unavailable', tech: 'WordPress' }
+      { company: 'Tampa Bay Solar', niche: 'Commercial & Residential Solar', city: 'Tampa, FL', phone: '+1 813 *** 6527', email: 'in**@t***.com', tech: 'WordPress, Google Analytics' },
+      { company: 'SunVena Solar', niche: 'High-Efficiency Solar & Storage', city: 'Orlando, FL', phone: '+1 407 *** 9584', email: 's***@s***.com', tech: 'WordPress, Google Analytics' },
+      { company: 'Goldin Solar', niche: 'Hurricane-Resistant Solar', city: 'Miami, FL', phone: '+1 855 *** 2730', email: 'Unavailable', tech: 'WordPress' }
     ])
   }),
   medspas: Object.freeze({
@@ -96,9 +96,9 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
       'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'
     ]),
     sampleRows: Object.freeze([
-      { company: 'SkinSpirit Beverly Hills', niche: 'Luxury Injectables & Laser', city: 'Beverly Hills, CA', phone: '+1 855 383 7546', email: 'skinspirit@5wpr.com', tech: 'Google Analytics' },
-      { company: 'Epi Center MedSpa', niche: 'Regenerative Aesthetic Medicine', city: 'San Francisco, CA', phone: '+1 415 362 4754', email: 'reception@epicentermedspa.com', tech: 'WordPress, Meta Pixel' },
-      { company: 'Nob Hill Aesthetics', niche: 'Facial Balancing & Lasers', city: 'San Francisco, CA', phone: '+1 415 440 6800', email: 'serviceoffice@nobhillaesthetics.com', tech: 'Shopify, Google Analytics, Meta Pixel' }
+      { company: 'SkinSpirit Beverly Hills', niche: 'Luxury Injectables & Laser', city: 'Beverly Hills, CA', phone: '+1 855 *** 7546', email: 's***@5***.com', tech: 'Google Analytics' },
+      { company: 'Epi Center MedSpa', niche: 'Regenerative Aesthetic Medicine', city: 'San Francisco, CA', phone: '+1 415 *** 4754', email: 'r***@e***.com', tech: 'WordPress, Meta Pixel' },
+      { company: 'Nob Hill Aesthetics', niche: 'Facial Balancing & Lasers', city: 'San Francisco, CA', phone: '+1 415 *** 6800', email: 's***@n***.com', tech: 'Shopify, Google Analytics, Meta Pixel' }
     ])
   }),
   hvac: Object.freeze({
@@ -127,9 +127,9 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
       'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'
     ]),
     sampleRows: Object.freeze([
-      { company: 'Midwest Mechanical', niche: 'Energy Solutions & Commercial HVAC', city: 'Chicago, IL', phone: '+1 630 850 2300', email: 'answers@midwestmech.com', tech: 'Google Analytics' },
-      { company: 'Way Mechanical', niche: 'Commercial AC & Plumbing', city: 'Dallas, TX', phone: '+1 713 672 7545', email: 'sales@waymech.com', tech: 'Wix' },
-      { company: 'Shumate Commercial HVAC', niche: 'Commercial HVAC Replacement', city: 'Atlanta, GA', phone: '+1 678 584 0880', email: 'commercialsales@shumatemech.com', tech: 'Google Analytics' }
+      { company: 'Midwest Mechanical', niche: 'Energy Solutions & Commercial HVAC', city: 'Chicago, IL', phone: '+1 630 *** 2300', email: 'a***@m***.com', tech: 'Google Analytics' },
+      { company: 'Way Mechanical', niche: 'Commercial AC & Plumbing', city: 'Dallas, TX', phone: '+1 713 *** 7545', email: 's***@w***.com', tech: 'Wix' },
+      { company: 'Shumate Commercial HVAC', niche: 'Commercial HVAC Replacement', city: 'Atlanta, GA', phone: '+1 678 *** 0880', email: 'c***@s***.com', tech: 'Google Analytics' }
     ])
   })
 });
