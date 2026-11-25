@@ -1812,7 +1812,7 @@
 
     filtered.forEach(item => {
       const isAlreadySaved = currentLeads.some(l => l.domain === item.domain || l.id === item.id);
-      const speedColor = item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400');
+      const speedColor = item.speed_ms == null ? 'text-slate-500' : (item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400'));
 
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-800/40 transition';
@@ -1825,7 +1825,7 @@
         </td>
         <td class="py-3 px-4 font-mono text-slate-300 text-[11px]">${escapeHTML(item.city)}</td>
         <td class="py-3 px-4 text-slate-300">${escapeHTML(item.industry)}</td>
-        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms}ms</td>
+        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms == null ? 'Not measured' : `${item.speed_ms}ms`}</td>
         <td class="py-3 px-4">
           ${item.metaPixel ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta Active</span>' : '<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Missing Pixel</span>'}
         </td>
