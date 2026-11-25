@@ -9,6 +9,7 @@
 
 import { getDiscoveryRepository } from './repository.js';
 import { processLeadIngestionBatch } from '../../aws/lambda-crawler-handler.mjs';
+import { scoreLead } from '../tools/opportunity-scorer.js';
 
 /**
  * Mask an email address for public preview (e.g. "info@dallasroofer.com" -> "in**@dallasroofer.com")
@@ -95,6 +96,23 @@ export class DiscoveryService {
         : null;
       const metaPixel = typeof lead.meta_pixel === 'boolean' ? lead.meta_pixel : null;
       const googleAds = typeof lead.google_ads === 'boolean' ? lead.google_ads : null;
+      const opportunity = scoreLead({
+        speed_ms: speedMs,
+        meta_pixel: metaPixel,
+        google_ads: googleAds,
+        email,
+        phone,
+        mx_verified: typeof lead.mx_verified === 'boolean' ? lead.mx_verified : null,
+        cms: lead.cms || lead.tech || null,
+        trade: lead.trade || lead.category || null,
+        title: lead.title,
+        metaDesc: lead.metaDesc,
+        seoIssues: lead.seoIssues,
+        sslDetails: lead.sslDetails,
+        securityHeaders: lead.securityHeaders,
+        pixels: lead.pixels,
+        scanStatus: lead.scanStatus
+      });
 
       return {
         id: lead.id,
@@ -113,6 +131,10 @@ export class DiscoveryService {
         cms: lead.cms || lead.tech || null,
         tech: lead.tech || lead.cms || null,
         mx_verified: typeof lead.mx_verified === 'boolean' ? lead.mx_verified : null,
+        opportunityScore: opportunity.score,
+        opportunityGrade: opportunity.grade,
+        opportunityFactors: opportunity.factors,
+        provenance: opportunity.provenance,
         createdAt: lead.createdAt || lead.created_at || null,
         // Sensitive contact fields: masked unless user is platform admin; missing values stay unavailable.
         email: isAdmin ? email : maskEmail(email),
