@@ -22,12 +22,12 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
     filename: 'Texas_HighTicket_Contractors_Enriched_Audited.xlsx',
     description: '24 premier commercial & residential roofing, storm restoration, and solar outfits across Austin, Dallas, Houston & SA.',
     fieldCoverage: Object.freeze({
-      emailsAvailable: '13 / 24 verified decision maker inboxes',
+      emailsAvailable: '13 / 24 listed emails with DNS MX checks',
       phonesAvailable: '17 / 24 direct business lines',
-      verifiedTechAvailable: '17 / 24 stack & telemetry profiles'
+      verifiedTechAvailable: '17 / 24 technology and site-signal profiles'
     }),
     freshness: 'Audited November 2026',
-    provenanceSummary: '5-tier provenance taxonomy with DNS MX verification on active inboxes.',
+    provenanceSummary: 'Dataset-specific provenance notes; DNS MX checks apply where an email address is present. Mailbox delivery is not guaranteed.',
     limitations: 'Where businesses do not publish a direct email or phone, entries are marked Unavailable rather than guessed.',
     fieldDictionary: Object.freeze([
       'Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone',
@@ -53,12 +53,12 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
     filename: 'Florida_HighTicket_Solar_Restoration_Enriched.xlsx',
     description: 'Hurricane-grade commercial solar installers and rapid-response disaster mitigation contractors in South & Central Florida.',
     fieldCoverage: Object.freeze({
-      emailsAvailable: '5 / 8 verified decision maker inboxes',
+      emailsAvailable: '5 / 8 listed emails with DNS MX checks',
       phonesAvailable: '7 / 8 direct business lines',
-      verifiedTechAvailable: '7 / 8 stack & telemetry profiles'
+      verifiedTechAvailable: '7 / 8 technology and site-signal profiles'
     }),
     freshness: 'Audited November 2026',
-    provenanceSummary: '5-tier provenance taxonomy with DNS MX verification on active inboxes.',
+    provenanceSummary: 'Dataset-specific provenance notes; DNS MX checks apply where an email address is present. Mailbox delivery is not guaranteed.',
     limitations: 'Points-in-time telemetry; unlisted contact channels left Unavailable.',
     fieldDictionary: Object.freeze([
       'Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone',
@@ -84,12 +84,12 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
     filename: 'California_Luxury_MedSpas_Enriched_Audited.xlsx',
     description: 'Premier cosmetic dermatology, facial plastic surgery, and luxury injectable clinics across Beverly Hills, SF & San Diego.',
     fieldCoverage: Object.freeze({
-      emailsAvailable: '4 / 9 verified decision maker inboxes',
+      emailsAvailable: '4 / 9 listed emails with DNS MX checks',
       phonesAvailable: '7 / 9 direct business lines',
-      verifiedTechAvailable: '7 / 9 stack & telemetry profiles'
+      verifiedTechAvailable: '7 / 9 technology and site-signal profiles'
     }),
     freshness: 'Audited November 2026',
-    provenanceSummary: '5-tier provenance taxonomy with DNS MX verification on active inboxes.',
+    provenanceSummary: 'Dataset-specific provenance notes; DNS MX checks apply where an email address is present. Mailbox delivery is not guaranteed.',
     limitations: 'Clinic front-desk reception emails verified; private surgeon emails not fabricated.',
     fieldDictionary: Object.freeze([
       'Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone',
@@ -115,12 +115,12 @@ export const APEX_PRODUCT_CATALOG = Object.freeze({
     filename: 'Commercial_HVAC_Mechanical_Enriched_Audited.xlsx',
     description: 'Industrial chiller, VRF piping, and commercial building automation contractors across Chicago, DFW, and Atlanta.',
     fieldCoverage: Object.freeze({
-      emailsAvailable: '7 / 12 verified decision maker inboxes',
+      emailsAvailable: '7 / 12 listed emails with DNS MX checks',
       phonesAvailable: '11 / 12 direct business lines',
-      verifiedTechAvailable: '7 / 12 stack & telemetry profiles'
+      verifiedTechAvailable: '7 / 12 technology and site-signal profiles'
     }),
     freshness: 'Audited November 2026',
-    provenanceSummary: '5-tier provenance taxonomy with DNS MX verification on active inboxes.',
+    provenanceSummary: 'Dataset-specific provenance notes; DNS MX checks apply where an email address is present. Mailbox delivery is not guaranteed.',
     limitations: 'Cleaned email address entries; malformed legacy spreadsheet cells sanitized.',
     fieldDictionary: Object.freeze([
       'Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone',
