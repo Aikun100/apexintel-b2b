@@ -2638,10 +2638,9 @@
     const totalEl = document.getElementById('datasetsTotalLeadsCount');
     const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
     const paidOrders = orders.filter(order => String(order.status || '').toLowerCase() === 'paid');
-    const packRecordCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
     if (ownedEl) ownedEl.innerText = String(paidOrders.length);
     if (totalEl) {
-      const total = paidOrders.reduce((sum, order) => sum + (Number(order.leadsCount) || packRecordCounts[order.productKey] || 0), 0);
+      const total = paidOrders.reduce((sum, order) => sum + (order.leadsCount !== null && order.leadsCount !== undefined && Number.isFinite(Number(order.leadsCount)) ? Number(order.leadsCount) : 0), 0);
       totalEl.innerText = String(total);
     }
     if (!container) return;
@@ -2669,7 +2668,7 @@
       const orderId = escapeHTML(order.orderId || '');
       const productKey = escapeHTML(order.productKey || '');
       const status = escapeHTML(isPaid ? 'Paid' : (order.status || 'Pending'));
-      const recordCount = Number(order.leadsCount) || packRecordCounts[order.productKey] || null;
+      const recordCount = order.leadsCount !== null && order.leadsCount !== undefined && Number.isFinite(Number(order.leadsCount)) ? Number(order.leadsCount) : null;
       const card = document.createElement('div');
       card.className = 'bg-slate-900/80 border border-slate-800 hover:border-slate-700 p-4 rounded-2xl transition flex flex-col md:flex-row md:items-center justify-between gap-4';
       card.innerHTML = `
@@ -2706,10 +2705,9 @@
       tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No orders have been recorded for this account yet.</td></tr>';
       return;
     }
-    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
     orders.forEach(order => {
       const status = String(order.status || 'unknown');
-      const recordCount = Number(order.leadsCount) || packLeadCounts[order.productKey] || null;
+      const recordCount = order.leadsCount !== null && order.leadsCount !== undefined && Number.isFinite(Number(order.leadsCount)) ? Number(order.leadsCount) : null;
       const date = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Date unavailable';
       const row = document.createElement('tr');
       row.className = 'hover:bg-slate-900/40 transition';
