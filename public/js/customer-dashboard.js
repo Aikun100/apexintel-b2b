@@ -2727,7 +2727,7 @@
     if (avatarEl) avatarEl.innerText = firstLetter;
     if (nameEl) nameEl.innerText = user.name || 'Agency Member';
     if (planBadge) planBadge.innerText = user.plan || 'Plan not assigned';
-    const credits = Number.isFinite(Number(user.credits)) ? Number(user.credits) : null;
+    const credits = user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits)) ? Number(user.credits) : null;
     if (creditsEl) creditsEl.innerText = credits === null ? 'Credits unavailable' : `${credits} Leads Available`;
     if (companyEl) companyEl.innerHTML = `${escapeHTML(user.company || 'Company not set')} • <span class="text-indigo-400 font-mono font-bold">${credits === null ? 'Credits unavailable' : `${credits} Leads Available`}</span>`;
 
