@@ -724,7 +724,7 @@
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Deliverability</span>
-                <div class="text-2xl font-black text-indigo-400 mt-1">100% <span class="text-xs text-slate-500 font-normal">MX-OK</span></div>
+                <div class="text-2xl font-black text-indigo-400 mt-1">— <span class="text-xs text-slate-500 font-normal">MX status</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Export Formats</span>
@@ -761,18 +761,18 @@
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="text-base font-black text-white">Zero-Duplicate Cloud Guarantee</h4>
-                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active & Syncing</span>
+                    <h4 class="text-base font-black text-white">Delivery History & Access</h4>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Backend tracked</span>
                   </div>
                   <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                    Every lead delivered to your agency is hashed and mapped into our <strong>Amazon DynamoDB</strong> ledger. When you order additional territories or renewal batches, our fulfillment engine automatically purges any lead you have ever received.
+                    The platform stores purchase and download records server-side. This panel displays delivery records only when they are returned by the backend. Check each dataset's listing for its specific overlap or exclusivity terms.
                   </p>
                 </div>
               </div>
               <div class="bg-slate-950/90 border border-slate-800 p-3 rounded-xl text-center shrink-0 w-full sm:w-auto">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Unique Records</span>
-                <span class="text-2xl font-black text-emerald-400 font-mono">72 / 72</span>
-                <span class="text-[10px] text-slate-500 block">0 Duplicates Sent</span>
+                <span class="text-2xl font-black text-emerald-400 font-mono">—</span>
+                <span class="text-[10px] text-slate-500 block">No records loaded</span>
               </div>
             </div>
 
@@ -2913,7 +2913,7 @@ Email:           ${user.email}
 Item Description:
 1x ${product}
 - Verified Decision-Maker Dataset Access
-- 100% Live DNS MX Resolution
+- DNS MX lookup where an email address is available
 - Exact Mobile Latency Speed (ms)
 - Ad Pixel Tracking Status (Meta / Google)
 -----------------------------------------------------
