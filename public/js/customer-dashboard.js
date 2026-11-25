@@ -2552,125 +2552,104 @@
     link.click();
     notify(`Exported ${leads.length} CRM prospects to CSV!`);
   };
-
   window.exportAuditReport = function (auditId) {
     const audits = getAuditScans();
-    const audit = audits.find(a => a.id === auditId) || audits[0];
+    const audit = audits.find(item => item.id === auditId) || audits[0];
+    if (!audit) {
+      notify('No saved audit is available to export yet.');
+      return;
+    }
 
-    const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Website Intelligence Diagnostic — ${audit.domain}</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #070B14; color: #E2E8F0; padding: 40px; margin: 0; }
-    .container { max-width: 800px; margin: 0 auto; background: #0F172A; border: 1px solid #1E293B; border-radius: 20px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-    .header { border-bottom: 1px solid #1E293B; padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-    .badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
-    .card { background: #070B14; border: 1px solid #1E293B; border-radius: 12px; padding: 16px; text-align: center; }
-    .card-label { font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; }
-    .card-val { font-size: 20px; font-weight: 900; color: #38BDF8; margin-top: 6px; font-family: monospace; }
-    .pitch-box { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 20px; margin-top: 24px; }
-    .footer { margin-top: 32px; border-top: 1px solid #1E293B; padding-top: 16px; font-size: 11px; color: #64748B; text-align: center; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <span class="badge">Technical Audit Lab</span>
-        <h1 style="margin: 8px 0 0 0; font-size: 24px; color: #FFFFFF;">${audit.company || audit.domain}</h1>
-        <p style="margin: 4px 0 0 0; font-size: 12px; color: #94A3B8; font-family: monospace;">Target Domain: ${audit.domain}</p>
-      </div>
-      <div style="text-align: right;">
-        <span style="font-size: 11px; color: #64748B;">Audit Date</span>
-        <div style="font-size: 12px; font-weight: 700; color: #E2E8F0;">${audit.scannedAt}</div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="card-label">Mobile TTFB Latency</div>
-        <div class="card-val" style="color: ${audit.speed_ms > 900 ? '#F43F5E' : '#10B981'};">${audit.speed_ms}ms</div>
-      </div>
-      <div class="card">
-        <div class="card-label">CMS Platform</div>
-        <div class="card-val" style="font-size: 14px; color: #F8FAFC;">${audit.cms}</div>
-      </div>
-      <div class="card">
-        <div class="card-label">Opportunity Score</div>
-        <div class="card-val" style="color: #6366F1;">${audit.icpScore}/100</div>
-      </div>
-    </div>
-
-    <div class="pitch-box">
-      <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #34D399; text-transform: uppercase;">Diagnostic Strategic Angle</h3>
-      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">"${audit.pitch}"</p>
-    </div>
-
-    <div class="footer">
-      Generated via ApexIntel B2B Website Intelligence Systems • Cloud Fulfillment ap-southeast-2
-    </div>
-  </div>
-</body>
-</html>`;
-
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+    const safe = {
+      domain: escapeHTML(audit.domain || ''),
+      company: escapeHTML(audit.company || audit.domain || 'Website audit'),
+      scannedAt: escapeHTML(audit.scannedAt ? new Date(audit.scannedAt).toLocaleString() : 'Date unavailable'),
+      speed: audit.speed_ms == null ? 'Not measured' : escapeHTML(audit.speed_ms) + 'ms',
+      cms: escapeHTML(audit.cms || 'Not detected'),
+      meta: audit.metaPixel === null || audit.metaPixel === undefined ? 'Unknown' : (audit.metaPixel ? 'Detected' : 'Not detected'),
+      ads: audit.googleAds === null || audit.googleAds === undefined ? 'Unknown' : (audit.googleAds ? 'Detected' : 'Not detected'),
+      score: audit.icpScore == null ? 'Not scored' : escapeHTML(audit.icpScore) + '/100',
+      pitch: escapeHTML(audit.pitch || 'No outreach suggestion was generated.'),
+      failed: escapeHTML(Array.isArray(audit.failedChecks) ? audit.failedChecks.join(', ') : 'Not available')
+    };
+    const report = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Website Diagnostic — ' + safe.domain + '</title>' +
+      '<style>body{font:15px/1.6 Arial,sans-serif;background:#070b14;color:#e2e8f0;padding:32px}.card{max-width:760px;margin:auto;background:#0f172a;border:1px solid #334155;border-radius:18px;padding:28px}h1{font-size:24px}small{color:#94a3b8}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.metric{background:#070b14;border:1px solid #334155;border-radius:12px;padding:14px}.label{font-size:11px;color:#94a3b8;text-transform:uppercase}.value{font-size:20px;font-weight:800;color:#38bdf8}.note{margin-top:22px;padding:16px;border:1px solid #334155;border-radius:12px}</style></head><body><main class="card"><small>APEXINTEL • WEBSITE DIAGNOSTIC</small><h1>' + safe.company + '</h1><p>Target domain: ' + safe.domain + '</p><p><small>Scanned: ' + safe.scannedAt + '</small></p><section class="grid"><div class="metric"><div class="label">Response time</div><div class="value">' + safe.speed + '</div></div><div class="metric"><div class="label">Technology</div><div class="value">' + safe.cms + '</div></div><div class="metric"><div class="label">Meta Pixel</div><div class="value">' + safe.meta + '</div></div><div class="metric"><div class="label">Google Ads tag</div><div class="value">' + safe.ads + '</div></div><div class="metric"><div class="label">Research score</div><div class="value">' + safe.score + '</div></div><div class="metric"><div class="label">Failed checks</div><div class="value">' + safe.failed + '</div></div></section><section class="note"><h2>Suggested research angle</h2><p>' + safe.pitch + '</p><small>Point-in-time website diagnostics are not a guarantee of performance, tracking coverage, or conversion outcomes.</small></section></main></body></html>';
+    const blob = new Blob([report], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `audit_report_${audit.domain}.html`;
+    link.href = url;
+    link.download = 'audit_report_' + String(audit.domain || 'website').replace(/[^a-z0-9.-]/gi, '_') + '.html';
+    document.body.appendChild(link);
     link.click();
-    notify(`Exported client audit report for ${audit.domain}!`);
-  };
+    link.remove();
+    URL.revokeObjectURL(url);
+    notify('Audit report exported.');
+  }
+  window.downloadCustomExtractionCsv = function (requestId) {
+    const requests = Array.isArray(window.userCustomRequests) ? window.userCustomRequests : [];
+    const request = requests.find(item => item.requestId === requestId || item.id === requestId);
+    if (!request) {
+      notify('Custom research request was not found for this account.');
+      return;
+    }
 
-  window.downloadCustomExtractionCsv = function (reqId) {
-    const list = getCustomRequests();
-    const req = list.find(r => r.id === reqId) || list[0];
-    
-    let csv = 'Company,Email,Phone,City,Industry,Territory,Status\n';
-    csv += `"Phoenix Sun Solar","service@phoenixsun.com","+1 602 555 8920","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Desert Ridge Roofing Pros","office@desertridgeroof.com","+1 480 555 1204","Scottsdale, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Camelback Commercial HVAC","dispatch@camelbackmech.com","+1 602 555 4411","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
+    const records = Array.isArray(request.deliveredRecords)
+      ? request.deliveredRecords
+      : (Array.isArray(request.results) ? request.results : []);
+    if (!records.length) {
+      notify('No delivered records are attached to this request yet.');
+      return;
+    }
 
+    const headers = Array.from(new Set(records.flatMap(record => Object.keys(record || {}))));
+    const escapeCsv = value => '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+    const csv = [headers.map(escapeCsv).join(',')]
+      .concat(records.map(record => headers.map(key => escapeCsv(record[key])).join(',')))
+      .join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `custom_extraction_${req.id}.csv`;
+    link.href = url;
+    link.download = 'custom_research_' + String(request.requestId || request.id).replace(/[^a-z0-9_-]/gi, '_') + '.csv';
+    document.body.appendChild(link);
     link.click();
-    notify(`Downloaded custom dataset for ${req.id}!`);
-  };
-
+    link.remove();
+    URL.revokeObjectURL(url);
+    notify('Delivered records exported.');
+  }
   window.loadUserOrdersFromBackend = async function () {
     const user = getUserData();
-    if (!user || !user.email) return;
+    if (!user || !user.email) {
+      userPurchasedOrders = [];
+      populateDatasetsList();
+      populateLedgerList();
+      populateBillingInvoices();
+      return;
+    }
 
     try {
-      const resp = await fetch('/api/orders', {
+      const response = await fetch('/api/orders', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Accept': 'application/json' },
         credentials: 'include'
       });
-
-      if (!resp.ok) {
-        if (resp.status === 401) {
-          userPurchasedOrders = [];
-          populateDatasetsList();
-          return;
-        }
-        throw new Error(`Failed to load orders (${resp.status})`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !Array.isArray(data.orders)) {
+        if (response.status === 401) userPurchasedOrders = [];
+        else throw new Error(data.error || 'Unable to load account orders.');
+      } else {
+        userPurchasedOrders = data.orders;
       }
-
-      const data = await resp.json();
-      userPurchasedOrders = data.orders || [];
-      populateDatasetsList();
-    } catch (err) {
-      console.warn('[Orders Load Error]:', err.message);
-      populateDatasetsList();
+    } catch (error) {
+      console.warn('[Orders Load Error]:', error.message);
+      userPurchasedOrders = [];
     }
-  };
+
+    populateDatasetsList();
+    populateLedgerList();
+    populateBillingInvoices();
+    renderBillingTab();
+  }
 
 
   function populateDatasetsList() {
@@ -2747,46 +2726,70 @@
       container.appendChild(card);
     });
   }
-
+  function populateLedgerList() {
+    const tbody = document.getElementById('dedupeLedgerTableBody');
+    const countEl = document.getElementById('customerOrderHistoryCount');
+    if (!tbody) return;
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    if (countEl) countEl.innerText = String(orders.length);
+    tbody.innerHTML = '';
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No orders have been recorded for this account yet.</td></tr>';
+      return;
+    }
+    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
+    orders.forEach(order => {
+      const status = String(order.status || 'unknown');
+      const recordCount = Number(order.leadsCount) || packLeadCounts[order.productKey] || null;
+      const date = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Date unavailable';
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-slate-900/40 transition';
+      row.innerHTML = '<td class="py-2.5 px-4 text-indigo-300 font-bold">' + escapeHTML(order.orderId || 'Order ID unavailable') + '</td>' +
+        '<td class="py-2.5 px-4 text-white">' + escapeHTML(order.productName || order.productKey || 'Dataset') + '</td>' +
+        '<td class="py-2.5 px-4 text-slate-300">' + (recordCount === null ? 'Not specified' : recordCount) + '</td>' +
+        '<td class="py-2.5 px-4 text-slate-400">' + escapeHTML(date) + '</td>' +
+        '<td class="py-2.5 px-4 text-right"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-bold">' + escapeHTML(status) + '</span></td>';
+      tbody.appendChild(row);
+    });
+  }
 
   function refreshDashboardUserInfo() {
-    const user = getUserData();
+    const user = getUserData() || {};
     const avatarEl = document.getElementById('dashUserAvatar');
     const nameEl = document.getElementById('dashUserName');
     const companyEl = document.getElementById('dashUserCompany');
     const creditsEl = document.getElementById('dashUserCredits');
     const planBadge = document.getElementById('dashUserPlanBadge');
+    const displayName = user.name || 'Account';
+    const credits = user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits))
+      ? Number(user.credits)
+      : null;
+    const creditsLabel = credits === null ? 'Credits unavailable' : credits + ' Account Credits';
 
-    const firstLetter = (user.name || 'User').charAt(0).toUpperCase();
-    if (avatarEl) avatarEl.innerText = firstLetter;
-    if (nameEl) nameEl.innerText = user.name || 'Agency Member';
-    if (planBadge) planBadge.innerText = user.plan || 'Agency Growth';
-    if (creditsEl) creditsEl.innerText = `${user.credits || 250} Leads Available`;
-    if (companyEl) companyEl.innerHTML = `${user.company || 'Direct Agency'} • <span class="text-indigo-400 font-mono font-bold">${user.credits || 250} Leads Available</span>`;
+    if (avatarEl) avatarEl.innerText = displayName.charAt(0).toUpperCase();
+    if (nameEl) nameEl.innerText = displayName;
+    if (planBadge) planBadge.innerText = user.plan || 'No plan assigned';
+    if (creditsEl) creditsEl.innerText = creditsLabel;
+    if (companyEl) companyEl.innerHTML = escapeHTML(user.company || 'Company not set') +
+      ' • <span class="text-indigo-400 font-mono font-bold">' + escapeHTML(creditsLabel) + '</span>';
 
-    const setNam = document.getElementById('custSettingName');
-    const setCom = document.getElementById('custSettingCompany');
-    const setEma = document.getElementById('custSettingEmail');
-    const setPla = document.getElementById('custSettingPlan');
-
-    if (setNam) setNam.value = user.name || '';
-    if (setCom) setCom.value = user.company || '';
-    if (setEma) setEma.value = user.email || '';
-    if (setPla) setPla.value = user.plan || 'Enterprise Pro (Lifetime)';
-
-    const key = getCustomerApiKey();
-    const keyInput = document.getElementById('custApiKeyInput');
-    const keyPlaceholder = document.getElementById('curlKeyPlaceholder');
-    if (keyInput) keyInput.value = key;
-    if (keyPlaceholder) keyPlaceholder.innerText = key;
+    const fields = {
+      custSettingNameDisplay: displayName,
+      custSettingCompanyDisplay: user.company || 'Company not set',
+      custSettingEmailDisplay: user.email || 'Email unavailable',
+      custSettingPlanDisplay: user.plan || 'No plan assigned'
+    };
+    Object.entries(fields).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = value;
+    });
   }
-
-
   window.openCustomerDashboard = function (initialTab = 'overview') {
     injectDashboardHTML();
     refreshDashboardUserInfo();
     window.loadCrmLeadsFromBackend();
     window.loadUserOrdersFromBackend();
+    if (typeof window.loadCrmCampaignsFromBackend === 'function') window.loadCrmCampaignsFromBackend();
     window.switchCustomerTab(initialTab);
 
     const modal = document.getElementById('customerDashboard');
@@ -2794,7 +2797,7 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
     }
-  };
+  }
 
 
   window.closeCustomerDashboard = function () {
@@ -2848,20 +2851,18 @@
       notify(`Download error: ${err.message}`);
     }
   };
-
-
   window.downloadDatasetPacks = function (keyOrOrderId) {
-    const order = userPurchasedOrders.find(o => o.orderId === keyOrOrderId || o.productKey === keyOrOrderId);
+    const order = (userPurchasedOrders || []).find(item =>
+      item.status === 'paid' && (item.orderId === keyOrOrderId || item.productKey === keyOrOrderId)
+    );
     if (order) {
       window.downloadDatasetOrder(order.orderId);
     } else {
-      notify('No paid order found for this dataset. Please complete checkout to unlock.');
+      notify('No paid order found for this dataset. Complete checkout to unlock the download.');
     }
-  };
-
-
+  }
   window.downloadCombinedMasterDataset = function () {
-    notify('Datasets are securely delivered per verified order. Access individual packs above.');
-  };
+    notify('Datasets are delivered per paid order. Use the download action on each purchased dataset.');
+  }
 
 })();
