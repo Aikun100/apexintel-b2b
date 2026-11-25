@@ -382,6 +382,17 @@ test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
     const searchRes = await discoveryRepo.searchLeads();
     assert.ok(searchRes.totalCount > 0);
 
+    const scoredSearch = await dispatch({
+      method: 'GET',
+      path: '/api/discovery/search?limit=10',
+      headers: { cookie: adminUser.cookie }
+    });
+    assert.equal(scoredSearch.statusCode, 200);
+    assert.ok(Number.isFinite(scoredSearch.body.leads[0].opportunityScore));
+    assert.ok(['A', 'B', 'C', 'D'].includes(scoredSearch.body.leads[0].opportunityGrade));
+    assert.equal(scoredSearch.body.leads[0].provenance.email, 'Publicly Listed');
+    assert.equal(scoredSearch.body.leads[0].opportunityFactors.length, 6);
+
     await ordersRepo.createOrder({
       orderId: 'ord_real_test_1',
       userId: customerUser.user.userId,
