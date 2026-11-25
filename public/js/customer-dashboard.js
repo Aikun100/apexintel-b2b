@@ -77,26 +77,21 @@
       console.warn('[CRM Sync] Failed to update lead on server:', err);
     }
   }
-
   async function createLeadOnBackend(lead) {
-    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
-    try {
-      const res = await fetch('/api/crm/leads', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(lead)
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.lead;
-      }
-    } catch (err) {
-      console.warn('[CRM Sync] Failed to create lead on server:', err);
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
+      throw new Error('Sign in before adding a CRM record.');
     }
+    const response = await fetch('/api/crm/leads', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(lead)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.success || !data.lead) {
+      throw new Error(data.error || 'The server could not save this CRM record.');
+    }
+    return data.lead;
   }
 
   async function deleteLeadFromBackend(leadId) {
@@ -1797,46 +1792,56 @@
   };
 
   // Add discovered lead to CRM
-  window.addDiscoveredLeadToCrm = function (leadId) {
-    const item = getDiscoveryPool().find(l => l.id === leadId);
-    if (!item) return;
-
+  window.addDiscoveredLeadToCrm = async function (leadObj) {
+    if (!leadObj || !(leadObj.name || leadObj.company)) {
+      notify('This discovery result does not contain a business name.');
+      return;
+    }
     const leads = getCrmLeads();
-    if (leads.some(l => l.domain === item.domain)) {
-      notify('This company is already in your CRM pipeline.');
+    const companyName = String(leadObj.name || leadObj.company);
+    const domain = String(leadObj.domain || '').toLowerCase();
+    const existing = leads.find(item =>
+      (domain && item.domain === domain) ||
+      ((item.company || '').toLowerCase() === companyName.toLowerCase())
+    );
+    if (existing) {
+      notify('This business is already in your CRM.');
+      window.openCustomerDashboard('crm');
+      window.openLeadDrawer(existing.id);
       return;
     }
 
     const newLead = {
-      id: 'crm_' + Date.now().toString(36),
-      company: item.company,
-      domain: item.domain,
-      contactName: item.contactName,
-      email: item.email,
-      phone: item.phone,
-      city: item.city,
-      territory: item.territory,
-      industry: item.industry,
+      company: companyName,
+      domain: domain || null,
+      contactName: leadObj.contactName || null,
+      email: leadObj.email || null,
+      phone: leadObj.phone || null,
+      city: leadObj.city || null,
+      territory: leadObj.territory || null,
+      industry: leadObj.category || leadObj.industry || null,
       status: 'New',
-      priority: 'P1',
-      opportunityScore: item.opportunityScore,
-      speed_ms: item.speed_ms,
-      metaPixel: item.metaPixel,
-      googleAds: item.googleAds,
-      tags: [...(item.tags || [])],
-      notes: [
-        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'System Discovery', text: `Added from ${String(item.territory || 'discovery').toUpperCase()} discovery catalog.` }
-      ],
-      savedAt: new Date().toISOString()
+      priority: 'P2',
+      opportunityScore: typeof leadObj.opportunityScore === 'number' ? leadObj.opportunityScore : null,
+      speed_ms: typeof leadObj.speed_ms === 'number' ? leadObj.speed_ms : null,
+      metaPixel: typeof leadObj.metaPixel === 'boolean' ? leadObj.metaPixel : null,
+      googleAds: typeof leadObj.googleAds === 'boolean' ? leadObj.googleAds : null,
+      campaignId: null,
+      tags: ['saved-from-discovery'],
+      notes: [],
+      followUpDate: null
     };
 
-    leads.unshift(newLead);
-    saveCrmLeads(leads);
-    createLeadOnBackend(newLead);
-    notify(`Added ${item.company} to your CRM Pipeline!`);
-    renderDiscoverTab();
-    renderCrmLeads();
-  };
+    try {
+      const savedLead = await createLeadOnBackend(newLead);
+      saveCrmLeads([savedLead, ...getCrmLeads()]);
+      notify('Business record added to your CRM.');
+      renderCrmLeads();
+    } catch (error) {
+      console.warn('[CRM] Could not save discovery record:', error);
+      notify(error.message || 'Unable to save this record. Please retry.');
+    }
+  }
 
   // Quick audit launcher from discovery row
   window.auditDiscoveredDomain = function (domain) {
@@ -2110,33 +2115,37 @@
   // Open Lead Profile Drawer
   window.openLeadDrawer = function (leadId) {
     const leads = getCrmLeads();
-    const lead = leads.find(l => l.id === leadId);
+    const lead = leads.find(item => item.id === leadId || item.leadId === leadId);
     if (!lead) return;
 
     activeLeadInDrawer = lead;
-
-    document.getElementById('drawerCompanyName').innerText = lead.company;
-    document.getElementById('drawerDomainAndCity').innerText = `${lead.domain} • ${lead.city}`;
-    document.getElementById('drawerContactName').innerText = lead.contactName || 'Decision Maker';
-    document.getElementById('drawerEmailVal').innerText = lead.email;
-    document.getElementById('drawerPhoneVal').innerText = lead.phone;
-    document.getElementById('drawerSpeedVal').innerText = `${lead.speed_ms || 700}ms`;
-    document.getElementById('drawerScoreVal').innerText = `${lead.opportunityScore == null ? 'Not scored' : `${lead.opportunityScore}/100`}`;
-    document.getElementById('drawerTrackingVal').innerText = `${lead.metaPixel ? 'Meta' : 'No Pixel'} / ${lead.googleAds ? 'Google Ads' : 'No Ads'}`;
+    const setText = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) element.innerText = value == null || value === '' ? 'Not provided' : String(value);
+    };
+    setText('drawerCompanyName', lead.company || 'Business record');
+    setText('drawerDomainAndCity', [lead.domain, lead.city].filter(Boolean).join(' • ') || 'Location and domain unavailable');
+    setText('drawerContactName', lead.contactName || 'Not provided');
+    setText('drawerEmailVal', lead.email || 'Not provided');
+    setText('drawerPhoneVal', lead.phone || 'Not provided');
+    setText('drawerSpeedVal', lead.speed_ms == null ? 'Not measured' : String(lead.speed_ms) + 'ms');
+    setText('drawerScoreVal', lead.opportunityScore == null ? 'Not scored' : String(lead.opportunityScore) + '/100');
+    const tracking = lead.metaPixel === null || lead.metaPixel === undefined
+      ? 'Meta: Not assessed'
+      : (lead.metaPixel ? 'Meta: Detected' : 'Meta: Not detected');
+    const ads = lead.googleAds === null || lead.googleAds === undefined
+      ? 'Google Ads: Not assessed'
+      : (lead.googleAds ? 'Google Ads: Detected' : 'Google Ads: Not detected');
+    setText('drawerTrackingVal', tracking + ' / ' + ads);
 
     const statusSel = document.getElementById('drawerStatusSelect');
-    if (statusSel) statusSel.value = lead.status;
-
-    const prioSel = document.getElementById('drawerPrioritySelect');
-    if (prioSel) prioSel.value = lead.priority || 'P1';
-
-    const prioBadge = document.getElementById('drawerPriorityBadge');
-    if (prioBadge) prioBadge.innerText = `${lead.priority || 'P1'} - Opportunity Tier`;
-
-    const dateInp = document.getElementById('drawerFollowUpDateInput');
-    if (dateInp) dateInp.value = lead.followUpDate || '';
-
-    // Render notes
+    if (statusSel) statusSel.value = lead.status || 'New';
+    const prioritySel = document.getElementById('drawerPrioritySelect');
+    if (prioritySel) prioritySel.value = lead.priority || 'P2';
+    const priorityBadge = document.getElementById('drawerPriorityBadge');
+    if (priorityBadge) priorityBadge.innerText = (lead.priority || 'P2') + ' - Priority';
+    const followUp = document.getElementById('drawerFollowUpDateInput');
+    if (followUp) followUp.value = lead.followUpDate || '';
     renderDrawerNotes(lead);
 
     const drawer = document.getElementById('leadProfileDrawer');
@@ -2144,7 +2153,7 @@
       drawer.classList.remove('hidden');
       drawer.classList.add('flex');
     }
-  };
+  }
 
   window.closeLeadDrawer = function () {
     const drawer = document.getElementById('leadProfileDrawer');
@@ -2352,36 +2361,37 @@
     renderDrawerNotes(activeLeadInDrawer);
     notify('Note added to lead record!');
   };
-
-
   window.copyDrawerEmail = function () {
-    if (activeLeadInDrawer) {
-      navigator.clipboard.writeText(activeLeadInDrawer.email);
-      notify(`Copied ${activeLeadInDrawer.email} to clipboard!`);
+    if (!activeLeadInDrawer || !activeLeadInDrawer.email) {
+      notify('No email address is listed for this record.');
+      return;
     }
-  };
-
-
+    navigator.clipboard.writeText(activeLeadInDrawer.email);
+    notify('Email address copied.');
+  }
   window.generateOutreachFromDrawer = function () {
     if (!activeLeadInDrawer) return;
     window.closeLeadDrawer();
     window.closeCustomerDashboard();
-    
-    // Populate Tool 3 Outreach Generator
+
     window.currentSelectedLead = {
-      name: activeLeadInDrawer.company,
-      domain: activeLeadInDrawer.domain,
-      speed: `${activeLeadInDrawer.speed_ms || 750}ms`,
-      pixel: activeLeadInDrawer.metaPixel ? 'Meta Pixel Active' : 'No Pixel',
-      tech: activeLeadInDrawer.googleAds ? 'Google Ads Active' : 'Organic Only'
+      name: activeLeadInDrawer.company || 'Business record',
+      domain: activeLeadInDrawer.domain || '',
+      speed: activeLeadInDrawer.speed_ms == null ? 'Not measured' : String(activeLeadInDrawer.speed_ms) + 'ms',
+      pixel: activeLeadInDrawer.metaPixel === null || activeLeadInDrawer.metaPixel === undefined
+        ? 'Not assessed'
+        : (activeLeadInDrawer.metaPixel ? 'Meta Pixel detected' : 'Meta Pixel not detected'),
+      tech: activeLeadInDrawer.googleAds === null || activeLeadInDrawer.googleAds === undefined
+        ? 'Not assessed'
+        : (activeLeadInDrawer.googleAds ? 'Google Ads tag detected' : 'Google Ads tag not detected')
     };
 
     location.hash = '#cold-outreach';
     if (typeof window.regenerateOutreachTemplates === 'function') {
       window.regenerateOutreachTemplates();
     }
-    notify(`Generated tailored outreach templates for ${activeLeadInDrawer.company}!`);
-  };
+    notify('Outreach draft context prepared. Verify all details before sending.');
+  }
 
 
   window.deleteLeadFromCrm = function (leadId) {
@@ -2441,10 +2451,8 @@
       modal.classList.remove('flex');
     }
   };
-
-
-  window.submitNewManualLead = async function (e) {
-    e.preventDefault();
+  window.submitNewManualLead = async function (event) {
+    event.preventDefault();
     const company = document.getElementById('addLeadCompany').value.trim();
     const domain = document.getElementById('addLeadDomain').value.trim().toLowerCase();
     const city = document.getElementById('addLeadCity').value.trim();
@@ -2454,16 +2462,15 @@
     const priority = document.getElementById('addLeadPriority').value;
     const note = document.getElementById('addLeadNote').value.trim();
 
-    const leads = getCrmLeads();
     const newLead = {
       company,
-      domain,
+      domain: domain || null,
       contactName: null,
       email: email || null,
       phone: phone || null,
-      city,
-      territory: 'custom',
-      industry: 'Unclassified',
+      city: city || null,
+      territory: null,
+      industry: null,
       status,
       priority,
       opportunityScore: null,
@@ -2472,13 +2479,17 @@
       googleAds: null,
       campaignId: null,
       tags: ['manual-entry'],
-      notes: note ? [{ id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: getUserData().name || 'User', text: note }] : [],
+      notes: note ? [{
+        id: 'n_' + Date.now(),
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        author: getUserData().name || 'User',
+        text: note
+      }] : [],
       followUpDate: null
     };
 
     try {
       const savedLead = await createLeadOnBackend(newLead);
-      if (!savedLead) throw new Error('The server did not return a saved CRM record.');
       saveCrmLeads([savedLead, ...getCrmLeads()]);
       window.closeAddLeadModal();
       notify('Business record saved to your CRM.');
@@ -2487,21 +2498,32 @@
       console.warn('[CRM] Manual lead creation failed:', error);
       notify(error.message || 'Unable to save this record. Please retry.');
     }
-  };
-
+  }
   window.exportCrmLeadsCsv = function () {
     const leads = getCrmLeads();
-    let csv = 'Company,Domain,Email,Phone,City,Status,Priority,Opportunity_Score,Follow_Up_Date\n';
-    leads.forEach(l => {
-      csv += `"${l.company}","${l.domain}","${l.email}","${l.phone}","${l.city}","${l.status}","${l.priority}","${l.opportunityScore}","${l.followUpDate || ''}"\n`;
-    });
+    if (!leads.length) {
+      notify('There are no CRM records to export yet.');
+      return;
+    }
+    const headers = ['Company', 'Domain', 'Email', 'Phone', 'City', 'Status', 'Priority', 'Opportunity Score', 'Follow-up Date'];
+    const escapeCsv = value => '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+    const csv = [headers.map(escapeCsv).join(',')]
+      .concat(leads.map(lead => [
+        lead.company, lead.domain, lead.email, lead.phone, lead.city,
+        lead.status, lead.priority, lead.opportunityScore, lead.followUpDate
+      ].map(escapeCsv).join(',')))
+      .join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `apexintel_crm_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.href = url;
+    link.download = 'apexintel_crm_export_' + new Date().toISOString().split('T')[0] + '.csv';
+    document.body.appendChild(link);
     link.click();
-    notify(`Exported ${leads.length} CRM prospects to CSV!`);
-  };
+    link.remove();
+    URL.revokeObjectURL(url);
+    notify('Exported ' + leads.length + ' CRM records.');
+  }
   window.exportAuditReport = function (auditId) {
     const audits = getAuditScans();
     const audit = audits.find(item => item.id === auditId) || audits[0];
