@@ -2661,7 +2661,8 @@
     orders.forEach(order => {
       const isPaid = String(order.status || '').toLowerCase() === 'paid';
       const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Date unavailable';
-      const amountValue = Number(order.amount);
+      const centsValue = order.amountInCents !== null && order.amountInCents !== undefined ? Number(order.amountInCents) : null;
+      const amountValue = centsValue !== null && Number.isFinite(centsValue) ? centsValue / 100 : Number(order.amount);
       const amountLabel = Number.isFinite(amountValue) ? new Intl.NumberFormat('en-US', { style: 'currency', currency: String(order.currency || 'USD').toUpperCase() }).format(amountValue) : 'Amount unavailable';
       const productName = escapeHTML(order.productName || order.productKey || 'Dataset');
       const filename = escapeHTML(order.filename || 'Dataset file');
@@ -2688,7 +2689,7 @@
         <div class="flex items-center gap-2 shrink-0">
           ${isPaid
             ? `<button onclick="window.downloadDatasetOrder('${orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"><span>📥 Download XLSX</span></button>`
-            : `<button onclick="window.redirectToStripeHostedCheckout('${productKey}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">Complete Payment</button>`}
+            : `<span class="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-bold">Awaiting payment confirmation</span>`}
         </div>`;
       container.appendChild(card);
     });
