@@ -925,96 +925,59 @@
 
           <!-- ==================== TAB: BILLING (#custTab-billing) ==================== -->
           <div id="custTab-billing" class="space-y-6 hidden">
-            <!-- Plan Overview Card -->
             <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div class="space-y-2">
                 <div class="flex items-center gap-2">
-                  <span class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">Active Subscription</span>
-                  <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active • Renews Monthly</span>
+                  <span class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">Account Plan</span>
+                  <span id="billingPlanStatus" class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Status unavailable</span>
                 </div>
-                <h3 class="text-2xl font-black text-white font-display">Professional Intelligence Workspace</h3>
-                <p class="text-xs text-slate-400 leading-relaxed max-w-xl">
-                  Includes 500 verified monthly lead extractions, 250 real-time website scans, full 11-stage CRM pipeline, cold outreach generator, and priority queue fulfillment.
+                <h3 id="billingPlanName" class="text-2xl font-black text-white font-display">No plan assigned</h3>
+                <p id="billingPlanDescription" class="text-xs text-slate-400 leading-relaxed max-w-xl">
+                  Plan details and account allowances will appear here when provided by the account service.
                 </p>
               </div>
               <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
-                <span class="text-3xl font-black text-white font-display">$79.00 <span class="text-xs text-slate-400 font-mono font-normal">/ month</span></span>
-                <button onclick="window.openStripeCustomerPortal ? window.openStripeCustomerPortal() : (typeof window.showToast === 'function' ? window.showToast('Opening Stripe Customer Portal...') : null)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs transition border border-slate-700 shadow flex items-center gap-1.5">
-                  <span>⚙️</span> Manage on Stripe Portal
-                </button>
+                <span id="billingCreditBalance" class="text-2xl font-black text-white font-display">Credits unavailable</span>
+                <span class="text-[10px] text-slate-500 font-mono">Server account balance</span>
               </div>
             </div>
 
-            <!-- Quota Utilization -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-bold">Monthly Lead Quota</span>
-                  <span id="billingLeadQuotaText" class="font-mono text-cyan-400 font-bold">6 / 500 Leads</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div class="bg-cyan-500 h-2 rounded-full" style="width: 1.2%"></div>
-                </div>
-                <p class="text-[11px] text-slate-500 font-mono">Resets on next billing cycle</p>
+                <span class="text-xs text-slate-400 font-bold">CRM Records</span>
+                <div id="billingLeadQuotaText" class="text-2xl font-black text-cyan-400 font-mono">—</div>
+                <p class="text-[11px] text-slate-500">Server-backed records for this account</p>
               </div>
-
               <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-bold">Website Scans Quota</span>
-                  <span class="font-mono text-indigo-400 font-bold">12 / 250 Scans</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div class="bg-indigo-500 h-2 rounded-full" style="width: 4.8%"></div>
-                </div>
-                <p class="text-[11px] text-slate-500 font-mono">Live latency & pixel audits</p>
+                <span class="text-xs text-slate-400 font-bold">Saved Website Scans</span>
+                <div id="billingScanCountText" class="text-2xl font-black text-indigo-400 font-mono">—</div>
+                <p class="text-[11px] text-slate-500">Saved in this browser; not synced across devices</p>
               </div>
-
               <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-bold">Custom Research Hours</span>
-                  <span class="font-mono text-emerald-400 font-bold">Priority Queuing</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div>
-                </div>
-                <p class="text-[11px] text-slate-500 font-mono">48-hour SLA turn-around</p>
+                <span class="text-xs text-slate-400 font-bold">Custom Research Requests</span>
+                <div id="billingRequestCountText" class="text-2xl font-black text-emerald-400 font-mono">—</div>
+                <p class="text-[11px] text-slate-500">Requests returned by the account service</p>
               </div>
             </div>
 
-            <!-- Invoices / Order Receipts -->
             <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">
-                  Billing & Order Receipts
-                </h4>
-                <span class="text-xs font-mono text-slate-500">Stripe Invoices</span>
+                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">Order &amp; Payment History</h4>
+                <span class="text-xs font-mono text-slate-500">Server order records</span>
               </div>
               <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
                 <table class="w-full text-left text-xs">
                   <thead>
                     <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
-                      <th class="py-3 px-4">Invoice / Order ID</th>
-                      <th class="py-3 px-4">Description</th>
+                      <th class="py-3 px-4">Order ID</th>
+                      <th class="py-3 px-4">Dataset</th>
                       <th class="py-3 px-4">Date</th>
                       <th class="py-3 px-4">Amount</th>
                       <th class="py-3 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody id="billingInvoicesBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
-                    <tr>
-                      <td class="py-3 px-4 text-cyan-400">inv_apex_2026_01</td>
-                      <td class="py-3 px-4 font-sans text-white">Professional Workspace Subscription</td>
-                      <td class="py-3 px-4 text-slate-400">2026-11-01</td>
-                      <td class="py-3 px-4 font-bold text-white">$79.00</td>
-                      <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">PAID</span></td>
-                    </tr>
-                    <tr>
-                      <td class="py-3 px-4 text-cyan-400">ord_tx_pack_01</td>
-                      <td class="py-3 px-4 font-sans text-white">Texas High-Ticket Contractors (Dataset)</td>
-                      <td class="py-3 px-4 text-slate-400">2026-11-20</td>
-                      <td class="py-3 px-4 font-bold text-white">$79.00</td>
-                      <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">PAID</span></td>
-                    </tr>
+                    <tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No payment records have been returned for this account yet.</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -2085,12 +2048,76 @@
     renderMyLeadsTab();
   };
 
-  // Render Billing Tab
+  // Render billing from account and order data returned by the server.
   function renderBillingTab() {
-    const quotaText = document.getElementById('billingLeadQuotaText');
-    if (quotaText) {
-      quotaText.innerText = `${getCrmLeads().length} / 500 Leads`;
+    const user = getUserData();
+    const planName = document.getElementById('billingPlanName');
+    const planStatus = document.getElementById('billingPlanStatus');
+    const planDescription = document.getElementById('billingPlanDescription');
+    const creditBalance = document.getElementById('billingCreditBalance');
+    const leadCount = document.getElementById('billingLeadQuotaText');
+    const scanCount = document.getElementById('billingScanCountText');
+    const requestCount = document.getElementById('billingRequestCountText');
+
+    const credits = user && user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits))
+      ? Number(user.credits)
+      : null;
+    if (planName) planName.innerText = user && user.plan ? user.plan : 'No plan assigned';
+    if (planStatus) planStatus.innerText = user && user.accountStatus ? user.accountStatus : 'Status unavailable';
+    if (creditBalance) creditBalance.innerText = credits === null ? 'Credits unavailable' : `${credits} credits`;
+    if (planDescription) {
+      planDescription.innerText = credits === null
+        ? 'Plan limits, subscription status, and renewal dates are not currently available from the account service.'
+        : 'Your account balance is shown above. Any additional plan limits or renewal terms should be confirmed in your account agreement.';
     }
+    if (leadCount) leadCount.innerText = `${getCrmLeads().length} records`;
+    if (scanCount) scanCount.innerText = String(getAuditScans().length);
+    if (requestCount) requestCount.innerText = Array.isArray(window.userCustomRequests)
+      ? String(window.userCustomRequests.length)
+      : '—';
+
+    populateBillingInvoices();
+  }
+
+  function populateBillingInvoices() {
+    const tbody = document.getElementById('billingInvoicesBody');
+    if (!tbody) return;
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    tbody.innerHTML = '';
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No payment records have been returned for this account yet.</td></tr>';
+      return;
+    }
+
+    orders.forEach(order => {
+      const cents = order.amountInCents !== null && order.amountInCents !== undefined
+        ? Number(order.amountInCents)
+        : null;
+      const amount = cents !== null && Number.isFinite(cents)
+        ? cents / 100
+        : (Number.isFinite(Number(order.amount)) ? Number(order.amount) : null);
+      const currency = String(order.currency || 'USD').toUpperCase();
+      let amountLabel = '—';
+      if (amount !== null) {
+        try {
+          amountLabel = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+        } catch {
+          amountLabel = `${amount.toFixed(2)} ${currency}`;
+        }
+      }
+      const dateLabel = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Date unavailable';
+      const status = String(order.status || 'unknown');
+      const paid = status.toLowerCase() === 'paid';
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="py-3 px-4 text-cyan-300">${escapeHTML(order.orderId || 'Order ID unavailable')}</td>
+        <td class="py-3 px-4 font-sans text-white">${escapeHTML(order.productName || order.productKey || 'Dataset')}</td>
+        <td class="py-3 px-4 text-slate-400">${escapeHTML(dateLabel)}</td>
+        <td class="py-3 px-4 font-bold text-white">${escapeHTML(amountLabel)}</td>
+        <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded ${paid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'} text-[10px]">${escapeHTML(status.toUpperCase())}</span></td>
+      `;
+      tbody.appendChild(row);
+    });
   }
 
   // Switch CRM view mode
@@ -2691,11 +2718,13 @@
       userPurchasedOrders = Array.isArray(data.orders) ? data.orders : [];
       populateDatasetsList();
       populateLedgerList();
+      populateBillingInvoices();
     } catch (err) {
       console.warn('[Orders Load Error]:', err.message);
       userPurchasedOrders = [];
       populateDatasetsList();
       populateLedgerList();
+      populateBillingInvoices();
     }
   };
 
