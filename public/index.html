@@ -3108,69 +3108,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
 (function () {
   'use strict';
 
-  const STORAGE_ORDERS = 'apexintel_orders';
-
-  // --- Seed Orders (Local UI Showcase Data) ---
-  const SEED_ORDERS = [
-    {
-      id: 'ord_tx_9011',
-      date: '2026-11-20T14:22:00Z',
-      customerEmail: 'alex@velocitygrowth.io',
-      customerName: 'Alex Rivera',
-      company: 'Velocity Growth Agency',
-      packId: 'texas',
-      packName: 'Texas High-Ticket Contractors',
-      leadsDelivered: 24,
-      amount: 79,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_texas.png',
-      leads: [
-        { domain: 'dallasroofer.com', company: 'T Rock Roofing & Restoration', email: 'info@dallasroofer.com' },
-        { domain: 'suttonroofinginc.com', company: 'Sutton Roofing & Solar', email: 'office@suttonroofinginc.com' },
-        { domain: 'precisionroof.com', company: 'Precision Roof Crafters', email: 'leads@precisionroof.com' },
-        { domain: 'freedomsolar.com', company: 'Freedom Solar Power', email: 'contact@freedomsolar.com' }
-      ]
-    },
-    {
-      id: 'ord_fl_8944',
-      date: '2026-11-19T09:11:00Z',
-      customerEmail: 'alex@velocitygrowth.io',
-      customerName: 'Alex Rivera',
-      company: 'Velocity Growth Agency',
-      packId: 'florida',
-      packName: 'Florida Solar & Storm Restoration',
-      leadsDelivered: 8,
-      amount: 79,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_florida.png',
-      leads: [
-        { domain: 'tampabaysolar.com', company: 'Tampa Bay Solar', email: 'info@tampabaysolar.com' },
-        { domain: 'sunvena.com', company: 'SunVena Solar', email: 'service@sunvena.com' },
-        { domain: 'goldinsolar.com', company: 'Goldin Solar', email: 'contact@goldinsolar.com' }
-      ]
-    },
-    {
-      id: 'ord_ca_7812',
-      date: '2026-11-21T11:45:00Z',
-      customerEmail: 'sarah@outboundsprint.com',
-      customerName: 'Sarah Chen',
-      company: 'OutboundSprint',
-      packId: 'medspas',
-      packName: 'California Luxury MedSpas',
-      leadsDelivered: 9,
-      amount: 89,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_medspas.png',
-      leads: [
-        { domain: 'nassifmd.com', company: 'NassifMD Medical Spa', email: 'concierge@nassifmd.com' },
-        { domain: 'skinspirit.com', company: 'SkinSpirit Beverly Hills', email: 'info@skinspirit.com' },
-        { domain: 'ljcmedspa.com', company: 'La Jolla Cosmetic MedSpa', email: 'appointments@ljcmedspa.com' }
-      ]
-    }
-  ];
+  // Orders are authoritative backend records. Never seed or persist orders in browser storage.
 
   // --- Production Auth Engine ---
   const ApexAuth = {
@@ -3178,9 +3116,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     _initialized: false,
 
     initStorage: function () {
-      if (!localStorage.getItem(STORAGE_ORDERS)) {
-        localStorage.setItem(STORAGE_ORDERS, JSON.stringify(SEED_ORDERS));
-      }
+      // Kept as a compatibility hook; order data must come from the authenticated API.
     },
 
     /**
@@ -3218,26 +3154,14 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
       return this._currentUser;
     },
 
-    getOrders: function (customerEmail) {
-      try {
-        const raw = localStorage.getItem(STORAGE_ORDERS);
-        const all = raw ? JSON.parse(raw) : [];
-        if (!customerEmail) return all;
-        return all.filter(o => o.customerEmail.toLowerCase() === customerEmail.toLowerCase());
-      } catch (e) {
-        return [];
-      }
+    getOrders: function () {
+      // No local/demo order ledger. Fetch orders from the authenticated backend.
+      return [];
     },
 
-    addOrder: function (order) {
-      try {
-        const all = this.getOrders();
-        all.unshift(order);
-        localStorage.setItem(STORAGE_ORDERS, JSON.stringify(all));
-        return true;
-      } catch (e) {
-        return false;
-      }
+    addOrder: function () {
+      // Orders can only be created by the server-side payment/fulfillment workflow.
+      return false;
     },
 
     /**
@@ -4075,275 +3999,11 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     { id: 'Not Qualified', label: 'Not Qualified', color: 'slate', border: 'border-slate-600/40', bg: 'bg-slate-700/20', text: 'text-slate-400' }
   ];
 
-  // --- Seed CRM Leads ---
-  const DEFAULT_CRM_LEADS = [
-    {
-      id: 'lead_tx_001',
-      company: 'T Rock Roofing & Restoration',
-      domain: 'dallasroofer.com',
-      contactName: 'Thomas Rock (Managing Partner)',
-      email: 'info@dallasroofer.com',
-      phone: '+1 469 931 9867',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'texas',
-      industry: 'Roofing & Storm Restoration',
-      status: 'Ready to Contact',
-      priority: 'P1',
-      opportunityScore: 92,
-      speed_ms: 1473,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['google-ads-active', 'missing-pixel', 'dallas', 'high-ltv'],
-      notes: [
-        { id: 'n1', timestamp: '2026-11-21 14:10', author: 'Alex Rivera', text: 'Prospect is spending on Google Search for storm repair but drops traffic due to 1473ms mobile latency.' }
-      ],
-      followUpDate: '2026-11-24',
-      savedAt: '2026-11-21T10:00:00.000Z'
-    },
-    {
-      id: 'lead_tx_002',
-      company: 'Sutton Roofing & Solar',
-      domain: 'suttonroofinginc.com',
-      contactName: 'Operations Director',
-      email: 'office@suttonroofinginc.com',
-      phone: '+1 512 837 8777',
-      city: 'Austin, TX',
-      territory: 'texas',
-      industry: 'Commercial Solar & Roofing',
-      status: 'Contacted',
-      priority: 'P1',
-      opportunityScore: 88,
-      speed_ms: 620,
-      metaPixel: true,
-      googleAds: false,
-      campaignId: 'camp_tx_01',
-      tags: ['austin', 'solar', 'meta-active'],
-      notes: [
-        { id: 'n2', timestamp: '2026-11-20 09:30', author: 'Alex Rivera', text: 'Sent consultative outbound pitch regarding commercial solar tax credits.' }
-      ],
-      followUpDate: '2026-11-23',
-      savedAt: '2026-11-20T08:00:00.000Z'
-    },
-    {
-      id: 'lead_fl_001',
-      company: 'Tampa Bay Solar',
-      domain: 'tampabaysolar.com',
-      contactName: 'Ben Gold (Owner)',
-      email: 'info@tampabaysolar.com',
-      phone: '+1 813 398 3687',
-      city: 'Tampa, FL',
-      territory: 'florida',
-      industry: 'Solar Energy Contracting',
-      status: 'Meeting Scheduled',
-      priority: 'P1',
-      opportunityScore: 95,
-      speed_ms: 740,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_fl_01',
-      tags: ['florida', 'hot-lead', 'meeting-booked'],
-      notes: [
-        { id: 'n3', timestamp: '2026-11-21 16:45', author: 'Alex Rivera', text: 'Demo call scheduled for Wednesday at 2pm EST to review retargeting pixel setup.' }
-      ],
-      followUpDate: '2026-11-25',
-      savedAt: '2026-11-19T11:00:00.000Z'
-    },
-    {
-      id: 'lead_fl_002',
-      company: 'Best Roofing Florida',
-      domain: 'bestroofing.net',
-      contactName: 'Commercial Estimator',
-      email: 'emergency@bestroofing.net',
-      phone: '+1 888 844 7663',
-      city: 'Fort Lauderdale, FL',
-      territory: 'florida',
-      industry: 'Hurricane Mitigation & Commercial Roofs',
-      status: 'Follow-Up',
-      priority: 'P2',
-      opportunityScore: 82,
-      speed_ms: 890,
-      metaPixel: false,
-      googleAds: false,
-      campaignId: 'camp_fl_01',
-      tags: ['hurricane-mitigation', 'south-fl'],
-      notes: [
-        { id: 'n4', timestamp: '2026-11-21 11:20', author: 'Alex Rivera', text: 'Left voicemail with dispatch; follow up on Tuesday.' }
-      ],
-      followUpDate: '2026-11-22',
-      savedAt: '2026-11-19T12:00:00.000Z'
-    },
-    {
-      id: 'lead_ca_001',
-      company: 'NassifMD Medical Spa',
-      domain: 'nassifmd.com',
-      contactName: 'Practice Concierge',
-      email: 'concierge@nassifmd.com',
-      phone: '+1 310 275 2467',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Luxury Aesthetics & Surgery',
-      status: 'Proposal',
-      priority: 'P1',
-      opportunityScore: 96,
-      speed_ms: 530,
-      metaPixel: true,
-      googleAds: true,
-      campaignId: 'camp_ca_01',
-      tags: ['luxury-medspa', 'beverly-hills', 'proposal-sent'],
-      notes: [
-        { id: 'n5', timestamp: '2026-11-21 17:00', author: 'Alex Rivera', text: 'Sent $4,500/mo retainer proposal for paid patient acquisition and VIP funnel optimization.' }
-      ],
-      followUpDate: '2026-11-26',
-      savedAt: '2026-11-18T15:00:00.000Z'
-    },
-    {
-      id: 'lead_ca_002',
-      company: 'SkinSpirit Beverly Hills',
-      domain: 'skinspirit.com',
-      contactName: 'Clinic General Manager',
-      email: 'info@skinspirit.com',
-      phone: '+1 310 555 7820',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Medical Aesthetics & Injectables',
-      status: 'Responded',
-      priority: 'P1',
-      opportunityScore: 89,
-      speed_ms: 680,
-      metaPixel: true,
-      googleAds: false,
-      campaignId: 'camp_ca_01',
-      tags: ['injectables', 'replied'],
-      notes: [
-        { id: 'n6', timestamp: '2026-11-21 13:15', author: 'Alex Rivera', text: 'GM replied asking for agency case studies in the aesthetic laser space.' }
-      ],
-      followUpDate: '2026-11-23',
-      savedAt: '2026-11-18T16:00:00.000Z'
-    },
-    {
-      id: 'lead_tx_003',
-      company: 'Precision Roof Crafters',
-      domain: 'precisionroof.com',
-      contactName: 'Sales Director',
-      email: 'leads@precisionroof.com',
-      phone: '+1 713 799 8555',
-      city: 'Houston, TX',
-      territory: 'texas',
-      industry: 'Roofing Contractors',
-      status: 'Qualified',
-      priority: 'P2',
-      opportunityScore: 84,
-      speed_ms: 980,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['houston', 'qualified'],
-      notes: [
-        { id: 'n7', timestamp: '2026-11-20 10:00', author: 'Alex Rivera', text: 'Domain verified. Valid MX records. Fast loading CMS.' }
-      ],
-      followUpDate: '2026-11-27',
-      savedAt: '2026-11-20T10:00:00.000Z'
-    },
-    {
-      id: 'lead_hvac_001',
-      company: 'Midwest Mechanical Services',
-      domain: 'midwestmech.com',
-      contactName: 'Commercial Operations Lead',
-      email: 'service@midwestmech.com',
-      phone: '+1 312 555 0192',
-      city: 'Chicago, IL',
-      territory: 'hvac',
-      industry: 'Commercial HVAC & Chillers',
-      status: 'Won',
-      priority: 'P1',
-      opportunityScore: 94,
-      speed_ms: 710,
-      metaPixel: true,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['closed-won', 'contract-signed'],
-      notes: [
-        { id: 'n8', timestamp: '2026-11-22 09:00', author: 'Alex Rivera', text: 'Won $3,800/mo retainer contract! Onboarding kicks off next Monday.' }
-      ],
-      followUpDate: '',
-      savedAt: '2026-11-15T10:00:00.000Z'
-    }
-  ];
-
-  // --- Seed Campaigns ---
-  const DEFAULT_CAMPAIGNS = [
-    {
-      id: 'camp_tx_01',
-      title: 'Texas Q4 Commercial Roofers & Restoration',
-      territory: 'Texas (Dallas, Austin, Houston)',
-      niche: 'Commercial Roofing',
-      status: 'Active',
-      targetCount: 40,
-      createdAt: '2026-11-15'
-    },
-    {
-      id: 'camp_fl_01',
-      title: 'Florida Solar & Hurricane Mitigation',
-      territory: 'Florida (Miami, Tampa, Orlando)',
-      niche: 'Solar & Mitigation',
-      status: 'Active',
-      targetCount: 30,
-      createdAt: '2026-11-18'
-    },
-    {
-      id: 'camp_ca_01',
-      title: 'California Luxury MedSpas & Aesthetic Clinics',
-      territory: 'California (Beverly Hills, SF)',
-      niche: 'Medical Aesthetics',
-      status: 'Active',
-      targetCount: 25,
-      createdAt: '2026-11-20'
-    }
-  ];
-
-  // --- Seed Website Audits ---
-  const DEFAULT_AUDITS = [
-    {
-      id: 'audit_01',
-      domain: 'precisionroof.com',
-      company: 'Precision Roof Crafters',
-      scannedAt: '2026-11-21 16:30',
-      speed_ms: 980,
-      cms: 'WordPress / Apache',
-      metaPixel: false,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 85,
-      pitch: 'Noticed you are running Google Search campaigns for commercial roofing in Houston, but without retargeting pixels active, dropping roughly 35% of clicks.'
-    },
-    {
-      id: 'audit_02',
-      domain: 'tampabaysolar.com',
-      company: 'Tampa Bay Solar',
-      scannedAt: '2026-11-20 14:15',
-      speed_ms: 740,
-      cms: 'Webflow / Fastly',
-      metaPixel: false,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 88,
-      pitch: 'Your site loads fast at 740ms with Google Ads active, but missing Meta Pixel retargeting on commercial solar prospects who do not call immediately.'
-    },
-    {
-      id: 'audit_03',
-      domain: 'nassifmd.com',
-      company: 'NassifMD Medical Spa',
-      scannedAt: '2026-11-19 11:20',
-      speed_ms: 530,
-      cms: 'Custom / NGINX',
-      metaPixel: true,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 96,
-      pitch: 'Excellent tech stack in place with sub-600ms latency. High opportunity for VIP concierge booking automation.'
-    }
-  ];
+  // CRM starts empty for each account; records are loaded from the authenticated backend.
+  const DEFAULT_CRM_LEADS = [];
+  // Campaigns and audits start empty; never inject showcase records into customer workspaces.
+  const DEFAULT_CAMPAIGNS = [];
+  const DEFAULT_AUDITS = [];
 
   // --- Custom Extraction Requests State ---
   window.userCustomRequests = [];
@@ -4351,17 +4011,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
   // --- Server-Authoritative User Purchased Orders ---
   let userPurchasedOrders = [];
 
-  // --- Delivered leads for Deduplication Ledger ---
-  const dedupeLedgerRecords = [
-    { domain: 'dallasroofer.com', company: 'T Rock Roofing & Restoration', territory: 'Dallas, TX', date: '2026-11-15 14:22 UTC', hash: 'e9b2...8f11', status: 'Delivered (Unique)' },
-    { domain: 'suttonroofinginc.com', company: 'Sutton Roofing & Solar', territory: 'Austin, TX', date: '2026-11-15 14:22 UTC', hash: '4a1c...3d90', status: 'Delivered (Unique)' },
-    { domain: 'precisionroof.com', company: 'Precision Roof Crafters', territory: 'Houston, TX', date: '2026-11-15 14:22 UTC', hash: '7c8d...1e44', status: 'Delivered (Unique)' },
-    { domain: 'freedomsolar.com', company: 'Freedom Solar Power', territory: 'Austin, TX', date: '2026-11-15 14:22 UTC', hash: '1f0b...92a6', status: 'Delivered (Unique)' },
-    { domain: 'tampabaysolar.com', company: 'Tampa Bay Solar', territory: 'Tampa, FL', date: '2026-11-18 09:15 UTC', hash: '88c1...5d23', status: 'Delivered (Unique)' },
-    { domain: 'sunvena.com', company: 'SunVena Solar', territory: 'Orlando, FL', date: '2026-11-18 09:15 UTC', hash: '3e4f...7a89', status: 'Delivered (Unique)' },
-    { domain: 'nassifmd.com', company: 'NassifMD Medical Spa', territory: 'Beverly Hills, CA', date: '2026-11-20 16:40 UTC', hash: '5b99...2f10', status: 'Delivered (Unique)' },
-    { domain: 'skinspirit.com', company: 'SkinSpirit Beverly Hills', territory: 'Beverly Hills, CA', date: '2026-11-20 16:40 UTC', hash: '99d0...11bc', status: 'Delivered (Unique)' }
-  ];
+  // Ledger rows must come from verified purchase/deduplication records; no demo entries.
 
   // --- Notification Helper ---
   function notify(msg) {
@@ -4433,7 +4083,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     if (crmFetchPromise) return crmFetchPromise;
 
     if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
-      crmLeadsCache = DEFAULT_CRM_LEADS;
+      crmLeadsCache = [];
       renderCrmLeads();
       renderCampaignsAndFollowUps();
       return crmLeadsCache;
@@ -4450,27 +4100,8 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
         if (res.ok) {
           const data = await res.json();
           if (data && data.success && Array.isArray(data.leads)) {
-            if (data.leads.length > 0) {
-              crmLeadsCache = data.leads;
-            } else {
-              // Brand new user with 0 leads: seed initial sample data into backend
-              try {
-                const seedRes = await fetch('/api/crm/leads', {
-                  method: 'POST',
-                  credentials: 'include',
-                  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                  body: JSON.stringify({ leads: DEFAULT_CRM_LEADS })
-                });
-                if (seedRes.ok) {
-                  const seedData = await seedRes.json();
-                  crmLeadsCache = seedData.leads || DEFAULT_CRM_LEADS;
-                } else {
-                  crmLeadsCache = DEFAULT_CRM_LEADS;
-                }
-              } catch {
-                crmLeadsCache = DEFAULT_CRM_LEADS;
-              }
-            }
+            // An empty server response is a genuinely empty CRM, not a request to seed demo records.
+            crmLeadsCache = data.leads;
           } else {
             crmLeadsCache = DEFAULT_CRM_LEADS;
           }
@@ -4510,33 +4141,40 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     userPurchasedOrders = [];
   };
 
+  function getTenantStorageKey(key) {
+    const user = window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function'
+      ? window.ApexAuth.getCurrentUser()
+      : null;
+    const tenant = user && (user.id || user.email);
+    return tenant ? `${key}:${String(tenant).toLowerCase()}` : null;
+  }
+
   function getCrmCampaigns() {
-    const raw = localStorage.getItem('apexintel_crm_campaigns');
-    if (!raw) {
-      localStorage.setItem('apexintel_crm_campaigns', JSON.stringify(DEFAULT_CAMPAIGNS));
-      return DEFAULT_CAMPAIGNS;
-    }
+    const key = getTenantStorageKey('apexintel_crm_campaigns');
+    if (!key) return [];
     try {
-      return JSON.parse(raw);
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      return DEFAULT_CAMPAIGNS;
+      return [];
     }
   }
 
   function saveCrmCampaigns(camps) {
-    localStorage.setItem('apexintel_crm_campaigns', JSON.stringify(camps));
+    const key = getTenantStorageKey('apexintel_crm_campaigns');
+    if (key) localStorage.setItem(key, JSON.stringify(Array.isArray(camps) ? camps : []));
   }
 
   function getAuditScans() {
-    const raw = localStorage.getItem('apexintel_audit_scans');
-    if (!raw) {
-      localStorage.setItem('apexintel_audit_scans', JSON.stringify(DEFAULT_AUDITS));
-      return DEFAULT_AUDITS;
-    }
+    const key = getTenantStorageKey('apexintel_audit_scans');
+    if (!key) return [];
     try {
-      return JSON.parse(raw);
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      return DEFAULT_AUDITS;
+      return [];
     }
   }
 
@@ -4577,12 +4215,8 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
   }
 
   function getCustomerApiKey() {
-    let key = localStorage.getItem('apexintel_api_key');
-    if (!key) {
-      key = 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + '2026';
-      localStorage.setItem('apexintel_api_key', key);
-    }
-    return key;
+    // API keys must be issued and stored by a server-side credential service.
+    return '';
   }
 
   // --- HTML Injection ---
@@ -5147,7 +4781,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
               </div>
 
               <div class="flex flex-col sm:flex-row gap-2">
-                <input type="url" id="custWebhookInput" placeholder="https://services.leadconnectorhq.com/hooks/..." value="https://services.leadconnectorhq.com/hooks/apex_live_feed" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500">
+                <input type="url" id="custWebhookInput" placeholder="https://services.leadconnectorhq.com/hooks/..." value="" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500">
                 <button onclick="window.saveCustomerWebhook()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition shrink-0">
                   Save Webhook URL
                 </button>
@@ -5818,6 +5452,10 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     if (!tbody) return;
 
     tbody.innerHTML = '';
+    if (audits.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="py-8 px-4 text-center text-slate-500">No completed website audits are available for this account yet.</td></tr>';
+      return;
+    }
     audits.forEach(a => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-900/50 transition border-b border-slate-800/60';
@@ -5914,202 +5552,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     });
   }
 
-  // --- Curated Discovery Database Catalog (Blueprint v1.0) ---
-  const DISCOVERY_CATALOG_LEADS = [
-    {
-      id: 'disc_tx_01',
-      company: 'T Rock Roofing & Restoration',
-      domain: 'dallasroofer.com',
-      contactName: 'Thomas Rock (Managing Partner)',
-      email: 'info@dallasroofer.com',
-      phone: '+1 469 931 9867',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'texas',
-      industry: 'Roofing & Storm Restoration',
-      speed_ms: 1473,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 92,
-      tags: ['slow-latency', 'missing-pixel', 'dallas']
-    },
-    {
-      id: 'disc_tx_02',
-      company: 'Sutton Roofing & Solar',
-      domain: 'suttonroofinginc.com',
-      contactName: 'Operations Director',
-      email: 'office@suttonroofinginc.com',
-      phone: '+1 512 837 8777',
-      city: 'Austin, TX',
-      territory: 'texas',
-      industry: 'Commercial Solar & Roofing',
-      speed_ms: 620,
-      metaPixel: true,
-      googleAds: false,
-      opportunityScore: 88,
-      tags: ['austin', 'solar']
-    },
-    {
-      id: 'disc_tx_03',
-      company: 'K-Post Company Commercial Roofing',
-      domain: 'kpostcompany.com',
-      contactName: 'Keith Post (President)',
-      email: 'commercial@kpostcompany.com',
-      phone: '+1 972 606 0000',
-      city: 'Dallas, TX',
-      territory: 'texas',
-      industry: 'Commercial & Industrial Roofing',
-      speed_ms: 1840,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 95,
-      tags: ['high-speed-flaw', 'missing-pixel', 'high-ltv']
-    },
-    {
-      id: 'disc_tx_04',
-      company: 'Lonestar Commercial Roofing',
-      domain: 'lonestarroofingpro.com',
-      contactName: 'Robert Vance (Owner)',
-      email: 'service@lonestarroofingpro.com',
-      phone: '+1 832 770 1200',
-      city: 'Houston, TX',
-      territory: 'texas',
-      industry: 'Commercial TPO & Metal Roofing',
-      speed_ms: 1120,
-      metaPixel: false,
-      googleAds: false,
-      opportunityScore: 89,
-      tags: ['houston', 'missing-pixel']
-    },
-    {
-      id: 'disc_fl_01',
-      company: 'Tampa Bay Solar & Energy',
-      domain: 'tampabaysolar.com',
-      contactName: 'Ben Gold (Owner)',
-      email: 'info@tampabaysolar.com',
-      phone: '+1 813 398 3687',
-      city: 'Tampa, FL',
-      territory: 'florida',
-      industry: 'Commercial Solar Energy',
-      speed_ms: 740,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 94,
-      tags: ['missing-pixel', 'tampa', 'solar']
-    },
-    {
-      id: 'disc_fl_02',
-      company: 'Goldin Solar Orlando',
-      domain: 'goldinsolar.com',
-      contactName: 'Dvir Goldin (Founder)',
-      email: 'contact@goldinsolar.com',
-      phone: '+1 407 500 7652',
-      city: 'Orlando, FL',
-      territory: 'florida',
-      industry: 'Commercial Solar & Battery',
-      speed_ms: 1620,
-      metaPixel: true,
-      googleAds: true,
-      opportunityScore: 91,
-      tags: ['slow-latency', 'orlando']
-    },
-    {
-      id: 'disc_fl_03',
-      company: 'Miami Hurricane Mitigation & Roofing',
-      domain: 'miamihurricanepros.com',
-      contactName: 'Carlos Mendez (VP Commercial)',
-      email: 'info@miamihurricanepros.com',
-      phone: '+1 305 558 9200',
-      city: 'Miami, FL',
-      territory: 'florida',
-      industry: 'Disaster Mitigation & Roofing',
-      speed_ms: 1390,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 96,
-      tags: ['high-ltv', 'missing-pixel', 'miami']
-    },
-    {
-      id: 'disc_ca_01',
-      company: 'Beverly Hills Skin & Laser Center',
-      domain: 'bhskinlaser.com',
-      contactName: 'Clinical Director',
-      email: 'concierge@bhskinlaser.com',
-      phone: '+1 310 278 8878',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Aesthetic Dermatology & Laser',
-      speed_ms: 1250,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 93,
-      tags: ['luxury', 'missing-pixel', 'beverly-hills']
-    },
-    {
-      id: 'disc_ca_02',
-      company: 'Union Square Aesthetics & Surgery',
-      domain: 'unionsquareaesthetics.com',
-      contactName: 'Dr. Michael Chen',
-      email: 'frontdesk@unionsquareaesthetics.com',
-      phone: '+1 415 392 3333',
-      city: 'San Francisco, CA',
-      territory: 'medspas',
-      industry: 'Cosmetic Surgery & Injectables',
-      speed_ms: 540,
-      metaPixel: true,
-      googleAds: true,
-      opportunityScore: 86,
-      tags: ['san-francisco', 'injectables']
-    },
-    {
-      id: 'disc_ca_03',
-      company: 'La Jolla Institute of Plastic Surgery',
-      domain: 'lajollaplasticsurg.com',
-      contactName: 'Practice Administrator',
-      email: 'info@lajollaplasticsurg.com',
-      phone: '+1 858 454 4455',
-      city: 'San Diego, CA',
-      territory: 'medspas',
-      industry: 'Plastic Surgery & Medical Spa',
-      speed_ms: 1490,
-      metaPixel: false,
-      googleAds: false,
-      opportunityScore: 90,
-      tags: ['san-diego', 'missing-pixel']
-    },
-    {
-      id: 'disc_hvac_01',
-      company: 'Midwest Mechanical Chiller Systems',
-      domain: 'midwestmechchillers.com',
-      contactName: 'David Kowalski (VP Sales)',
-      email: 'commercial@midwestmechchillers.com',
-      phone: '+1 312 880 4400',
-      city: 'Chicago, IL',
-      territory: 'hvac',
-      industry: 'Industrial Chiller & VRF Systems',
-      speed_ms: 1680,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 95,
-      tags: ['chicago', 'missing-pixel', 'high-speed-flaw']
-    },
-    {
-      id: 'disc_hvac_02',
-      company: 'DFW Industrial Building Automation',
-      domain: 'dfwbuildingauto.com',
-      contactName: 'Engineering Director',
-      email: 'service@dfwbuildingauto.com',
-      phone: '+1 214 740 8820',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'hvac',
-      industry: 'Commercial HVAC Controls',
-      speed_ms: 710,
-      metaPixel: true,
-      googleAds: false,
-      opportunityScore: 87,
-      tags: ['dallas', 'hvac-controls']
-    }
-  ];
-
+  // Discovery records are sourced exclusively from the authenticated discovery API.
   // Tab Aliases for backwards compatibility with legacy UI triggers
   const TAB_ALIASES = {
     auditlab: 'intelligence',
@@ -6117,7 +5560,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     api: 'settings'
   };
 
-  let liveDiscoveryLeadsCache = null;
+  let liveDiscoveryLeadsCache = [];
   let liveDiscoveryPromise = null;
 
   window.loadLiveDiscoveryLeads = async function () {
@@ -6131,12 +5574,12 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
         });
         if (res.ok) {
           const data = await res.json();
-          if (data && data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+          if (data && data.success && Array.isArray(data.leads)) {
             liveDiscoveryLeadsCache = data.leads.map(l => ({
               id: l.id || l.domain,
               company: l.company_name || l.name || l.domain,
               domain: l.domain || l.id,
-              contactName: 'Verified Decision Maker',
+              contactName: l.contact_name || l.contactName || '',
               email: l.email || '',
               phone: l.phone || '',
               city: l.city || l.location || '',
@@ -6144,20 +5587,28 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
                 : /FL\b/i.test(l.city || '') ? 'florida'
                 : /medspa|aesthetic/i.test(l.trade || '') ? 'medspas'
                 : /hvac|mechanical/i.test(l.trade || '') ? 'hvac'
-                : 'texas',
-              industry: l.trade || l.category || 'Commercial Services',
-              speed_ms: Number(l.speed_ms) || 750,
+                : 'other',
+              industry: l.trade || l.category || 'Not specified',
+              speed_ms: Number.isFinite(Number(l.speed_ms)) && Number(l.speed_ms) > 0 ? Number(l.speed_ms) : null,
               metaPixel: Boolean(l.meta_pixel),
               googleAds: Boolean(l.google_ads),
-              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 4)),
+              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 0)),
               tags: [l.meta_pixel ? 'meta-active' : 'missing-pixel'],
               isLiveApi: true
             }));
             renderDiscoverTab();
+          } else {
+            liveDiscoveryLeadsCache = [];
+            renderDiscoverTab();
           }
+        } else {
+          liveDiscoveryLeadsCache = [];
+          renderDiscoverTab();
         }
       } catch (err) {
-        console.warn('[Discover] Live API fallback to catalog samples:', err.message);
+        liveDiscoveryLeadsCache = [];
+        console.warn('[Discover] Live API request failed:', err.message);
+        renderDiscoverTab();
       } finally {
         liveDiscoveryPromise = null;
       }
@@ -6167,11 +5618,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
   };
 
   function getDiscoveryPool() {
-    if (Array.isArray(liveDiscoveryLeadsCache) && liveDiscoveryLeadsCache.length > 0) {
-      const seen = new Set(liveDiscoveryLeadsCache.map(l => l.domain));
-      return [...liveDiscoveryLeadsCache, ...DISCOVERY_CATALOG_LEADS.filter(l => !seen.has(l.domain))];
-    }
-    return DISCOVERY_CATALOG_LEADS;
+    return Array.isArray(liveDiscoveryLeadsCache) ? liveDiscoveryLeadsCache : [];
   }
 
   // --- Window Interactive Actions ---
@@ -6332,7 +5779,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
 
     filtered.forEach(item => {
       const isAlreadySaved = currentLeads.some(l => l.domain === item.domain || l.id === item.id);
-      const speedColor = item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400');
+      const speedColor = item.speed_ms == null ? 'text-slate-500' : (item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400'));
 
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-800/40 transition';
@@ -6345,7 +5792,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
         </td>
         <td class="py-3 px-4 font-mono text-slate-300 text-[11px]">${escapeHTML(item.city)}</td>
         <td class="py-3 px-4 text-slate-300">${escapeHTML(item.industry)}</td>
-        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms}ms</td>
+        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms == null ? 'Not measured' : `${item.speed_ms}ms`}</td>
         <td class="py-3 px-4">
           ${item.metaPixel ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta Active</span>' : '<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Missing Pixel</span>'}
         </td>
@@ -7051,22 +6498,27 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     notify(`Exported client audit report for ${audit.domain}!`);
   };
 
-  // Download custom request CSV
+  // Download only records actually returned with a delivered custom request.
   window.downloadCustomExtractionCsv = function (reqId) {
-    const list = getCustomRequests();
-    const req = list.find(r => r.id === reqId) || list[0];
-    
-    let csv = 'Company,Email,Phone,City,Industry,Territory,Status\n';
-    csv += `"Phoenix Sun Solar","service@phoenixsun.com","+1 602 555 8920","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Desert Ridge Roofing Pros","office@desertridgeroof.com","+1 480 555 1204","Scottsdale, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Camelback Commercial HVAC","dispatch@camelbackmech.com","+1 602 555 4411","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
-
+    const req = getCustomRequests().find(r => String(r.requestId || r.id) === String(reqId));
+    if (!req || req.status !== 'Delivered') {
+      notify('This request has no verified delivered dataset available.');
+      return;
+    }
+    const records = Array.isArray(req.leads) ? req.leads : (Array.isArray(req.results) ? req.results : []);
+    if (records.length === 0) {
+      notify('No dataset records were returned by the server for this request.');
+      return;
+    }
+    const columns = ['company', 'email', 'phone', 'city', 'industry', 'territory', 'status'];
+    const cell = value => '"' + String(value ?? '').replace(/"/g, '""') + '"';
+    const csv = [columns.join(','), ...records.map(record => columns.map(column => cell(record[column])).join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `custom_extraction_${req.id}.csv`;
     link.click();
-    notify(`Downloaded custom dataset for ${req.id}!`);
+    notify(`Downloaded server-provided dataset for ${req.id}.`);
   };
 
   // --- Server-Authoritative User Purchased Orders & S3 Fulfillment ---
@@ -7181,6 +6633,10 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     if (!tbody) return;
 
     tbody.innerHTML = '';
+    if (dedupeLedgerRecords.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No verified deduplication records are available yet.</td></tr>';
+      return;
+    }
     dedupeLedgerRecords.forEach(rec => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-900/40 transition';
@@ -7230,7 +6686,7 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
     const key = getCustomerApiKey();
     const keyInput = document.getElementById('custApiKeyInput');
     const keyPlaceholder = document.getElementById('curlKeyPlaceholder');
-    if (keyInput) keyInput.value = key;
+    if (keyInput) keyInput.value = key || 'API access is not configured';
     if (keyPlaceholder) keyPlaceholder.innerText = key;
   }
 
@@ -7257,28 +6713,15 @@ Hey David — quick call regarding your Austin web traffic. Noticed 1400ms mobil
   };
 
   window.copyCustomerApiKey = function () {
-    const input = document.getElementById('custApiKeyInput');
-    if (input) {
-      navigator.clipboard.writeText(input.value);
-      notify('API Key copied to clipboard! Keep it secure.');
-    }
+    notify('API key management is not connected to the server yet. No key is available to copy.');
   };
 
   window.regenerateCustomerApiKey = function () {
-    if (confirm('Regenerating will revoke your existing API key immediately. Proceed?')) {
-      const newKey = 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + '2026';
-      localStorage.setItem('apexintel_api_key', newKey);
-      refreshDashboardUserInfo();
-      notify('New API Key generated & activated!');
-    }
+    notify('API key management is not connected to the server yet. A key cannot be generated in the browser.');
   };
 
   window.saveCustomerWebhook = function () {
-    const url = document.getElementById('custWebhookInput').value.trim();
-    if (url) {
-      localStorage.setItem('apexintel_webhook_url', url);
-      notify('Webhook endpoint saved & verified!');
-    }
+    notify('Webhook dispatch is not connected to the server yet. The endpoint was not saved or verified.');
   };
 
   window.copyCustomerCurlSnippet = function () {
@@ -7451,135 +6894,9 @@ Support: support@apexintel-b2b.shop
       .replace(/'/g, '&#39;');
   }
 
-  // --- Sample Admin Seed Data ---
-  const ADMIN_METRICS = {
-    grossRevenue: 14820,
-    revenueGrowth: '+2,370',
-    netProfit: 14480,
-    profitMargin: '97.7%',
-    awsCost: 0,
-    activeLeads: 3840,
-    uniqueBuyers: 88,
-    reorderRate: '42%'
-  };
-
-  const SEED_TRANSACTIONS = [
-    {
-      id: 'tx_ord_9011',
-      time: '2026-11-21 14:32',
-      customerEmail: 'alex@velocitygrowth.io',
-      agency: 'Velocity Growth Agency',
-      product: 'Texas Commercial Contractors',
-      tier: 'Pack (24 leads)',
-      amount: '$79.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8944',
-      time: '2026-11-21 11:45',
-      customerEmail: 'sarah@outboundsprint.com',
-      agency: 'OutboundSprint',
-      product: 'California Luxury MedSpas',
-      tier: 'Pack (9 leads)',
-      amount: '$89.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8820',
-      time: '2026-11-21 08:30',
-      customerEmail: 'david@zenithb2b.com',
-      agency: 'Zenith B2B Media',
-      product: 'Custom Scrape: Phoenix Solar & Roofing',
-      tier: 'Custom (250 leads)',
-      amount: '$299.00',
-      processor: 'Stripe Invoice',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8755',
-      time: '2026-11-20 18:04',
-      customerEmail: 'marcus@leadcraft.agency',
-      agency: 'LeadCraft Outbound',
-      product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (12 leads)',
-      amount: '$99.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8612',
-      time: '2026-11-20 13:22',
-      customerEmail: 'elena@skylinegrowth.com',
-      agency: 'Skyline Growth Partners',
-      product: 'Florida Solar & Storm Restoration',
-      tier: 'Pack (8 leads)',
-      amount: '$79.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8501',
-      time: '2026-11-19 21:10',
-      customerEmail: 'mike@industrialgrowth.io',
-      agency: 'Industrial Growth Partners',
-      product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (12 leads)',
-      amount: '$99.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    }
-  ];
-
-  const INVENTORY_DATA = [
-    {
-      territory: 'Texas Commercial Contractors',
-      niche: 'Roofing & Restoration (Austin, DFW, Houston)',
-      unassigned: 1420,
-      delivered: 180,
-      total: 1600,
-      pct: 88,
-      status: 'Optimal',
-      badgeColor: 'emerald'
-    },
-    {
-      territory: 'Florida Solar & Storm Recovery',
-      niche: 'Commercial Solar & Hurricane Mitigation',
-      unassigned: 980,
-      delivered: 120,
-      total: 1100,
-      pct: 89,
-      status: 'Optimal',
-      badgeColor: 'sky'
-    },
-    {
-      territory: 'California Luxury MedSpas',
-      niche: 'Aesthetic Medicine & Injectables (BH, SF, SD)',
-      unassigned: 740,
-      delivered: 95,
-      total: 835,
-      pct: 88,
-      status: 'High Demand',
-      badgeColor: 'pink'
-    },
-    {
-      territory: 'Commercial HVAC & Mechanical',
-      niche: 'Industrial Chillers & Building Automation',
-      unassigned: 700,
-      delivered: 85,
-      total: 785,
-      pct: 89,
-      status: 'Optimal',
-      badgeColor: 'emerald'
-    }
-  ];
+  // These panels render only verified backend data. No sample business metrics or transactions.
+  const SEED_TRANSACTIONS = [];
+  const INVENTORY_DATA = [];
 
   // --- Admin Custom Requests Backend State ---
   window.adminCustomRequestsList = [];
@@ -7664,7 +6981,7 @@ Support: support@apexintel-b2b.shop
                 <div class="flex items-center gap-2.5">
                   <h2 class="text-2xl font-black text-white tracking-tight">ApexIntel Admin Command Center</h2>
                   <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">ROOT ACCESS</span>
-                  <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Live Custom Queue • Sample Metrics</span>
+                  <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Live Custom Queue • Metrics Pending</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">Real-Time Revenue Analytics, Crawler Fleet Health, Lead Inventory & Custom Extraction Queue</p>
               </div>
@@ -7689,9 +7006,9 @@ Support: support@apexintel-b2b.shop
                 <span>Gross Revenue (Verified)</span>
                 <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Stripe Live</span>
               </div>
-              <div id="adminGrossRevenueVal" class="text-3xl font-black text-white font-mono">$246</div>
+              <div id="adminGrossRevenueVal" class="text-3xl font-black text-white font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
-                <span id="adminOrdersCountVal" class="text-emerald-400 font-bold">3</span> paid transactions across all packs
+                <span id="adminOrdersCountVal" class="text-emerald-400 font-bold">—</span> verified paid transactions
               </div>
             </div>
 
@@ -7701,9 +7018,9 @@ Support: support@apexintel-b2b.shop
                 <span>Net Margin</span>
                 <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Serverless</span>
               </div>
-              <div class="text-3xl font-black text-emerald-400 font-mono">97.7%</div>
+              <div class="text-3xl font-black text-emerald-400 font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
-                AWS infrastructure cost: <strong class="text-slate-300 font-mono">$0.00</strong> (credit pool)
+                AWS infrastructure cost: <strong class="text-slate-300 font-mono">Unavailable</strong>
               </div>
             </div>
 
@@ -7713,7 +7030,7 @@ Support: support@apexintel-b2b.shop
                 <span>Pre-Warmed Lead Pool</span>
                 <span class="text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">DynamoDB</span>
               </div>
-              <div id="adminLeadsPoolVal" class="text-3xl font-black text-cyan-300 font-mono">53</div>
+              <div id="adminLeadsPoolVal" class="text-3xl font-black text-cyan-300 font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>Verified lead records in catalog cache</span>
@@ -7726,7 +7043,7 @@ Support: support@apexintel-b2b.shop
                 <span>Total Client Accounts</span>
                 <span class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Auth Users</span>
               </div>
-              <div id="adminUsersCountVal" class="text-3xl font-black text-purple-300 font-mono">3</div>
+              <div id="adminUsersCountVal" class="text-3xl font-black text-purple-300 font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
                 Active customer and admin accounts
               </div>
@@ -7772,7 +7089,7 @@ Support: support@apexintel-b2b.shop
               </div>
               <span class="text-xs text-emerald-400 font-mono font-bold flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                ALL SYSTEMS OPERATIONAL
+                STATUS UNVERIFIED
               </span>
             </div>
 
@@ -7781,12 +7098,12 @@ Support: support@apexintel-b2b.shop
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">Lambda Crawler</span>
-                  <span class="text-[10px] font-mono text-emerald-400 font-bold">ACTIVE ●</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">UNVERIFIED</span>
                 </div>
                 <div class="text-sm font-mono text-white font-bold truncate">apex-web-app</div>
                 <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
                   <span>Last Invoked:</span>
-                  <span class="text-slate-300 font-mono">2m ago</span>
+                  <span class="text-slate-300 font-mono">Unavailable</span>
                 </div>
                 <div class="text-[11px] text-slate-400 flex justify-between mt-0.5">
                   <span>Runtime:</span>
@@ -7798,16 +7115,16 @@ Support: support@apexintel-b2b.shop
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">DynamoDB Ledger</span>
-                  <span class="text-[10px] font-mono text-cyan-400 font-bold">PAY_PER_REQ</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">UNVERIFIED</span>
                 </div>
                 <div class="text-sm font-mono text-white font-bold truncate">leads_cache</div>
                 <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
                   <span>Items Tracked:</span>
-                  <span class="text-slate-300 font-mono font-bold">3,840</span>
+                  <span class="text-slate-300 font-mono font-bold">Unavailable</span>
                 </div>
                 <div class="text-[11px] text-slate-400 flex justify-between mt-0.5">
                   <span>Throttled Events:</span>
-                  <span class="text-emerald-400 font-mono font-bold">0</span>
+                  <span class="text-emerald-400 font-mono font-bold">Unavailable</span>
                 </div>
               </div>
 
@@ -7815,15 +7132,15 @@ Support: support@apexintel-b2b.shop
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">DNS MX Deliverability</span>
-                  <span class="text-[10px] font-mono text-emerald-400 font-bold">98.4% PASS</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">NO LIVE DATA</span>
                 </div>
-                <div class="text-sm font-mono text-white font-bold">Zero Hard Bounces</div>
+                <div class="text-sm font-mono text-white font-bold">No verified report</div>
                 <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
-                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 98.4%"></div>
+                  <div class="bg-slate-600 h-1.5 rounded-full" style="width: 0%"></div>
                 </div>
                 <div class="text-[10px] text-slate-400 mt-1.5 flex justify-between">
                   <span>Failed Discarded:</span>
-                  <span class="text-slate-400 font-mono">61 invalid</span>
+                  <span class="text-slate-400 font-mono">Unavailable</span>
                 </div>
               </div>
 
@@ -7831,15 +7148,15 @@ Support: support@apexintel-b2b.shop
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">AWS Credit Budget</span>
-                  <span class="text-[10px] font-mono text-indigo-400 font-bold">$200.00 POOL</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">NO LIVE DATA</span>
                 </div>
-                <div class="text-sm font-mono text-white font-bold">$0.00 MTD Billed</div>
+                <div class="text-sm font-mono text-white font-bold">Unavailable</div>
                 <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
                   <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 1%"></div>
                 </div>
                 <div class="text-[10px] text-slate-400 mt-1.5 flex justify-between">
                   <span>Credits Remaining:</span>
-                  <span class="text-emerald-400 font-mono font-bold">$200.00</span>
+                  <span class="text-slate-400 font-mono font-bold">Unavailable</span>
                 </div>
               </div>
             </div>
@@ -7853,7 +7170,7 @@ Support: support@apexintel-b2b.shop
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-              ${INVENTORY_DATA.map(inv => `
+              ${INVENTORY_DATA.length ? INVENTORY_DATA.map(inv => `
                 <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
                   <div>
                     <div class="flex items-center justify-between text-xs font-bold text-white mb-1">
@@ -7879,7 +7196,7 @@ Support: support@apexintel-b2b.shop
                     </div>
                   </div>
                 </div>
-              `).join('')}
+              `).join('') : '<div class="col-span-full py-6 text-center text-slate-500">Inventory metrics are not available from the backend.</div>'}
             </div>
           </div>
 
@@ -7890,7 +7207,7 @@ Support: support@apexintel-b2b.shop
                 <span class="text-sm font-extrabold uppercase tracking-wider text-indigo-400">📋 Live Order & Transaction Feed</span>
                 <span class="text-[10px] font-mono text-slate-500">Synced with Stripe Checkout & Webhooks</span>
               </div>
-              <span class="text-xs text-slate-400">Showing last real-time transactions</span>
+              <span class="text-xs text-slate-400">Live feed requires verified transaction data</span>
             </div>
 
             <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
@@ -7906,7 +7223,7 @@ Support: support@apexintel-b2b.shop
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300">
-                  ${SEED_TRANSACTIONS.map(tx => `
+                  ${SEED_TRANSACTIONS.length ? SEED_TRANSACTIONS.map(tx => `
                     <tr class="hover:bg-slate-800/40 transition">
                       <td class="py-3 px-4 text-slate-400 text-[11px] whitespace-nowrap">${tx.time}</td>
                       <td class="py-3 px-4">
@@ -7929,7 +7246,7 @@ Support: support@apexintel-b2b.shop
                         </span>
                       </td>
                     </tr>
-                  `).join('')}
+                  `).join('') : '<tr><td colspan="6" class="py-6 px-4 text-center text-slate-500">No verified transactions have been returned by the backend.</td></tr>'}
                 </tbody>
               </table>
             </div>
@@ -7938,13 +7255,13 @@ Support: support@apexintel-b2b.shop
           <!-- Bottom Summary Strip -->
           <div class="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
             <div class="flex flex-wrap items-center gap-4">
-              <span>All-Time Leads: <strong class="text-white">12,480</strong></span>
+              <span>All-Time Leads: <strong class="text-white">—</strong></span>
               <span>•</span>
-              <span>All-Time Revenue: <strong class="text-emerald-400">$14,820</strong></span>
+              <span>All-Time Revenue: <strong class="text-emerald-400">—</strong></span>
               <span>•</span>
-              <span>Uptime: <strong class="text-white">99.97%</strong></span>
+              <span>Uptime: <strong class="text-white">—</strong></span>
               <span>•</span>
-              <span>Avg Delivery: <strong class="text-cyan-400">1.2s</strong></span>
+              <span>Avg Delivery: <strong class="text-cyan-400">—</strong></span>
             </div>
             <div>
               <button onclick="window.closeAdminDashboard()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 font-bold transition">
