@@ -58,6 +58,8 @@
   // --- In-Memory Multi-Tenant CRM Cache & Server-Authoritative Sync ---
   let crmLeadsCache = null;
   let crmFetchPromise = null;
+  let crmCampaignsCache = null;
+  let crmCampaignsFetchPromise = null;
 
   async function syncLeadToBackend(leadId, updates) {
     if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
@@ -170,6 +172,8 @@
   window.clearCustomerDashboardCache = function () {
     crmLeadsCache = null;
     crmFetchPromise = null;
+    crmCampaignsCache = null;
+    crmCampaignsFetchPromise = null;
     activeLeadInDrawer = null;
     userPurchasedOrders = [];
   };
@@ -178,26 +182,55 @@
     const user = window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function'
       ? window.ApexAuth.getCurrentUser()
       : null;
-    const tenant = user && (user.id || user.email);
+    const tenant = user && (user.userId || user.id || user.email);
     return tenant ? `${key}:${String(tenant).toLowerCase()}` : null;
   }
 
   function getCrmCampaigns() {
-    const key = getTenantStorageKey('apexintel_crm_campaigns');
-    if (!key) return [];
-    try {
-      const raw = localStorage.getItem(key);
-      const parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
+    if (crmCampaignsCache === null) {
+      crmCampaignsCache = [];
+      window.loadCrmCampaignsFromBackend();
     }
+    return crmCampaignsCache;
   }
 
-  function saveCrmCampaigns(camps) {
-    const key = getTenantStorageKey('apexintel_crm_campaigns');
-    if (key) localStorage.setItem(key, JSON.stringify(Array.isArray(camps) ? camps : []));
+  function saveCrmCampaigns(campaigns) {
+    crmCampaignsCache = Array.isArray(campaigns) ? campaigns : [];
+    renderCampaignsAndFollowUps();
   }
+
+  window.loadCrmCampaignsFromBackend = async function () {
+    if (crmCampaignsFetchPromise) return crmCampaignsFetchPromise;
+
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
+      crmCampaignsCache = [];
+      renderCampaignsAndFollowUps();
+      return crmCampaignsCache;
+    }
+
+    crmCampaignsFetchPromise = (async () => {
+      try {
+        const response = await fetch('/api/crm/campaigns', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await response.json().catch(() => ({}));
+        crmCampaignsCache = response.ok && data.success && Array.isArray(data.campaigns)
+          ? data.campaigns
+          : [];
+      } catch (error) {
+        console.warn('[CRM] Failed to fetch campaigns from server:', error);
+        crmCampaignsCache = [];
+      } finally {
+        crmCampaignsFetchPromise = null;
+        renderCampaignsAndFollowUps();
+      }
+      return crmCampaignsCache;
+    })();
+
+    return crmCampaignsFetchPromise;
+  };
 
   function getAuditScans() {
     const key = getTenantStorageKey('apexintel_audit_scans');
@@ -1409,7 +1442,10 @@
     if (campGrid) {
       campGrid.innerHTML = '';
       campaigns.forEach(c => {
-        const assigned = leads.filter(l => l.campaignId === c.id);
+        const campaignId = c.campaignId || c.id;
+        const campaignName = c.name || c.title || 'Untitled campaign';
+        const assigned = leads.filter(l => l.campaignId === campaignId || (Array.isArray(c.leadIds) && c.leadIds.includes(l.id)));
+        const assignedCount = Math.max(assigned.length, Array.isArray(c.leadIds) ? c.leadIds.length : 0);
         const contacted = assigned.filter(l => ['Contacted', 'Follow-Up', 'Responded', 'Meeting Scheduled', 'Proposal', 'Won'].includes(l.status)).length;
         const meetings = assigned.filter(l => ['Meeting Scheduled', 'Proposal', 'Won'].includes(l.status)).length;
         const won = assigned.filter(l => l.status === 'Won').length;
@@ -1420,7 +1456,7 @@
           <div class="flex items-start justify-between">
             <div>
               <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">${c.status}</span>
-              <h5 class="text-xs font-black text-white mt-1.5 leading-snug">${c.title}</h5>
+              <h5 class="text-xs font-black text-white mt-1.5 leading-snug">${escapeHTML(campaignName)}</h5>
               <p class="text-[11px] text-slate-400 font-mono mt-0.5">${c.territory}</p>
             </div>
           </div>
@@ -1428,7 +1464,7 @@
           <div class="grid grid-cols-4 gap-1.5 text-center bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
             <div>
               <span class="text-[9px] text-slate-500 block uppercase">Leads</span>
-              <span class="text-xs font-mono font-bold text-white">${assigned.length}</span>
+              <span class="text-xs font-mono font-bold text-white">${assignedCount}</span>
             </div>
             <div>
               <span class="text-[9px] text-slate-500 block uppercase">Sent</span>
@@ -2217,21 +2253,25 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'x-csrf-token': csrfToken
       },
       credentials: 'include',
       body: JSON.stringify(campaign)
-    }).then(res => res.json()).then(data => {
-      if (typeof window.showToast === 'function') {
-        window.showToast(`✓ Campaign plan "${name}" created with ${leadIds.length} target leads!`);
+    }).then(async response => {
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success || !data.campaign) {
+        throw new Error(data.error || 'The server could not save this campaign.');
       }
-      if (typeof renderCampaignsTab === 'function') {
-        renderCampaignsTab();
+      crmCampaignsCache = [data.campaign, ...(crmCampaignsCache || [])];
+      renderCampaignsAndFollowUps();
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Campaign "${name}" saved to your account with ${leadIds.length} target records.`);
       }
     }).catch(err => {
       console.warn('Campaign save error:', err);
       if (typeof window.showToast === 'function') {
-        window.showToast(`✓ Campaign "${name}" staged locally.`);
+        window.showToast(err.message || 'Campaign could not be saved. Please retry.');
       }
     });
   };
