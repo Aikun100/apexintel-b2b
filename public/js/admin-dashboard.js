@@ -67,22 +67,72 @@
   };
 
   function updateAdminOverviewUI(data) {
+    const metrics = data.metrics || {};
     const revEl = document.getElementById('adminGrossRevenueVal');
     const ordersCountEl = document.getElementById('adminOrdersCountVal');
     const leadsPoolEl = document.getElementById('adminLeadsPoolVal');
     const usersCountEl = document.getElementById('adminUsersCountVal');
+    const allLeadsEl = document.getElementById('adminAllTimeLeads');
+    const allRevenueEl = document.getElementById('adminAllTimeRevenue');
 
-    if (revEl && data.metrics?.totalRevenue !== undefined) {
-      revEl.innerText = `$${Number(data.metrics.totalRevenue).toLocaleString()}`;
+    const currency = metrics.revenueCurrency || 'USD';
+    const money = value => new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency
+    }).format(Number(value) || 0);
+
+    if (revEl && metrics.totalRevenue !== undefined) revEl.innerText = money(metrics.totalRevenue);
+    if (ordersCountEl && metrics.paidOrdersCount !== undefined) ordersCountEl.innerText = String(metrics.paidOrdersCount);
+    if (leadsPoolEl && metrics.activeLeadsPool !== undefined) leadsPoolEl.innerText = Number(metrics.activeLeadsPool).toLocaleString();
+    if (usersCountEl && metrics.totalUsers !== undefined) usersCountEl.innerText = String(metrics.totalUsers);
+    if (allLeadsEl && metrics.activeLeadsPool !== undefined) allLeadsEl.innerText = Number(metrics.activeLeadsPool).toLocaleString();
+    if (allRevenueEl && metrics.totalRevenue !== undefined) allRevenueEl.innerText = money(metrics.totalRevenue);
+
+    const inventoryGrid = document.getElementById('adminInventoryGrid');
+    if (inventoryGrid && Array.isArray(data.inventorySummary)) {
+      inventoryGrid.innerHTML = data.inventorySummary.length
+        ? data.inventorySummary.map(item => `
+          <article class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
+            <div class="flex items-center justify-between gap-3">
+              <h4 class="text-sm font-bold text-white">${escapeHTML(item.title || item.packKey || 'Dataset')}</h4>
+              <span class="text-[10px] uppercase font-bold text-cyan-300">${escapeHTML(item.status || 'Catalogued')}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">${escapeHTML(item.territory || 'Territory not specified')}</p>
+            <div class="flex items-end justify-between mt-4">
+              <span class="text-xs text-slate-500">${escapeHTML(item.niche || 'Business dataset')}</span>
+              <strong class="font-mono text-white">${Number(item.count || 0).toLocaleString()} records</strong>
+            </div>
+          </article>`).join('')
+        : '<div class="col-span-full py-6 text-center text-slate-500">No catalog entries are available.</div>';
     }
-    if (ordersCountEl && data.metrics?.paidOrdersCount !== undefined) {
-      ordersCountEl.innerText = `${data.metrics.paidOrdersCount}`;
-    }
-    if (leadsPoolEl && data.metrics?.activeLeadsPool !== undefined) {
-      leadsPoolEl.innerText = `${Number(data.metrics.activeLeadsPool).toLocaleString()}`;
-    }
-    if (usersCountEl && data.metrics?.totalUsers !== undefined) {
-      usersCountEl.innerText = `${data.metrics.totalUsers}`;
+
+    const ordersBody = document.getElementById('adminRecentOrdersBody');
+    if (ordersBody && Array.isArray(data.recentOrders)) {
+      ordersBody.innerHTML = data.recentOrders.length
+        ? data.recentOrders.map(order => {
+          const paid = ['paid', 'fulfilled', 'delivered'].includes(String(order.status || '').toLowerCase());
+          const timestamp = order.time ? new Date(order.time).toLocaleString() : 'Time unavailable';
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4 text-slate-400 text-[11px] whitespace-nowrap">${escapeHTML(timestamp)}</td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-white font-sans">${escapeHTML(order.agency || 'Customer')}</div>
+                <div class="text-[11px] text-slate-400">${escapeHTML(order.customerEmail || 'Email unavailable')}</div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-indigo-300 font-sans">${escapeHTML(order.product || 'Dataset')}</div>
+                <div class="text-[10px] text-slate-500 font-sans">${escapeHTML(order.tier || '')}</div>
+              </td>
+              <td class="py-3 px-4 font-bold text-emerald-400 text-sm">${escapeHTML(order.amount || '—')}</td>
+              <td class="py-3 px-4">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${escapeHTML(order.processor || '—')}</span>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <span class="inline-flex items-center gap-1 text-[11px] font-bold ${paid ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'} px-2 py-0.5 rounded border">${escapeHTML(order.status || 'Unknown')}</span>
+              </td>
+            </tr>`;
+        }).join('')
+        : '<tr><td colspan="6" class="py-6 px-4 text-center text-slate-500">No orders have been recorded yet.</td></tr>';
     }
   }
 
@@ -292,7 +342,7 @@
               <span class="text-xs text-slate-400">Auto-balanced across 4 core datasets</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div id="adminInventoryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
               ${INVENTORY_DATA.length ? INVENTORY_DATA.map(inv => `
                 <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
                   <div>
@@ -345,7 +395,7 @@
                     <th class="py-3 px-4 text-center">Fulfillment</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                <tbody id="adminRecentOrdersBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
                   ${SEED_TRANSACTIONS.length ? SEED_TRANSACTIONS.map(tx => `
                     <tr class="hover:bg-slate-800/40 transition">
                       <td class="py-3 px-4 text-slate-400 text-[11px] whitespace-nowrap">${tx.time}</td>
@@ -378,9 +428,9 @@
           <!-- Bottom Summary Strip -->
           <div class="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
             <div class="flex flex-wrap items-center gap-4">
-              <span>All-Time Leads: <strong class="text-white">—</strong></span>
+              <span>All-Time Leads: <strong id="adminAllTimeLeads" class="text-white">—</strong></span>
               <span>•</span>
-              <span>All-Time Revenue: <strong class="text-emerald-400">—</strong></span>
+              <span>All-Time Revenue: <strong id="adminAllTimeRevenue" class="text-emerald-400">—</strong></span>
               <span>•</span>
               <span>Uptime: <strong class="text-white">—</strong></span>
               <span>•</span>
