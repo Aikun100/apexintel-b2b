@@ -14,9 +14,9 @@
  */
 
 import { discoveryService } from './service.js';
-import { authService } from '../auth/service.js';
-import { paymentsService } from '../payments/service.js';
-import { requestsService } from '../requests/service.js';
+import { getAuthRepository } from '../auth/repository.js';
+import { getOrdersRepository } from '../payments/repository.js';
+import { getRequestsRepository } from '../requests/repository.js';
 import { listProducts, getProductByKey } from '../payments/catalog.js';
 import { authenticateSession } from '../auth/middleware.js';
 import { validateWorkerSecret } from '../auth/router.js';
@@ -202,9 +202,9 @@ export async function dispatchDiscoveryRoute(reqObj, service = discoveryService,
     try {
       // Aggregate from persistent repositories only. Missing data is never replaced with sample values.
       const [users, orders, customRequests, activeLeadsPool] = await Promise.all([
-        authService.repo.listAllUsers(),
-        paymentsService.repo.listAllOrders(),
-        requestsService.listCustomRequests(auth.user),
+        getAuthRepository().listAllUsers(),
+        getOrdersRepository().listAllOrders(),
+        getRequestsRepository().listAllRequests(),
         service.repo.countLeads()
       ]);
 
