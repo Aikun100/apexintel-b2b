@@ -286,6 +286,8 @@ test('Discovery Suite: Live Search, Filtering, Pagination & Contact Masking', as
 test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
   discoveryRepo.clear();
   authRepo.clear();
+  ordersRepo.clear();
+  requestsRepo.clear();
 
   const customerUser = await createTestUser('customer@agency.com', 'customer', 'Customer');
   const adminUser = await createTestUser('admin@apexintel.io', 'admin', 'Admin');
@@ -338,6 +340,19 @@ test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
   });
 
   await t.test('accepts authenticated admin recrawl and ingests leads into DynamoDB cache', async () => {
+    const emptyRes = await dispatch({
+      method: 'POST',
+      path: '/api/discovery/recrawl',
+      headers: {
+        cookie: adminUser.cookie,
+        origin: 'https://apexintel-b2b.shop',
+        'content-type': 'application/json'
+      },
+      body: { leads: [] }
+    });
+    assert.equal(emptyRes.statusCode, 400);
+    assert.match(emptyRes.body.error, /No crawl candidates/i);
+
     const res = await dispatch({
       method: 'POST',
       path: '/api/discovery/recrawl',
