@@ -16,6 +16,7 @@ import {
   PutCommand, 
   UpdateCommand, 
   QueryCommand,
+  ScanCommand,
   TransactWriteCommand
 } from '@aws-sdk/lib-dynamodb';
 
@@ -133,6 +134,12 @@ export class InMemoryAuthRepository {
       record.usedAt = new Date().toISOString();
       this.resetTokensByHash.set(tokenHash, record);
     }
+  }
+
+  async listAllUsers(options = {}) {
+    const users = Array.from(this.usersById.values()).map(user => ({ ...user }));
+    users.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return options.limit ? users.slice(0, options.limit) : users;
   }
 
   clear() {
@@ -259,6 +266,27 @@ export class DynamoDBAuthRepository {
     }));
 
     return res.Attributes;
+  }
+
+  async listAllUsers(options = {}) {
+    const users = [];
+    const pageSize = Math.min(Math.max(Number(options.pageSize) || 100, 1), 1000);
+    let ExclusiveStartKey;
+
+    do {
+      const result = await this.docClient.send(new ScanCommand({
+        TableName: TABLE_NAMES.USERS,
+        Limit: pageSize,
+        FilterExpression: 'attribute_not_exists(#type)',
+        ExpressionAttributeNames: { '#type': 'type' },
+        ExclusiveStartKey
+      }));
+      users.push(...(result.Items || []));
+      ExclusiveStartKey = result.LastEvaluatedKey;
+    } while (ExclusiveStartKey && (!options.limit || users.length < options.limit));
+
+    users.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return options.limit ? users.slice(0, options.limit) : users;
   }
 
   async createSession(session) {
