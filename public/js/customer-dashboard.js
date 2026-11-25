@@ -44,17 +44,7 @@
   // --- Server-Authoritative User Purchased Orders ---
   let userPurchasedOrders = [];
 
-  // --- Delivered leads for Deduplication Ledger ---
-  const dedupeLedgerRecords = [
-    { domain: 'dallasroofer.com', company: 'T Rock Roofing & Restoration', territory: 'Dallas, TX', date: '2026-11-15 14:22 UTC', hash: 'e9b2...8f11', status: 'Delivered (Unique)' },
-    { domain: 'suttonroofinginc.com', company: 'Sutton Roofing & Solar', territory: 'Austin, TX', date: '2026-11-15 14:22 UTC', hash: '4a1c...3d90', status: 'Delivered (Unique)' },
-    { domain: 'precisionroof.com', company: 'Precision Roof Crafters', territory: 'Houston, TX', date: '2026-11-15 14:22 UTC', hash: '7c8d...1e44', status: 'Delivered (Unique)' },
-    { domain: 'freedomsolar.com', company: 'Freedom Solar Power', territory: 'Austin, TX', date: '2026-11-15 14:22 UTC', hash: '1f0b...92a6', status: 'Delivered (Unique)' },
-    { domain: 'tampabaysolar.com', company: 'Tampa Bay Solar', territory: 'Tampa, FL', date: '2026-11-18 09:15 UTC', hash: '88c1...5d23', status: 'Delivered (Unique)' },
-    { domain: 'sunvena.com', company: 'SunVena Solar', territory: 'Orlando, FL', date: '2026-11-18 09:15 UTC', hash: '3e4f...7a89', status: 'Delivered (Unique)' },
-    { domain: 'nassifmd.com', company: 'NassifMD Medical Spa', territory: 'Beverly Hills, CA', date: '2026-11-20 16:40 UTC', hash: '5b99...2f10', status: 'Delivered (Unique)' },
-    { domain: 'skinspirit.com', company: 'SkinSpirit Beverly Hills', territory: 'Beverly Hills, CA', date: '2026-11-20 16:40 UTC', hash: '99d0...11bc', status: 'Delivered (Unique)' }
-  ];
+  // Ledger rows must come from verified purchase/deduplication records; no demo entries.
 
   // --- Notification Helper ---
   function notify(msg) {
@@ -258,12 +248,8 @@
   }
 
   function getCustomerApiKey() {
-    let key = localStorage.getItem('apexintel_api_key');
-    if (!key) {
-      key = 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + '2026';
-      localStorage.setItem('apexintel_api_key', key);
-    }
-    return key;
+    // API keys must be issued and stored by a server-side credential service.
+    return '';
   }
 
   // --- HTML Injection ---
@@ -828,7 +814,7 @@
               </div>
 
               <div class="flex flex-col sm:flex-row gap-2">
-                <input type="url" id="custWebhookInput" placeholder="https://services.leadconnectorhq.com/hooks/..." value="https://services.leadconnectorhq.com/hooks/apex_live_feed" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500">
+                <input type="url" id="custWebhookInput" placeholder="https://services.leadconnectorhq.com/hooks/..." value="" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500">
                 <button onclick="window.saveCustomerWebhook()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition shrink-0">
                   Save Webhook URL
                 </button>
@@ -2862,6 +2848,10 @@
     if (!tbody) return;
 
     tbody.innerHTML = '';
+    if (dedupeLedgerRecords.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No verified deduplication records are available yet.</td></tr>';
+      return;
+    }
     dedupeLedgerRecords.forEach(rec => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-900/40 transition';
@@ -2911,7 +2901,7 @@
     const key = getCustomerApiKey();
     const keyInput = document.getElementById('custApiKeyInput');
     const keyPlaceholder = document.getElementById('curlKeyPlaceholder');
-    if (keyInput) keyInput.value = key;
+    if (keyInput) keyInput.value = key || 'API access is not configured';
     if (keyPlaceholder) keyPlaceholder.innerText = key;
   }
 
@@ -2938,28 +2928,15 @@
   };
 
   window.copyCustomerApiKey = function () {
-    const input = document.getElementById('custApiKeyInput');
-    if (input) {
-      navigator.clipboard.writeText(input.value);
-      notify('API Key copied to clipboard! Keep it secure.');
-    }
+    notify('API key management is not connected to the server yet. No key is available to copy.');
   };
 
   window.regenerateCustomerApiKey = function () {
-    if (confirm('Regenerating will revoke your existing API key immediately. Proceed?')) {
-      const newKey = 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + '2026';
-      localStorage.setItem('apexintel_api_key', newKey);
-      refreshDashboardUserInfo();
-      notify('New API Key generated & activated!');
-    }
+    notify('API key management is not connected to the server yet. A key cannot be generated in the browser.');
   };
 
   window.saveCustomerWebhook = function () {
-    const url = document.getElementById('custWebhookInput').value.trim();
-    if (url) {
-      localStorage.setItem('apexintel_webhook_url', url);
-      notify('Webhook endpoint saved & verified!');
-    }
+    notify('Webhook dispatch is not connected to the server yet. The endpoint was not saved or verified.');
   };
 
   window.copyCustomerCurlSnippet = function () {
