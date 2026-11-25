@@ -178,6 +178,33 @@ test('CRM Suite: Multi-Tenant CRUD Lifecycle', async (t) => {
     createdLeadId = res.body.lead.id;
   });
 
+  await t.test('Manual CRM records keep unprovided diagnostics unknown', async () => {
+    const res = await dispatch({
+      method: 'POST',
+      path: '/api/crm/leads',
+      headers: {
+        cookie: userA.cookie,
+        origin: 'https://apexintel-b2b.shop',
+        'content-type': 'application/json'
+      },
+      body: {
+        company: 'Unscanned Local Contractor',
+        domain: 'unscanned-contractor.example',
+        city: 'Austin, TX',
+        status: 'New',
+        priority: 'P2'
+      }
+    });
+
+    assert.equal(res.statusCode, 201);
+    assert.equal(res.body.lead.opportunityScore, null);
+    assert.equal(res.body.lead.speed_ms, null);
+    assert.equal(res.body.lead.metaPixel, null);
+    assert.equal(res.body.lead.googleAds, null);
+    assert.equal(res.body.lead.email, '');
+    assert.equal(res.body.lead.phone, '');
+  });
+
   await t.test('GET /api/crm/leads/:id retrieves lead by point lookup', async () => {
     const res = await dispatch({
       method: 'GET',
