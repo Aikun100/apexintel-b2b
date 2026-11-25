@@ -1612,7 +1612,7 @@
               id: l.id || l.domain,
               company: l.company_name || l.name || l.domain,
               domain: l.domain || l.id,
-              contactName: 'Verified Decision Maker',
+              contactName: l.contact_name || l.contactName || '',
               email: l.email || '',
               phone: l.phone || '',
               city: l.city || l.location || '',
@@ -1620,12 +1620,12 @@
                 : /FL\b/i.test(l.city || '') ? 'florida'
                 : /medspa|aesthetic/i.test(l.trade || '') ? 'medspas'
                 : /hvac|mechanical/i.test(l.trade || '') ? 'hvac'
-                : 'texas',
-              industry: l.trade || l.category || 'Commercial Services',
-              speed_ms: Number(l.speed_ms) || 750,
+                : 'other',
+              industry: l.trade || l.category || 'Not specified',
+              speed_ms: Number.isFinite(Number(l.speed_ms)) && Number(l.speed_ms) > 0 ? Number(l.speed_ms) : null,
               metaPixel: Boolean(l.meta_pixel),
               googleAds: Boolean(l.google_ads),
-              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 4)),
+              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 0)),
               tags: [l.meta_pixel ? 'meta-active' : 'missing-pixel'],
               isLiveApi: true
             }));
