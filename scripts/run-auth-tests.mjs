@@ -11,7 +11,8 @@ console.log('🧪 Starting ApexIntel B2B Authentication Test Suite...\n');
 const testFiles = [
   'tests/auth/auth.test.js',
   'tests/auth/password-reset-and-admin.test.js',
-  'tests/auth/lambda-and-worker.test.js'
+  'tests/auth/lambda-and-worker.test.js',
+  'tests/auth/iam-policy.test.js'
 ];
 
 const child = spawn('node', ['--test', ...testFiles], {

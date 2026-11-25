@@ -689,6 +689,138 @@ test('Payments Suite: Concurrency, Replay Defense & Strict Validation', async (t
     assert.equal(freshOrder.status, 'pending_payment');
   });
 
+  await t.test('missing amount_total is rejected with 400 and leaves order pending_payment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_missing_amount_107',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_missing_amt_sess_107'
+    });
+
+    const webhookEvent = {
+      id: 'evt_missing_amount',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          currency: 'usd',
+          metadata: { orderId: order.orderId }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    await assert.rejects(
+      async () => {
+        await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+      },
+      (err) => {
+        assert.equal(err.statusCode, 400);
+        assert.match(err.message, /Payment amount mismatch/i);
+        return true;
+      }
+    );
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
+  await t.test('missing currency is rejected with 400 and leaves order pending_payment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_missing_currency_108',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_missing_curr_sess_108'
+    });
+
+    const webhookEvent = {
+      id: 'evt_missing_currency',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: order.stripeSessionId,
+          payment_status: 'paid',
+          amount_total: 7900,
+          metadata: { orderId: order.orderId }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    await assert.rejects(
+      async () => {
+        await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+      },
+      (err) => {
+        assert.equal(err.statusCode, 400);
+        assert.match(err.message, /Currency mismatch/i);
+        return true;
+      }
+    );
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
+  await t.test('missing stripeSessionId is rejected with 400 and leaves order pending_payment', async () => {
+    const order = await ordersRepo.createOrder({
+      orderId: 'ord_missing_session_109',
+      userId: testUser.user.userId,
+      userEmail: testUser.user.email,
+      productKey: 'texas',
+      productName: APEX_PRODUCT_CATALOG.texas.title,
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'pending_payment',
+      stripeSessionId: 'cs_test_missing_sess_109'
+    });
+
+    const webhookEvent = {
+      id: 'evt_missing_session',
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          payment_status: 'paid',
+          amount_total: 7900,
+          currency: 'usd',
+          metadata: { orderId: order.orderId }
+        }
+      }
+    };
+
+    const sig = generateTestStripeSignature(webhookEvent);
+
+    await assert.rejects(
+      async () => {
+        await paymentsService.handleStripeWebhook(JSON.stringify(webhookEvent), sig);
+      },
+      (err) => {
+        assert.equal(err.statusCode, 400);
+        assert.match(err.message, /Stripe Session ID mismatch/i);
+        return true;
+      }
+    );
+
+    const freshOrder = await ordersRepo.getOrderById(order.orderId);
+    assert.equal(freshOrder.status, 'pending_payment');
+  });
+
   await t.test('missing STRIPE_SECRET_KEY when NODE_ENV=production fails closed with HTTP 500', async () => {
     const originalEnv = process.env.NODE_ENV;
     const originalKey = process.env.STRIPE_SECRET_KEY;

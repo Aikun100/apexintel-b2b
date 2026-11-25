@@ -82,7 +82,7 @@ export class CrmService {
     const territory = CrmService.sanitizeString(input.territory, 100);
     const industry = CrmService.sanitizeString(input.industry, 150);
 
-    let status = input.status ? String(input.status).trim() : 'New';
+    let status = input.status ? String(input.status).trim() : (input.stage ? String(input.stage).trim() : 'New');
     if (!VALID_PIPELINE_STAGES.has(status)) {
       status = 'New';
     }
@@ -146,6 +146,7 @@ export class CrmService {
       territory,
       industry,
       status,
+      stage: status,
       priority,
       opportunityScore,
       speed_ms,
@@ -224,14 +225,16 @@ export class CrmService {
 
     const cleanUpdates = {};
 
-    if (updates.status !== undefined) {
-      const st = String(updates.status).trim();
+    const rawStatus = updates.status !== undefined ? updates.status : updates.stage;
+    if (rawStatus !== undefined) {
+      const st = String(rawStatus).trim();
       if (!VALID_PIPELINE_STAGES.has(st)) {
         const err = new Error(`Invalid pipeline stage '${st}'. Must be one of the 11 valid stages.`);
         err.statusCode = 400;
         throw err;
       }
       cleanUpdates.status = st;
+      cleanUpdates.stage = st;
     }
 
     if (updates.company !== undefined) {
@@ -267,7 +270,19 @@ export class CrmService {
         .filter(Boolean)
         .slice(0, 20);
     }
-    if (updates.notes !== undefined && Array.isArray(updates.notes)) {
+    if (typeof updates.note === 'string' && updates.note.trim()) {
+      const existingLead = await this.repo.findLeadById(userId, leadId);
+      const currentNotes = Array.isArray(existingLead?.notes) ? existingLead.notes : [];
+      cleanUpdates.notes = [
+        ...currentNotes,
+        {
+          id: `n_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          author: 'Agent',
+          text: CrmService.sanitizeString(updates.note, 2000)
+        }
+      ];
+    } else if (updates.notes !== undefined && Array.isArray(updates.notes)) {
       cleanUpdates.notes = updates.notes.map(n => ({
         id: CrmService.sanitizeString(n.id || `n_${Date.now()}`, 50),
         timestamp: n.timestamp || new Date().toISOString().replace('T', ' ').substring(0, 16),

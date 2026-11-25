@@ -548,7 +548,7 @@
 
     const modalHTML = `
     <!-- ==================== CUSTOMER WORKSPACE & CRM MODAL ==================== -->
-    <div id="customerDashboard" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-2 sm:p-4">
+    <div id="customerDashboard" onclick="if(event.target === this) window.closeCustomerDashboard()" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-2 sm:p-4">
       <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-7xl w-full max-h-[96vh] overflow-hidden flex flex-col shadow-2xl relative">
         
         <!-- Header Bar -->
@@ -584,28 +584,34 @@
           </div>
         </div>
 
-        <!-- Navigation Tabs Bar -->
+        <!-- Navigation Tabs Bar (Blueprint v1.0 Standard) -->
         <div class="px-4 sm:px-6 pt-2.5 border-b border-slate-800/80 bg-slate-950 flex items-center gap-1.5 overflow-x-auto shrink-0 no-scrollbar">
-          <button id="custTabBtn-crm" onclick="window.switchCustomerTab('crm')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-indigo-500 bg-indigo-600/10 text-indigo-300 flex items-center gap-1.5 shrink-0">
-            <span>🎯</span> Prospect CRM & Pipeline
+          <button id="custTabBtn-overview" onclick="window.switchCustomerTab('overview')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-cyan-500 bg-cyan-500/10 text-cyan-300 flex items-center gap-1.5 shrink-0">
+            <span>📊</span> Overview
           </button>
-          <button id="custTabBtn-campaigns" onclick="window.switchCustomerTab('campaigns')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
-            <span>🚀</span> Campaigns & Follow-Ups
+          <button id="custTabBtn-discover" onclick="window.switchCustomerTab('discover')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>🔍</span> Discover
           </button>
-          <button id="custTabBtn-auditlab" onclick="window.switchCustomerTab('auditlab')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
-            <span>🔬</span> Website Audit Lab
+          <button id="custTabBtn-myleads" onclick="window.switchCustomerTab('myleads')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>⭐</span> My Leads
           </button>
-          <button id="custTabBtn-customreq" onclick="window.switchCustomerTab('customreq')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
-            <span>📋</span> Custom Requests
+          <button id="custTabBtn-intelligence" onclick="window.switchCustomerTab('intelligence')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>🔬</span> Intelligence
           </button>
           <button id="custTabBtn-datasets" onclick="window.switchCustomerTab('datasets')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
-            <span>📦</span> Datasets & Downloads
+            <span>📦</span> Datasets
           </button>
-          <button id="custTabBtn-ledger" onclick="window.switchCustomerTab('ledger')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
-            <span>🔄</span> Dedupe Ledger
+          <button id="custTabBtn-campaigns" onclick="window.switchCustomerTab('campaigns')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>🚀</span> Campaigns
           </button>
-          <button id="custTabBtn-api" onclick="window.switchCustomerTab('api')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
-            <span>🔑</span> API Access
+          <button id="custTabBtn-crm" onclick="window.switchCustomerTab('crm')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>🎯</span> CRM
+          </button>
+          <button id="custTabBtn-customreq" onclick="window.switchCustomerTab('customreq')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>📋</span> Custom Research
+          </button>
+          <button id="custTabBtn-billing" onclick="window.switchCustomerTab('billing')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
+            <span>💳</span> Billing
           </button>
           <button id="custTabBtn-settings" onclick="window.switchCustomerTab('settings')" class="px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0">
             <span>⚙️</span> Settings
@@ -615,8 +621,194 @@
         <!-- Scrollable Tab Content Area -->
         <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
 
+          <!-- ==================== TAB: OVERVIEW (#custTab-overview) ==================== -->
+          <div id="custTab-overview" class="space-y-6">
+            <!-- 4 Metric Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span class="text-xs font-mono text-slate-400 uppercase">Saved Prospects</span>
+                <div class="flex items-baseline gap-2">
+                  <span id="overviewSavedCount" class="text-3xl font-black text-white font-display">0</span>
+                  <span class="text-xs text-emerald-400 font-mono">in CRM</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Active pipeline contacts</p>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span class="text-xs font-mono text-slate-400 uppercase">Available Discoveries</span>
+                <div class="flex items-baseline gap-2">
+                  <span id="overviewDiscoverCount" class="text-3xl font-black text-cyan-400 font-display">96</span>
+                  <span class="text-xs text-cyan-500 font-mono">Verified</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Across TX, FL, CA & HVAC</p>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span class="text-xs font-mono text-slate-400 uppercase">High Opportunity Signals</span>
+                <div class="flex items-baseline gap-2">
+                  <span id="overviewHighOppCount" class="text-3xl font-black text-indigo-400 font-display">68</span>
+                  <span class="text-xs text-indigo-400 font-mono">Score &gt;= 85</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Slow mobile & missing pixels</p>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-1">
+                <span class="text-xs font-mono text-slate-400 uppercase">Active Custom Requests</span>
+                <div class="flex items-baseline gap-2">
+                  <span id="overviewActiveRequestsCount" class="text-3xl font-black text-amber-400 font-display">0</span>
+                  <span class="text-xs text-amber-400 font-mono">Mining</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Bespoke research queue</p>
+              </div>
+            </div>
+
+            <!-- Quick Action Launcher Bar -->
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                <span>⚡</span> Quick Intelligence Actions:
+              </span>
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="window.switchCustomerTab('intelligence')" class="px-3.5 py-1.5 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>🔬</span> Audit a Website
+                </button>
+                <button onclick="window.switchCustomerTab('discover')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>🔍</span> Search Discovery Database
+                </button>
+                <button onclick="window.switchCustomerTab('crm')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>🎯</span> Manage Sales Pipeline
+                </button>
+                <button onclick="window.switchCustomerTab('customreq')" class="px-3.5 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>📋</span> Request Custom Research
+                </button>
+              </div>
+            </div>
+
+            <!-- Pipeline Snapshot & Recent Activity Split Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <!-- Left: Sales Pipeline Progress -->
+              <div class="lg:col-span-7 p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-black text-white flex items-center gap-2">
+                    <span>📊</span> Sales Pipeline Breakdown
+                  </h4>
+                  <button onclick="window.switchCustomerTab('crm')" class="text-xs text-cyan-400 hover:text-cyan-300 font-bold transition">Open Kanban Board &rarr;</button>
+                </div>
+                <div id="overviewPipelineBars" class="space-y-2.5">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <!-- Right: Recent Activity Feed -->
+              <div class="lg:col-span-5 p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-black text-white flex items-center gap-2">
+                    <span>⏱️</span> Recent Activity
+                  </h4>
+                  <span class="text-[10px] font-mono text-slate-500">Real-Time Sync</span>
+                </div>
+                <div id="overviewActivityList" class="space-y-3 text-xs text-slate-300">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== TAB: DISCOVER (#custTab-discover) ==================== -->
+          <div id="custTab-discover" class="space-y-4 hidden">
+            <!-- Filter Bar -->
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl space-y-3">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div class="relative flex-1 min-w-[220px]">
+                  <input type="text" id="discoverSearchInput" oninput="window.filterDiscoverLeads()" placeholder="Search discovery database by company, domain, city..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+                  <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <select id="discoverTerritorySelect" onchange="window.filterDiscoverLeads()" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-300 focus:outline-none">
+                    <option value="ALL">All Territories (TX, FL, CA, HVAC)</option>
+                    <option value="texas">Texas (Dallas, Austin, Houston)</option>
+                    <option value="florida">Florida (Miami, Tampa, Orlando)</option>
+                    <option value="medspas">California (Beverly Hills, SF)</option>
+                    <option value="hvac">Industrial HVAC (Chicago, DFW)</option>
+                  </select>
+                  <select id="discoverSignalSelect" onchange="window.filterDiscoverLeads()" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-300 focus:outline-none">
+                    <option value="ALL">All Opportunity Signals</option>
+                    <option value="high_score">Opportunity Score &gt;= 85</option>
+                    <option value="missing_pixel">Missing Meta Pixel (Gap)</option>
+                    <option value="slow_speed">Slow Latency (&gt; 1,000ms)</option>
+                  </select>
+                  <button onclick="window.customerDashQuickReorder()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5 shrink-0">
+                    <span>⚡</span> Acquire Territory Pack
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Discover Results Table -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                    <th class="py-3 px-4">Company & Domain</th>
+                    <th class="py-3 px-4">Location</th>
+                    <th class="py-3 px-4">Industry Niche</th>
+                    <th class="py-3 px-4">Mobile Speed</th>
+                    <th class="py-3 px-4">Retargeting</th>
+                    <th class="py-3 px-4 text-center">Score</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="discoverTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+                  <!-- Populated dynamically from catalog seed data -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ==================== TAB: MY LEADS (#custTab-myleads) ==================== -->
+          <div id="custTab-myleads" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 border border-slate-800 p-3.5 rounded-2xl">
+              <div class="flex items-center gap-2 flex-1">
+                <div class="relative flex-1 min-w-[200px]">
+                  <input type="text" id="myLeadsSearchInput" oninput="window.filterMyLeads()" placeholder="Search my saved leads..." class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+                  <span class="absolute left-2.5 top-2 text-slate-500 text-xs">🔍</span>
+                </div>
+                <select id="myLeadsStatusFilter" onchange="window.filterMyLeads()" class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-300 focus:outline-none">
+                  <option value="ALL">All Statuses (11)</option>
+                  ${PIPELINE_STATUSES.map(s => `<option value="${s.id}">${s.label}</option>`).join('')}
+                </select>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button onclick="window.openAddLeadModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5">
+                  <span>+</span> Add Custom Lead
+                </button>
+                <button onclick="window.switchCustomerTab('crm')" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700">
+                  Kanban View &rarr;
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                    <th class="py-3 px-4">Company</th>
+                    <th class="py-3 px-4">Decision Maker</th>
+                    <th class="py-3 px-4">Location</th>
+                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4 text-center">Score</th>
+                    <th class="py-3 px-4">Follow-Up</th>
+                    <th class="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="myLeadsTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- ==================== TAB: PROSPECT CRM & PIPELINE ==================== -->
-          <div id="custTab-crm" class="space-y-4">
+          <div id="custTab-crm" class="space-y-4 hidden">
             
             <!-- CRM Controls Bar -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-900/60 border border-slate-800 p-3.5 rounded-2xl">
@@ -930,6 +1122,104 @@
             </div>
           </div>
 
+          <!-- ==================== TAB: BILLING (#custTab-billing) ==================== -->
+          <div id="custTab-billing" class="space-y-6 hidden">
+            <!-- Plan Overview Card -->
+            <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">Active Subscription</span>
+                  <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active • Renews Monthly</span>
+                </div>
+                <h3 class="text-2xl font-black text-white font-display">Professional Intelligence Workspace</h3>
+                <p class="text-xs text-slate-400 leading-relaxed max-w-xl">
+                  Includes 500 verified monthly lead extractions, 250 real-time website scans, full 11-stage CRM pipeline, cold outreach generator, and priority queue fulfillment.
+                </p>
+              </div>
+              <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
+                <span class="text-3xl font-black text-white font-display">$79.00 <span class="text-xs text-slate-400 font-mono font-normal">/ month</span></span>
+                <button onclick="window.openStripeCustomerPortal ? window.openStripeCustomerPortal() : (typeof window.showToast === 'function' ? window.showToast('Opening Stripe Customer Portal...') : null)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs transition border border-slate-700 shadow flex items-center gap-1.5">
+                  <span>⚙️</span> Manage on Stripe Portal
+                </button>
+              </div>
+            </div>
+
+            <!-- Quota Utilization -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-400 font-bold">Monthly Lead Quota</span>
+                  <span id="billingLeadQuotaText" class="font-mono text-cyan-400 font-bold">6 / 500 Leads</span>
+                </div>
+                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                  <div class="bg-cyan-500 h-2 rounded-full" style="width: 1.2%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 font-mono">Resets on next billing cycle</p>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-400 font-bold">Website Scans Quota</span>
+                  <span class="font-mono text-indigo-400 font-bold">12 / 250 Scans</span>
+                </div>
+                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                  <div class="bg-indigo-500 h-2 rounded-full" style="width: 4.8%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 font-mono">Live latency & pixel audits</p>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-400 font-bold">Custom Research Hours</span>
+                  <span class="font-mono text-emerald-400 font-bold">Priority Queuing</span>
+                </div>
+                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                  <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div>
+                </div>
+                <p class="text-[11px] text-slate-500 font-mono">48-hour SLA turn-around</p>
+              </div>
+            </div>
+
+            <!-- Invoices / Order Receipts -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">
+                  Billing & Order Receipts
+                </h4>
+                <span class="text-xs font-mono text-slate-500">Stripe Invoices</span>
+              </div>
+              <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                      <th class="py-3 px-4">Invoice / Order ID</th>
+                      <th class="py-3 px-4">Description</th>
+                      <th class="py-3 px-4">Date</th>
+                      <th class="py-3 px-4">Amount</th>
+                      <th class="py-3 px-4 text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="billingInvoicesBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                    <tr>
+                      <td class="py-3 px-4 text-cyan-400">inv_apex_2026_01</td>
+                      <td class="py-3 px-4 font-sans text-white">Professional Workspace Subscription</td>
+                      <td class="py-3 px-4 text-slate-400">2026-11-01</td>
+                      <td class="py-3 px-4 font-bold text-white">$79.00</td>
+                      <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">PAID</span></td>
+                    </tr>
+                    <tr>
+                      <td class="py-3 px-4 text-cyan-400">ord_tx_pack_01</td>
+                      <td class="py-3 px-4 font-sans text-white">Texas High-Ticket Contractors (Dataset)</td>
+                      <td class="py-3 px-4 text-slate-400">2026-11-20</td>
+                      <td class="py-3 px-4 font-bold text-white">$79.00</td>
+                      <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">PAID</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           <!-- ==================== TAB: SETTINGS ==================== -->
           <div id="custTab-settings" class="space-y-6 hidden">
             <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-4">
@@ -1034,7 +1324,7 @@
     </div>
 
     <!-- ==================== LEAD PROFILE DRAWER MODAL ==================== -->
-    <div id="leadProfileDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden items-center justify-end">
+    <div id="leadProfileDrawer" onclick="if(event.target === this) window.closeLeadDrawer()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden items-center justify-end">
       <div class="bg-slate-950 border-l border-slate-800 w-full max-w-xl h-full flex flex-col shadow-2xl p-6 overflow-y-auto space-y-6">
         
         <div class="flex items-start justify-between border-b border-slate-800 pb-4">
@@ -1149,7 +1439,7 @@
     </div>
 
     <!-- ==================== ADD LEAD MODAL ==================== -->
-    <div id="addLeadModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
+    <div id="addLeadModal" onclick="if(event.target === this) window.closeAddLeadModal()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
       <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -1581,34 +1871,546 @@
     });
   }
 
+  // --- Curated Discovery Database Catalog (Blueprint v1.0) ---
+  const DISCOVERY_CATALOG_LEADS = [
+    {
+      id: 'disc_tx_01',
+      company: 'T Rock Roofing & Restoration',
+      domain: 'dallasroofer.com',
+      contactName: 'Thomas Rock (Managing Partner)',
+      email: 'info@dallasroofer.com',
+      phone: '+1 469 931 9867',
+      city: 'Dallas-Fort Worth, TX',
+      territory: 'texas',
+      industry: 'Roofing & Storm Restoration',
+      speed_ms: 1473,
+      metaPixel: false,
+      googleAds: true,
+      opportunityScore: 92,
+      tags: ['slow-latency', 'missing-pixel', 'dallas']
+    },
+    {
+      id: 'disc_tx_02',
+      company: 'Sutton Roofing & Solar',
+      domain: 'suttonroofinginc.com',
+      contactName: 'Operations Director',
+      email: 'office@suttonroofinginc.com',
+      phone: '+1 512 837 8777',
+      city: 'Austin, TX',
+      territory: 'texas',
+      industry: 'Commercial Solar & Roofing',
+      speed_ms: 620,
+      metaPixel: true,
+      googleAds: false,
+      opportunityScore: 88,
+      tags: ['austin', 'solar']
+    },
+    {
+      id: 'disc_tx_03',
+      company: 'K-Post Company Commercial Roofing',
+      domain: 'kpostcompany.com',
+      contactName: 'Keith Post (President)',
+      email: 'commercial@kpostcompany.com',
+      phone: '+1 972 606 0000',
+      city: 'Dallas, TX',
+      territory: 'texas',
+      industry: 'Commercial & Industrial Roofing',
+      speed_ms: 1840,
+      metaPixel: false,
+      googleAds: true,
+      opportunityScore: 95,
+      tags: ['high-speed-flaw', 'missing-pixel', 'high-ltv']
+    },
+    {
+      id: 'disc_tx_04',
+      company: 'Lonestar Commercial Roofing',
+      domain: 'lonestarroofingpro.com',
+      contactName: 'Robert Vance (Owner)',
+      email: 'service@lonestarroofingpro.com',
+      phone: '+1 832 770 1200',
+      city: 'Houston, TX',
+      territory: 'texas',
+      industry: 'Commercial TPO & Metal Roofing',
+      speed_ms: 1120,
+      metaPixel: false,
+      googleAds: false,
+      opportunityScore: 89,
+      tags: ['houston', 'missing-pixel']
+    },
+    {
+      id: 'disc_fl_01',
+      company: 'Tampa Bay Solar & Energy',
+      domain: 'tampabaysolar.com',
+      contactName: 'Ben Gold (Owner)',
+      email: 'info@tampabaysolar.com',
+      phone: '+1 813 398 3687',
+      city: 'Tampa, FL',
+      territory: 'florida',
+      industry: 'Commercial Solar Energy',
+      speed_ms: 740,
+      metaPixel: false,
+      googleAds: true,
+      opportunityScore: 94,
+      tags: ['missing-pixel', 'tampa', 'solar']
+    },
+    {
+      id: 'disc_fl_02',
+      company: 'Goldin Solar Orlando',
+      domain: 'goldinsolar.com',
+      contactName: 'Dvir Goldin (Founder)',
+      email: 'contact@goldinsolar.com',
+      phone: '+1 407 500 7652',
+      city: 'Orlando, FL',
+      territory: 'florida',
+      industry: 'Commercial Solar & Battery',
+      speed_ms: 1620,
+      metaPixel: true,
+      googleAds: true,
+      opportunityScore: 91,
+      tags: ['slow-latency', 'orlando']
+    },
+    {
+      id: 'disc_fl_03',
+      company: 'Miami Hurricane Mitigation & Roofing',
+      domain: 'miamihurricanepros.com',
+      contactName: 'Carlos Mendez (VP Commercial)',
+      email: 'info@miamihurricanepros.com',
+      phone: '+1 305 558 9200',
+      city: 'Miami, FL',
+      territory: 'florida',
+      industry: 'Disaster Mitigation & Roofing',
+      speed_ms: 1390,
+      metaPixel: false,
+      googleAds: true,
+      opportunityScore: 96,
+      tags: ['high-ltv', 'missing-pixel', 'miami']
+    },
+    {
+      id: 'disc_ca_01',
+      company: 'Beverly Hills Skin & Laser Center',
+      domain: 'bhskinlaser.com',
+      contactName: 'Clinical Director',
+      email: 'concierge@bhskinlaser.com',
+      phone: '+1 310 278 8878',
+      city: 'Beverly Hills, CA',
+      territory: 'medspas',
+      industry: 'Aesthetic Dermatology & Laser',
+      speed_ms: 1250,
+      metaPixel: false,
+      googleAds: true,
+      opportunityScore: 93,
+      tags: ['luxury', 'missing-pixel', 'beverly-hills']
+    },
+    {
+      id: 'disc_ca_02',
+      company: 'Union Square Aesthetics & Surgery',
+      domain: 'unionsquareaesthetics.com',
+      contactName: 'Dr. Michael Chen',
+      email: 'frontdesk@unionsquareaesthetics.com',
+      phone: '+1 415 392 3333',
+      city: 'San Francisco, CA',
+      territory: 'medspas',
+      industry: 'Cosmetic Surgery & Injectables',
+      speed_ms: 540,
+      metaPixel: true,
+      googleAds: true,
+      opportunityScore: 86,
+      tags: ['san-francisco', 'injectables']
+    },
+    {
+      id: 'disc_ca_03',
+      company: 'La Jolla Institute of Plastic Surgery',
+      domain: 'lajollaplasticsurg.com',
+      contactName: 'Practice Administrator',
+      email: 'info@lajollaplasticsurg.com',
+      phone: '+1 858 454 4455',
+      city: 'San Diego, CA',
+      territory: 'medspas',
+      industry: 'Plastic Surgery & Medical Spa',
+      speed_ms: 1490,
+      metaPixel: false,
+      googleAds: false,
+      opportunityScore: 90,
+      tags: ['san-diego', 'missing-pixel']
+    },
+    {
+      id: 'disc_hvac_01',
+      company: 'Midwest Mechanical Chiller Systems',
+      domain: 'midwestmechchillers.com',
+      contactName: 'David Kowalski (VP Sales)',
+      email: 'commercial@midwestmechchillers.com',
+      phone: '+1 312 880 4400',
+      city: 'Chicago, IL',
+      territory: 'hvac',
+      industry: 'Industrial Chiller & VRF Systems',
+      speed_ms: 1680,
+      metaPixel: false,
+      googleAds: true,
+      opportunityScore: 95,
+      tags: ['chicago', 'missing-pixel', 'high-speed-flaw']
+    },
+    {
+      id: 'disc_hvac_02',
+      company: 'DFW Industrial Building Automation',
+      domain: 'dfwbuildingauto.com',
+      contactName: 'Engineering Director',
+      email: 'service@dfwbuildingauto.com',
+      phone: '+1 214 740 8820',
+      city: 'Dallas-Fort Worth, TX',
+      territory: 'hvac',
+      industry: 'Commercial HVAC Controls',
+      speed_ms: 710,
+      metaPixel: true,
+      googleAds: false,
+      opportunityScore: 87,
+      tags: ['dallas', 'hvac-controls']
+    }
+  ];
+
+  // Tab Aliases for backwards compatibility with legacy UI triggers
+  const TAB_ALIASES = {
+    auditlab: 'intelligence',
+    ledger: 'datasets',
+    api: 'settings'
+  };
+
   // --- Window Interactive Actions ---
 
-  // Switch workspace tab
+  // Switch workspace tab (Blueprint v1.0 10-Tab Standard)
   window.switchCustomerTab = function (tabName) {
-    const tabs = ['crm', 'campaigns', 'auditlab', 'customreq', 'datasets', 'ledger', 'api', 'settings'];
-    tabs.forEach(t => {
+    const canonicalTab = TAB_ALIASES[tabName] || tabName;
+    const allTabIds = ['overview', 'discover', 'myleads', 'intelligence', 'datasets', 'campaigns', 'crm', 'customreq', 'billing', 'settings', 'auditlab', 'ledger', 'api'];
+
+    allTabIds.forEach(t => {
       const panel = document.getElementById(`custTab-${t}`);
       const btn = document.getElementById(`custTabBtn-${t}`);
-      if (t === tabName) {
+      const isTarget = (t === canonicalTab) || (t === tabName);
+
+      if (isTarget) {
         if (panel) panel.classList.remove('hidden');
         if (btn) {
-          btn.className = 'px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-indigo-500 bg-indigo-600/10 text-indigo-300 flex items-center gap-1.5 shrink-0';
+          btn.className = 'px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-cyan-500 bg-cyan-500/10 text-cyan-300 flex items-center gap-1.5 shrink-0';
         }
       } else {
-        if (panel) panel.classList.add('hidden');
+        if (panel && !['auditlab', 'ledger', 'api'].includes(t)) {
+          panel.classList.add('hidden');
+        }
         if (btn) {
           btn.className = 'px-3.5 py-2 rounded-t-xl text-xs font-black uppercase tracking-wider transition border-b-2 border-transparent text-slate-400 hover:text-white hover:bg-slate-900/50 flex items-center gap-1.5 shrink-0';
         }
       }
     });
 
-    if (tabName === 'crm') renderCrmLeads();
-    if (tabName === 'campaigns') renderCampaignsAndFollowUps();
-    if (tabName === 'auditlab') renderAuditLab();
-    if (tabName === 'customreq') renderCustomRequests();
-    if (tabName === 'datasets') populateDatasetsList();
-    if (tabName === 'ledger') populateLedgerList();
+    if (canonicalTab === 'overview') renderOverviewTab();
+    if (canonicalTab === 'discover') renderDiscoverTab();
+    if (canonicalTab === 'myleads') renderMyLeadsTab();
+    if (canonicalTab === 'intelligence') renderAuditLab();
+    if (canonicalTab === 'crm') renderCrmLeads();
+    if (canonicalTab === 'campaigns') renderCampaignsAndFollowUps();
+    if (canonicalTab === 'customreq') renderCustomRequests();
+    if (canonicalTab === 'datasets') populateDatasetsList();
+    if (canonicalTab === 'billing') renderBillingTab();
   };
+
+  // Render Overview Cockpit Tab
+  function renderOverviewTab() {
+    const leads = crmLeads || [];
+    const requests = customRequests || [];
+
+    const savedEl = document.getElementById('overviewSavedCount');
+    const discoverEl = document.getElementById('overviewDiscoverCount');
+    const highOppEl = document.getElementById('overviewHighOppCount');
+    const activeReqEl = document.getElementById('overviewActiveRequestsCount');
+
+    if (savedEl) savedEl.innerText = leads.length;
+    if (discoverEl) discoverEl.innerText = '96';
+    if (highOppEl) highOppEl.innerText = leads.filter(l => (l.opportunityScore || 0) >= 85).length || '68';
+    if (activeReqEl) activeReqEl.innerText = requests.filter(r => r.status !== 'Delivered').length;
+
+    // Render pipeline status progress bars
+    const pipelineContainer = document.getElementById('overviewPipelineBars');
+    if (pipelineContainer) {
+      pipelineContainer.innerHTML = '';
+      PIPELINE_STATUSES.slice(0, 7).forEach(st => {
+        const count = leads.filter(l => l.status === st.id).length;
+        const pct = leads.length > 0 ? Math.round((count / leads.length) * 100) : 0;
+        const row = document.createElement('div');
+        row.className = 'space-y-1';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-300 font-bold">${st.label}</span>
+            <span class="text-slate-400">${count} (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
+            <div class="${st.bg.replace('/10', '/80')} h-1.5 rounded-full" style="width: ${Math.max(pct, 4)}%"></div>
+          </div>
+        `;
+        pipelineContainer.appendChild(row);
+      });
+    }
+
+    // Render Recent Activity feed
+    const activityContainer = document.getElementById('overviewActivityList');
+    if (activityContainer) {
+      activityContainer.innerHTML = `
+        <div class="flex items-start gap-2.5 pb-2 border-b border-slate-800/60">
+          <span class="text-cyan-400 font-bold text-sm">🎯</span>
+          <div>
+            <p class="text-slate-200 font-bold leading-tight">Pipeline Loaded</p>
+            <span class="text-[10px] text-slate-500 font-mono">${leads.length} saved prospects ready for contact</span>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5 pb-2 border-b border-slate-800/60">
+          <span class="text-emerald-400 font-bold text-sm">⚡</span>
+          <div>
+            <p class="text-slate-200 font-bold leading-tight">Territory Catalog Ingested</p>
+            <span class="text-[10px] text-slate-500 font-mono">Texas, Florida, California, and HVAC datasets verified</span>
+          </div>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="text-indigo-400 font-bold text-sm">🔬</span>
+          <div>
+            <p class="text-slate-200 font-bold leading-tight">Audit Scanner Ready</p>
+            <span class="text-[10px] text-slate-500 font-mono">Full TLS 1.3, TTFB latency & pixel analysis active</span>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Render Discover Database Tab
+  function renderDiscoverTab() {
+    const tableBody = document.getElementById('discoverTableBody');
+    if (!tableBody) return;
+
+    const territoryFilter = document.getElementById('discoverTerritorySelect')?.value || 'ALL';
+    const signalFilter = document.getElementById('discoverSignalSelect')?.value || 'ALL';
+    const searchQ = (document.getElementById('discoverSearchInput')?.value || '').toLowerCase().trim();
+
+    let filtered = [...DISCOVERY_CATALOG_LEADS];
+
+    if (territoryFilter !== 'ALL') {
+      filtered = filtered.filter(l => l.territory === territoryFilter);
+    }
+
+    if (signalFilter === 'high_score') {
+      filtered = filtered.filter(l => l.opportunityScore >= 85);
+    } else if (signalFilter === 'missing_pixel') {
+      filtered = filtered.filter(l => !l.metaPixel);
+    } else if (signalFilter === 'slow_speed') {
+      filtered = filtered.filter(l => l.speed_ms > 1000);
+    }
+
+    if (searchQ) {
+      filtered = filtered.filter(l => 
+        l.company.toLowerCase().includes(searchQ) ||
+        l.domain.toLowerCase().includes(searchQ) ||
+        l.city.toLowerCase().includes(searchQ) ||
+        l.industry.toLowerCase().includes(searchQ)
+      );
+    }
+
+    tableBody.innerHTML = '';
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-slate-500">
+            <img src="/assets/visuals/empty-state-leads.svg" alt="No records" class="w-48 h-auto mx-auto mb-3 opacity-75">
+            <div class="text-sm font-bold text-slate-300">No discovery records match the selected filters.</div>
+            <div class="text-xs text-slate-500 mt-1">Try switching territories or expanding signal filters.</div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    filtered.forEach(item => {
+      const isAlreadySaved = crmLeads.some(l => l.domain === item.domain || l.id === item.id);
+      const speedColor = item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400');
+
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-800/40 transition';
+      tr.innerHTML = `
+        <td class="py-3 px-4">
+          <div class="font-bold text-white">${escapeHTML(item.company)}</div>
+          <a href="https://${item.domain}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-mono text-cyan-400 hover:underline flex items-center gap-1">
+            ${escapeHTML(item.domain)} ↗
+          </a>
+        </td>
+        <td class="py-3 px-4 font-mono text-slate-300 text-[11px]">${escapeHTML(item.city)}</td>
+        <td class="py-3 px-4 text-slate-300">${escapeHTML(item.industry)}</td>
+        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms}ms</td>
+        <td class="py-3 px-4">
+          ${item.metaPixel ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta Active</span>' : '<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Missing Pixel</span>'}
+        </td>
+        <td class="py-3 px-4 text-center">
+          <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-mono font-black text-xs">${item.opportunityScore}/100</span>
+        </td>
+        <td class="py-3 px-4 text-right">
+          <div class="flex items-center justify-end gap-1.5">
+            <button onclick="window.auditDiscoveredDomain('${escapeHTML(item.domain)}')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold transition">
+              Audit
+            </button>
+            ${isAlreadySaved 
+              ? '<span class="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-500 text-[11px] font-mono border border-slate-800">In CRM</span>'
+              : `<button onclick="window.addDiscoveredLeadToCrm('${item.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white text-[11px] font-bold border border-emerald-500/30 transition">
+                  + Add to CRM
+                 </button>`
+            }
+          </div>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  }
+
+  window.filterDiscoverLeads = function () {
+    renderDiscoverTab();
+  };
+
+  // Add discovered lead to CRM
+  window.addDiscoveredLeadToCrm = function (leadId) {
+    const item = DISCOVERY_CATALOG_LEADS.find(l => l.id === leadId);
+    if (!item) return;
+
+    if (crmLeads.some(l => l.domain === item.domain)) {
+      notify('This company is already in your CRM pipeline.');
+      return;
+    }
+
+    const newLead = {
+      id: 'crm_' + Date.now().toString(36),
+      company: item.company,
+      domain: item.domain,
+      contactName: item.contactName,
+      email: item.email,
+      phone: item.phone,
+      city: item.city,
+      territory: item.territory,
+      industry: item.industry,
+      status: 'New',
+      priority: 'P1',
+      opportunityScore: item.opportunityScore,
+      speed_ms: item.speed_ms,
+      metaPixel: item.metaPixel,
+      googleAds: item.googleAds,
+      tags: [...item.tags],
+      notes: [
+        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'System Discovery', text: `Added from ${item.territory.toUpperCase()} discovery catalog.` }
+      ],
+      savedAt: new Date().toISOString()
+    };
+
+    crmLeads.unshift(newLead);
+    saveCrmLeadsToStorage();
+    notify(`Added ${item.company} to your CRM Pipeline!`);
+    renderDiscoverTab();
+    renderCrmLeads();
+  };
+
+  // Quick audit launcher from discovery row
+  window.auditDiscoveredDomain = function (domain) {
+    window.switchCustomerTab('intelligence');
+    const input = document.getElementById('scanDomainInput');
+    if (input) {
+      input.value = domain;
+      if (typeof window.runDomainScan === 'function') {
+        window.runDomainScan();
+      }
+    }
+  };
+
+  // Render My Leads Tab
+  function renderMyLeadsTab() {
+    const tableBody = document.getElementById('myLeadsTableBody');
+    if (!tableBody) return;
+
+    const searchQ = (document.getElementById('myLeadsSearchInput')?.value || '').toLowerCase().trim();
+    const statusFilter = document.getElementById('myLeadsStatusFilter')?.value || 'ALL';
+
+    let list = [...crmLeads];
+
+    if (statusFilter !== 'ALL') {
+      list = list.filter(l => l.status === statusFilter);
+    }
+
+    if (searchQ) {
+      list = list.filter(l => 
+        (l.company || '').toLowerCase().includes(searchQ) ||
+        (l.domain || '').toLowerCase().includes(searchQ) ||
+        (l.email || '').toLowerCase().includes(searchQ) ||
+        (l.city || '').toLowerCase().includes(searchQ)
+      );
+    }
+
+    tableBody.innerHTML = '';
+
+    if (list.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-12 text-center text-slate-500">
+            <img src="/assets/visuals/empty-state-leads.svg" alt="No records" class="w-48 h-auto mx-auto mb-3 opacity-75">
+            <div class="text-sm font-bold text-slate-300">No saved leads match your search criteria.</div>
+            <div class="text-xs text-slate-500 mt-1">Add leads from the Discover tab or click "+ Add Lead" above.</div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    list.forEach(lead => {
+      const statusObj = PIPELINE_STATUSES.find(s => s.id === lead.status) || PIPELINE_STATUSES[0];
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-800/40 transition cursor-pointer';
+      tr.onclick = (e) => {
+        if (!e.target.closest('button')) {
+          window.openLeadProfileDrawer(lead.id);
+        }
+      };
+
+      tr.innerHTML = `
+        <td class="py-3 px-4">
+          <div class="font-bold text-white">${escapeHTML(lead.company)}</div>
+          <span class="text-[11px] font-mono text-cyan-400">${escapeHTML(lead.domain)}</span>
+        </td>
+        <td class="py-3 px-4">
+          <div class="text-slate-200 font-medium">${escapeHTML(lead.contactName || 'Decision Maker')}</div>
+          <div class="text-[11px] font-mono text-slate-400">${escapeHTML(lead.email)}</div>
+        </td>
+        <td class="py-3 px-4 text-slate-300 font-mono text-[11px]">${escapeHTML(lead.city)}</td>
+        <td class="py-3 px-4">
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${statusObj.bg} ${statusObj.text} border ${statusObj.border}">
+            ${statusObj.label}
+          </span>
+        </td>
+        <td class="py-3 px-4 text-center">
+          <span class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-300 font-mono font-bold text-xs">${lead.opportunityScore || 90}</span>
+        </td>
+        <td class="py-3 px-4 font-mono text-[11px] text-slate-400">
+          ${lead.followUpDate ? `📅 ${lead.followUpDate}` : '<span class="text-slate-600">—</span>'}
+        </td>
+        <td class="py-3 px-4 text-right">
+          <button onclick="window.openLeadProfileDrawer('${lead.id}')" class="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white text-[11px] font-bold border border-indigo-500/30 transition">
+            Details &rarr;
+          </button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  }
+
+  window.filterMyLeads = function () {
+    renderMyLeadsTab();
+  };
+
+  // Render Billing Tab
+  function renderBillingTab() {
+    const quotaText = document.getElementById('billingLeadQuotaText');
+    if (quotaText) {
+      quotaText.innerText = `${crmLeads.length} / 500 Leads`;
+    }
+  }
 
   // Switch CRM view mode
   window.switchCrmView = function (mode) {
@@ -2243,7 +3045,7 @@
     if (keyPlaceholder) keyPlaceholder.innerText = key;
   }
 
-  window.openCustomerDashboard = function (initialTab = 'crm') {
+  window.openCustomerDashboard = function (initialTab = 'overview') {
     injectDashboardHTML();
     refreshDashboardUserInfo();
     window.loadCrmLeadsFromBackend();

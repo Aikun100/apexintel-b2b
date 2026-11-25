@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="scanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1626"/>
+      <stop offset="100%" stop-color="#070B14"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="700" height="400" rx="12" fill="url(#scanGrad)" stroke="rgba(255,255,255,0.08)"/>
+
+  <!-- Header -->
+  <text x="40" y="45" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="800">DEEP WEBSITE DIAGNOSTIC PIPELINE</text>
+  <text x="40" y="65" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="11">Real-time socket inspection, cryptographic TLS trust chain, and pixel forensics</text>
+
+  <!-- Step 1: DNS & MX -->
+  <g transform="translate(40, 100)">
+    <rect width="180" height="240" rx="10" fill="#0B111E" stroke="rgba(6, 182, 212, 0.3)"/>
+    <circle cx="30" cy="30" r="14" fill="rgba(6, 182, 212, 0.15)"/>
+    <text x="30" y="34" text-anchor="middle" fill="#06B6D4" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">01</text>
+    <text x="55" y="34" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">DNS &amp; MX Gate</text>
+    
+    <path d="M 20 60 L 160 60" stroke="rgba(255,255,255,0.06)"/>
+    <text x="20" y="85" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Mail Exchange:</text>
+    <text x="20" y="105" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="10">✓ Google Workspace</text>
+    <text x="20" y="135" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">IPv4 / IPv6 Resolution:</text>
+    <text x="20" y="155" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="10">104.21.49.201</text>
+    <text x="20" y="185" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">SSRF Loopback Guard:</text>
+    <text x="20" y="205" fill="#10B981" font-family="'JetBrains Mono', monospace" font-size="10">✓ Public Routable IP</text>
+  </g>
+
+  <!-- Step 2: TLS Socket -->
+  <g transform="translate(260, 100)">
+    <rect width="180" height="240" rx="10" fill="#0B111E" stroke="rgba(99, 102, 241, 0.3)"/>
+    <circle cx="30" cy="30" r="14" fill="rgba(99, 102, 241, 0.15)"/>
+    <text x="30" y="34" text-anchor="middle" fill="#818CF8" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">02</text>
+    <text x="55" y="34" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">TLS Trust &amp; Cert</text>
+    
+    <path d="M 20 60 L 160 60" stroke="rgba(255,255,255,0.06)"/>
+    <text x="20" y="85" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Cert Authority:</text>
+    <text x="20" y="105" fill="#E2E8F0" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Let's Encrypt E6</text>
+    <text x="20" y="135" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Trust Validation:</text>
+    <text x="20" y="155" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="10">✓ Authorized Chain</text>
+    <text x="20" y="185" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Cipher Protocol:</text>
+    <text x="20" y="205" fill="#818CF8" font-family="'JetBrains Mono', monospace" font-size="10">TLSv1.3 (AES_256_GCM)</text>
+  </g>
+
+  <!-- Step 3: Performance & Opportunity -->
+  <g transform="translate(480, 100)">
+    <rect width="180" height="240" rx="10" fill="#0B111E" stroke="rgba(16, 185, 129, 0.3)"/>
+    <circle cx="30" cy="30" r="14" fill="rgba(16, 185, 129, 0.15)"/>
+    <text x="30" y="34" text-anchor="middle" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">03</text>
+    <text x="55" y="34" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Opportunity Score</text>
+    
+    <path d="M 20 60 L 160 60" stroke="rgba(255,255,255,0.06)"/>
+    <text x="20" y="85" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">TTFB Mobile Latency:</text>
+    <text x="20" y="105" fill="#FB7185" font-family="'JetBrains Mono', monospace" font-size="10">1,473ms (High Gap)</text>
+    <text x="20" y="135" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Ad Pixel Status:</text>
+    <text x="20" y="155" fill="#FBBF24" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Missing Meta Pixel</text>
+    <text x="20" y="185" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Sales Angle:</text>
+    <text x="20" y="205" fill="#22D3EE" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Speed &amp; CRO Pitch</text>
+  </g>
+</svg>

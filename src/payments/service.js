@@ -27,6 +27,7 @@ export class PaymentsService {
     this._stripeClient = options.stripeClient || null;
     this._s3Client = options.s3Client || null;
     this._region = options.region || process.env.AWS_REGION || 'ap-southeast-2';
+    this._webhookSecret = options.webhookSecret || null;
   }
 
   get repo() {
@@ -164,7 +165,7 @@ export class PaymentsService {
    * @returns {Promise<{ received: boolean, eventType: string, fulfilled?: boolean, alreadyFulfilled?: boolean, orderId?: string }>}
    */
   async handleStripeWebhook(rawBody, signatureHeader, secretOverride) {
-    const webhookSecret = secretOverride || process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = secretOverride || this._webhookSecret || process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
       const err = new Error('STRIPE_WEBHOOK_SECRET is not configured on the server.');
@@ -206,24 +207,24 @@ export class PaymentsService {
       }
 
       // 1. Strict Session ID verification
-      if (order.stripeSessionId && session.id && session.id !== order.stripeSessionId) {
-        console.warn(`[SECURITY WARNING] Stripe Session ID mismatch for order ${order.orderId}: expected ${order.stripeSessionId}, got ${session.id}`);
+      if (!session.id || !order.stripeSessionId || session.id !== order.stripeSessionId) {
+        console.warn(`[SECURITY WARNING] Stripe Session ID mismatch or missing for order ${order.orderId}: expected ${order.stripeSessionId}, got ${session.id}`);
         const err = new Error('Security validation failed: Stripe Session ID mismatch.');
         err.statusCode = 400;
         throw err;
       }
 
       // 2. Strict Authoritative Amount verification
-      if (session.amount_total !== undefined && session.amount_total !== order.amountInCents) {
-        console.warn(`[SECURITY WARNING] Payment amount mismatch for order ${order.orderId}: expected ${order.amountInCents}, got ${session.amount_total}`);
+      if (session.amount_total === undefined || session.amount_total === null || session.amount_total !== order.amountInCents) {
+        console.warn(`[SECURITY WARNING] Payment amount mismatch or missing for order ${order.orderId}: expected ${order.amountInCents}, got ${session.amount_total}`);
         const err = new Error('Security validation failed: Payment amount mismatch.');
         err.statusCode = 400;
         throw err;
       }
 
       // 3. Strict Authoritative Currency verification
-      if (session.currency && session.currency.toLowerCase() !== (order.currency || 'usd').toLowerCase()) {
-        console.warn(`[SECURITY WARNING] Currency mismatch for order ${order.orderId}: expected ${order.currency}, got ${session.currency}`);
+      if (!session.currency || session.currency.toLowerCase() !== (order.currency || 'usd').toLowerCase()) {
+        console.warn(`[SECURITY WARNING] Currency mismatch or missing for order ${order.orderId}: expected ${order.currency}, got ${session.currency}`);
         const err = new Error('Security validation failed: Currency mismatch.');
         err.statusCode = 400;
         throw err;
@@ -370,7 +371,7 @@ export class PaymentsService {
     let downloadUrl;
     // In test environment or when mock storage is active without real AWS credentials, provide simulated presigned URL
     if (process.env.USE_MOCK_STORAGE === 'true' || (process.env.NODE_ENV === 'test' && !process.env.AWS_ACCESS_KEY_ID)) {
-      downloadUrl = `https://${bucket}.s3.${this._region}.amazonaws.com/${s3Key}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=${PRESIGNED_URL_EXPIRES_IN_SECONDS}&mock_sig=valid_test_presigned_url`;
+      downloadUrl = `https://${bucket}.s3.${this._region}.amazonaws.com/${s3Key}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=${PRESIGNED_URL_EXPIRES_IN_SECONDS}&X-Amz-Signature=mock_valid_test_presigned_sig`;
     } else {
       const command = new GetObjectCommand({
         Bucket: bucket,

@@ -176,7 +176,7 @@
     if (document.getElementById('adminDashboardModal')) return;
 
     const html = `
-      <div id="adminDashboardModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+      <div id="adminDashboardModal" onclick="if(event.target === this) window.closeAdminDashboard()" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
         <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-6xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative my-auto">
           
           <!-- Top Header -->

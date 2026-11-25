@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 350" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="taxBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1626"/>
+      <stop offset="100%" stop-color="#070B14"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="750" height="350" rx="14" fill="url(#taxBg)" stroke="rgba(255,255,255,0.08)"/>
+
+  <text x="35" y="40" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="800">5-TIER DATA PROVENANCE &amp; INTEGRITY TAXONOMY</text>
+  <text x="35" y="60" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="11">Zero fabricated data. Clear epistemological labels for every data attribute.</text>
+
+  <!-- Tier 1: Verified -->
+  <g transform="translate(35, 90)">
+    <rect width="130" height="220" rx="8" fill="#0B111E" stroke="rgba(16, 185, 129, 0.4)"/>
+    <rect x="15" y="15" width="70" height="20" rx="4" fill="rgba(16, 185, 129, 0.15)"/>
+    <text x="21" y="29" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">VERIFIED</text>
+    <text x="15" y="60" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Directly Confirmed</text>
+    <text x="15" y="80" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Active DNS MX records, live HTTP 200 responses, authoritative registry matches.</text>
+    <text x="15" y="195" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="10">Tier 1: 100%</text>
+  </g>
+
+  <!-- Tier 2: Publicly Listed -->
+  <g transform="translate(175, 90)">
+    <rect width="130" height="220" rx="8" fill="#0B111E" stroke="rgba(6, 182, 212, 0.4)"/>
+    <rect x="15" y="15" width="95" height="20" rx="4" fill="rgba(6, 182, 212, 0.15)"/>
+    <text x="21" y="29" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">PUBLIC LISTED</text>
+    <text x="15" y="60" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Official Records</text>
+    <text x="15" y="80" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">State corporate filings, Google Business profile listings, publicly published phones.</text>
+    <text x="15" y="195" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="10">Tier 2: Primary</text>
+  </g>
+
+  <!-- Tier 3: Inferred -->
+  <g transform="translate(315, 90)">
+    <rect width="130" height="220" rx="8" fill="#0B111E" stroke="rgba(99, 102, 241, 0.4)"/>
+    <rect x="15" y="15" width="70" height="20" rx="4" fill="rgba(99, 102, 241, 0.15)"/>
+    <text x="21" y="29" fill="#818CF8" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">INFERRED</text>
+    <text x="15" y="60" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Derived Intel</text>
+    <text x="15" y="80" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">CMS platforms from script footprints, ad spending inferred from active remarketing tags.</text>
+    <text x="15" y="195" fill="#818CF8" font-family="'JetBrains Mono', monospace" font-size="10">Tier 3: Analyzed</text>
+  </g>
+
+  <!-- Tier 4: Estimated -->
+  <g transform="translate(455, 90)">
+    <rect width="130" height="220" rx="8" fill="#0B111E" stroke="rgba(245, 158, 11, 0.4)"/>
+    <rect x="15" y="15" width="75" height="20" rx="4" fill="rgba(245, 158, 11, 0.15)"/>
+    <text x="21" y="29" fill="#FBBF24" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">ESTIMATED</text>
+    <text x="15" y="60" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Model Estimates</text>
+    <text x="15" y="80" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Annual revenue ranges and employee counts calculated from territory industry medians.</text>
+    <text x="15" y="195" fill="#FBBF24" font-family="'JetBrains Mono', monospace" font-size="10">Tier 4: Model</text>
+  </g>
+
+  <!-- Tier 5: Unavailable -->
+  <g transform="translate(595, 90)">
+    <rect width="120" height="220" rx="8" fill="#0B111E" stroke="rgba(148, 163, 184, 0.25)"/>
+    <rect x="15" y="15" width="90" height="20" rx="4" fill="rgba(148, 163, 184, 0.1)"/>
+    <text x="21" y="29" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700">UNAVAILABLE</text>
+    <text x="15" y="60" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Honest Null</text>
+    <text x="15" y="80" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Where data cannot be legitimately verified, it is marked as unavailable. Never faked.</text>
+    <text x="15" y="195" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="10">Tier 5: Null Safe</text>
+  </g>
+</svg>

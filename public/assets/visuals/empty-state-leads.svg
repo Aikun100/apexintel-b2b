@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="emptyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1626"/>
+      <stop offset="100%" stop-color="#0B111E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="300" rx="12" fill="url(#emptyGrad)"/>
+
+  <!-- Radar Dish / Scanner Icon -->
+  <circle cx="200" cy="110" r="50" fill="none" stroke="rgba(6, 182, 212, 0.2)" stroke-width="1.5"/>
+  <circle cx="200" cy="110" r="35" fill="none" stroke="rgba(6, 182, 212, 0.3)" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <circle cx="200" cy="110" r="20" fill="none" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.5"/>
+  <circle cx="200" cy="110" r="5" fill="#06B6D4"/>
+
+  <!-- Scanning Sweep Beam -->
+  <path d="M 200 110 L 235 75 A 50 50 0 0 0 200 60 Z" fill="rgba(6, 182, 212, 0.15)"/>
+
+  <text x="200" y="195" text-anchor="middle" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="700">No Prospects Matched Query</text>
+  <text x="200" y="220" text-anchor="middle" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">Try expanding your territory or industry filter criteria</text>
+</svg>

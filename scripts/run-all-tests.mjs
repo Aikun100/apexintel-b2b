@@ -3,7 +3,7 @@
  * ApexIntel B2B - Unified End-to-End Test Runner
  * 
  * Executes all 6 modular test suites across the ApexIntel serverless architecture:
- * 1. Authentication & Session Lifecycle (52 tests)
+ * 1. Authentication & Session Lifecycle (60 tests)
  * 2. Multi-Tenant CRM Backend (24 tests)
  * 3. Stripe Payments & S3 Fulfillment (19 tests)
  * 4. Lead Discovery & Crawler Ingestion (15 tests)
@@ -25,7 +25,7 @@ const SUITES = [
   {
     name: 'Authentication & Session Lifecycle',
     script: 'scripts/run-auth-tests.mjs',
-    expectedTests: 52
+    expectedTests: 60
   },
   {
     name: 'Multi-Tenant CRM Backend',
@@ -35,7 +35,7 @@ const SUITES = [
   {
     name: 'Stripe Payments & S3 Fulfillment',
     script: 'scripts/run-payment-tests.mjs',
-    expectedTests: 27
+    expectedTests: 30
   },
   {
     name: 'Discovery API & Crawler Ingestion',
@@ -51,6 +51,11 @@ const SUITES = [
     name: 'Custom Extraction Requests & Queue',
     script: 'scripts/run-requests-tests.mjs',
     expectedTests: 17
+  },
+  {
+    name: 'End-to-End Customer Purchase Journey',
+    script: 'scripts/run-e2e-tests.mjs',
+    expectedTests: 9
   }
 ];
 

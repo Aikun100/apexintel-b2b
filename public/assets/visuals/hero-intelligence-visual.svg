@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="heroBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B111E"/>
+      <stop offset="100%" stop-color="#070B14"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="800" height="500" rx="16" fill="url(#heroBg)" stroke="rgba(255,255,255,0.08)"/>
+
+  <!-- Matrix Grid Lines -->
+  <g stroke="rgba(255,255,255,0.03)" stroke-width="1">
+    <line x1="50" y1="50" x2="750" y2="50"/>
+    <line x1="50" y1="150" x2="750" y2="150"/>
+    <line x1="50" y1="250" x2="750" y2="250"/>
+    <line x1="50" y1="350" x2="750" y2="350"/>
+    <line x1="50" y1="450" x2="750" y2="450"/>
+    <line x1="150" y1="50" x2="150" y2="450"/>
+    <line x1="300" y1="50" x2="300" y2="450"/>
+    <line x1="450" y1="50" x2="450" y2="450"/>
+    <line x1="600" y1="50" x2="600" y2="450"/>
+  </g>
+
+  <!-- Network Interconnect Paths -->
+  <path d="M 180 180 Q 300 120 420 220 T 640 180" fill="none" stroke="rgba(6, 182, 212, 0.4)" stroke-width="2" stroke-dasharray="4 4"/>
+  <path d="M 180 320 Q 350 380 480 300 T 640 340" fill="none" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" stroke-dasharray="4 4"/>
+  <path d="M 420 220 L 480 300" fill="none" stroke="rgba(99, 102, 241, 0.5)" stroke-width="1.5"/>
+
+  <!-- Primary Intelligence Node 1 (Dallas Roofer) -->
+  <g transform="translate(130, 140)">
+    <rect width="180" height="90" rx="10" fill="#0E1626" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1.5"/>
+    <circle cx="25" cy="25" r="10" fill="#06B6D4" opacity="0.2"/>
+    <circle cx="25" cy="25" r="4" fill="#06B6D4"/>
+    <text x="45" y="28" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">T Rock Roofing</text>
+    <text x="45" y="44" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Dallas, TX • $3.2M Rev</text>
+    <rect x="20" y="60" width="65" height="18" rx="4" fill="rgba(244, 63, 94, 0.15)"/>
+    <text x="26" y="73" fill="#FB7185" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">1,473ms</text>
+    <rect x="95" y="60" width="70" height="18" rx="4" fill="rgba(6, 182, 212, 0.15)"/>
+    <text x="101" y="73" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">Score 92</text>
+  </g>
+
+  <!-- Central Opportunity Hub (Opportunity Engine) -->
+  <g transform="translate(350, 170)">
+    <circle cx="70" cy="70" r="60" fill="#0B111E" stroke="url(#cyanGrad)" stroke-width="2" filter="url(#glowCyan)"/>
+    <circle cx="70" cy="70" r="48" fill="#0E1626" stroke="rgba(255,255,255,0.1)"/>
+    <text x="70" y="64" text-anchor="middle" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="800">94.8%</text>
+    <text x="70" y="82" text-anchor="middle" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="600" text-transform="uppercase" letter-spacing="1">Opportunity</text>
+    <circle cx="70" cy="10" r="4" fill="#06B6D4"/>
+    <circle cx="130" cy="70" r="4" fill="#10B981"/>
+    <circle cx="70" cy="130" r="4" fill="#6366F1"/>
+    <circle cx="10" cy="70" r="4" fill="#3B82F6"/>
+  </g>
+
+  <!-- Primary Intelligence Node 2 (Miami Solar) -->
+  <g transform="translate(560, 140)">
+    <rect width="180" height="90" rx="10" fill="#0E1626" stroke="rgba(16, 185, 129, 0.4)" stroke-width="1.5"/>
+    <circle cx="25" cy="25" r="10" fill="#10B981" opacity="0.2"/>
+    <circle cx="25" cy="25" r="4" fill="#10B981"/>
+    <text x="45" y="28" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700">Apex Sun Power</text>
+    <text x="45" y="44" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Miami, FL • Solar EPC</text>
+    <rect x="20" y="60" width="70" height="18" rx="4" fill="rgba(16, 185, 129, 0.15)"/>
+    <text x="26" y="73" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">MX-Verified</text>
+    <rect x="100" y="60" width="65" height="18" rx="4" fill="rgba(6, 182, 212, 0.15)"/>
+    <text x="106" y="73" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600">Score 88</text>
+  </g>
+
+  <!-- Floating Metric Gauge Cards -->
+  <g transform="translate(140, 310)">
+    <rect width="200" height="70" rx="8" fill="#0E1626" stroke="rgba(255,255,255,0.08)"/>
+    <text x="16" y="28" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600">REAL-TIME PROVENANCE</text>
+    <text x="16" y="52" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="800">5-Tier Taxonomical Audit</text>
+  </g>
+
+  <g transform="translate(540, 310)">
+    <rect width="200" height="70" rx="8" fill="#0E1626" stroke="rgba(255,255,255,0.08)"/>
+    <text x="16" y="28" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600">ACTIVE INTELLIGENCE LAKE</text>
+    <text x="16" y="52" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="800">12,480 Verified Records</text>
+  </g>
+</svg>
