@@ -32,202 +32,8 @@
     { id: 'Not Qualified', label: 'Not Qualified', color: 'slate', border: 'border-slate-600/40', bg: 'bg-slate-700/20', text: 'text-slate-400' }
   ];
 
-  // --- Seed CRM Leads ---
-  const DEFAULT_CRM_LEADS = [
-    {
-      id: 'lead_tx_001',
-      company: 'T Rock Roofing & Restoration',
-      domain: 'dallasroofer.com',
-      contactName: 'Thomas Rock (Managing Partner)',
-      email: 'info@dallasroofer.com',
-      phone: '+1 469 931 9867',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'texas',
-      industry: 'Roofing & Storm Restoration',
-      status: 'Ready to Contact',
-      priority: 'P1',
-      opportunityScore: 92,
-      speed_ms: 1473,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['google-ads-active', 'missing-pixel', 'dallas', 'high-ltv'],
-      notes: [
-        { id: 'n1', timestamp: '2026-11-21 14:10', author: 'Alex Rivera', text: 'Prospect is spending on Google Search for storm repair but drops traffic due to 1473ms mobile latency.' }
-      ],
-      followUpDate: '2026-11-24',
-      savedAt: '2026-11-21T10:00:00.000Z'
-    },
-    {
-      id: 'lead_tx_002',
-      company: 'Sutton Roofing & Solar',
-      domain: 'suttonroofinginc.com',
-      contactName: 'Operations Director',
-      email: 'office@suttonroofinginc.com',
-      phone: '+1 512 837 8777',
-      city: 'Austin, TX',
-      territory: 'texas',
-      industry: 'Commercial Solar & Roofing',
-      status: 'Contacted',
-      priority: 'P1',
-      opportunityScore: 88,
-      speed_ms: 620,
-      metaPixel: true,
-      googleAds: false,
-      campaignId: 'camp_tx_01',
-      tags: ['austin', 'solar', 'meta-active'],
-      notes: [
-        { id: 'n2', timestamp: '2026-11-20 09:30', author: 'Alex Rivera', text: 'Sent consultative outbound pitch regarding commercial solar tax credits.' }
-      ],
-      followUpDate: '2026-11-23',
-      savedAt: '2026-11-20T08:00:00.000Z'
-    },
-    {
-      id: 'lead_fl_001',
-      company: 'Tampa Bay Solar',
-      domain: 'tampabaysolar.com',
-      contactName: 'Ben Gold (Owner)',
-      email: 'info@tampabaysolar.com',
-      phone: '+1 813 398 3687',
-      city: 'Tampa, FL',
-      territory: 'florida',
-      industry: 'Solar Energy Contracting',
-      status: 'Meeting Scheduled',
-      priority: 'P1',
-      opportunityScore: 95,
-      speed_ms: 740,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_fl_01',
-      tags: ['florida', 'hot-lead', 'meeting-booked'],
-      notes: [
-        { id: 'n3', timestamp: '2026-11-21 16:45', author: 'Alex Rivera', text: 'Demo call scheduled for Wednesday at 2pm EST to review retargeting pixel setup.' }
-      ],
-      followUpDate: '2026-11-25',
-      savedAt: '2026-11-19T11:00:00.000Z'
-    },
-    {
-      id: 'lead_fl_002',
-      company: 'Best Roofing Florida',
-      domain: 'bestroofing.net',
-      contactName: 'Commercial Estimator',
-      email: 'emergency@bestroofing.net',
-      phone: '+1 888 844 7663',
-      city: 'Fort Lauderdale, FL',
-      territory: 'florida',
-      industry: 'Hurricane Mitigation & Commercial Roofs',
-      status: 'Follow-Up',
-      priority: 'P2',
-      opportunityScore: 82,
-      speed_ms: 890,
-      metaPixel: false,
-      googleAds: false,
-      campaignId: 'camp_fl_01',
-      tags: ['hurricane-mitigation', 'south-fl'],
-      notes: [
-        { id: 'n4', timestamp: '2026-11-21 11:20', author: 'Alex Rivera', text: 'Left voicemail with dispatch; follow up on Tuesday.' }
-      ],
-      followUpDate: '2026-11-22',
-      savedAt: '2026-11-19T12:00:00.000Z'
-    },
-    {
-      id: 'lead_ca_001',
-      company: 'NassifMD Medical Spa',
-      domain: 'nassifmd.com',
-      contactName: 'Practice Concierge',
-      email: 'concierge@nassifmd.com',
-      phone: '+1 310 275 2467',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Luxury Aesthetics & Surgery',
-      status: 'Proposal',
-      priority: 'P1',
-      opportunityScore: 96,
-      speed_ms: 530,
-      metaPixel: true,
-      googleAds: true,
-      campaignId: 'camp_ca_01',
-      tags: ['luxury-medspa', 'beverly-hills', 'proposal-sent'],
-      notes: [
-        { id: 'n5', timestamp: '2026-11-21 17:00', author: 'Alex Rivera', text: 'Sent $4,500/mo retainer proposal for paid patient acquisition and VIP funnel optimization.' }
-      ],
-      followUpDate: '2026-11-26',
-      savedAt: '2026-11-18T15:00:00.000Z'
-    },
-    {
-      id: 'lead_ca_002',
-      company: 'SkinSpirit Beverly Hills',
-      domain: 'skinspirit.com',
-      contactName: 'Clinic General Manager',
-      email: 'info@skinspirit.com',
-      phone: '+1 310 555 7820',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Medical Aesthetics & Injectables',
-      status: 'Responded',
-      priority: 'P1',
-      opportunityScore: 89,
-      speed_ms: 680,
-      metaPixel: true,
-      googleAds: false,
-      campaignId: 'camp_ca_01',
-      tags: ['injectables', 'replied'],
-      notes: [
-        { id: 'n6', timestamp: '2026-11-21 13:15', author: 'Alex Rivera', text: 'GM replied asking for agency case studies in the aesthetic laser space.' }
-      ],
-      followUpDate: '2026-11-23',
-      savedAt: '2026-11-18T16:00:00.000Z'
-    },
-    {
-      id: 'lead_tx_003',
-      company: 'Precision Roof Crafters',
-      domain: 'precisionroof.com',
-      contactName: 'Sales Director',
-      email: 'leads@precisionroof.com',
-      phone: '+1 713 799 8555',
-      city: 'Houston, TX',
-      territory: 'texas',
-      industry: 'Roofing Contractors',
-      status: 'Qualified',
-      priority: 'P2',
-      opportunityScore: 84,
-      speed_ms: 980,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['houston', 'qualified'],
-      notes: [
-        { id: 'n7', timestamp: '2026-11-20 10:00', author: 'Alex Rivera', text: 'Domain verified. Valid MX records. Fast loading CMS.' }
-      ],
-      followUpDate: '2026-11-27',
-      savedAt: '2026-11-20T10:00:00.000Z'
-    },
-    {
-      id: 'lead_hvac_001',
-      company: 'Midwest Mechanical Services',
-      domain: 'midwestmech.com',
-      contactName: 'Commercial Operations Lead',
-      email: 'service@midwestmech.com',
-      phone: '+1 312 555 0192',
-      city: 'Chicago, IL',
-      territory: 'hvac',
-      industry: 'Commercial HVAC & Chillers',
-      status: 'Won',
-      priority: 'P1',
-      opportunityScore: 94,
-      speed_ms: 710,
-      metaPixel: true,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['closed-won', 'contract-signed'],
-      notes: [
-        { id: 'n8', timestamp: '2026-11-22 09:00', author: 'Alex Rivera', text: 'Won $3,800/mo retainer contract! Onboarding kicks off next Monday.' }
-      ],
-      followUpDate: '',
-      savedAt: '2026-11-15T10:00:00.000Z'
-    }
-  ];
-
+  // CRM starts empty for each account; records are loaded from the authenticated backend.
+  const DEFAULT_CRM_LEADS = [];
   // --- Seed Campaigns ---
   const DEFAULT_CAMPAIGNS = [
     {
@@ -390,7 +196,7 @@
     if (crmFetchPromise) return crmFetchPromise;
 
     if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
-      crmLeadsCache = DEFAULT_CRM_LEADS;
+      crmLeadsCache = [];
       renderCrmLeads();
       renderCampaignsAndFollowUps();
       return crmLeadsCache;
@@ -407,27 +213,8 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.success && Array.isArray(data.leads)) {
-            if (data.leads.length > 0) {
-              crmLeadsCache = data.leads;
-            } else {
-              // Brand new user with 0 leads: seed initial sample data into backend
-              try {
-                const seedRes = await fetch('/api/crm/leads', {
-                  method: 'POST',
-                  credentials: 'include',
-                  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                  body: JSON.stringify({ leads: DEFAULT_CRM_LEADS })
-                });
-                if (seedRes.ok) {
-                  const seedData = await seedRes.json();
-                  crmLeadsCache = seedData.leads || DEFAULT_CRM_LEADS;
-                } else {
-                  crmLeadsCache = DEFAULT_CRM_LEADS;
-                }
-              } catch {
-                crmLeadsCache = DEFAULT_CRM_LEADS;
-              }
-            }
+            // An empty server response is a genuinely empty CRM, not a request to seed demo records.
+            crmLeadsCache = data.leads;
           } else {
             crmLeadsCache = DEFAULT_CRM_LEADS;
           }
