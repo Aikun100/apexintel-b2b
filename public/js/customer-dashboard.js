@@ -238,11 +238,11 @@
       if (u) return u;
     }
     return {
-      name: 'User',
+      name: null,
       email: '',
-      company: 'Agency',
-      plan: 'Community',
-      credits: 0,
+      company: null,
+      plan: null,
+      credits: null,
       role: 'customer'
     };
   }
@@ -293,7 +293,7 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h3 id="dashUserName" class="text-base font-black text-white leading-tight">Alex Rivera</h3>
+                <h3 id="dashUserName" class="text-base font-black text-white leading-tight">Your Account</h3>
                 <span id="dashUserPlanBadge" class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   Enterprise Pro
                 </span>
@@ -301,7 +301,7 @@
                   CRM v2.0
                 </span>
               </div>
-              <p id="dashUserCompany" class="text-xs text-slate-400 mt-0.5 font-medium">Velocity Growth Agency • <span id="dashUserCredits" class="text-indigo-400 font-mono font-bold">250 Leads Available</span></p>
+              <p id="dashUserCompany" class="text-xs text-slate-400 mt-0.5 font-medium" >Company not set • <span id="dashUserCredits" class="text-indigo-400 font-mono font-bold">Credits unavailable</span></p>
             </div>
           </div>
 
