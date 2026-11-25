@@ -410,7 +410,7 @@
                 <span class="text-xs font-mono text-slate-400 uppercase">Available Discoveries</span>
                 <div class="flex items-baseline gap-2">
                   <span id="overviewDiscoverCount" class="text-3xl font-black text-cyan-400 font-display">96</span>
-                  <span class="text-xs text-cyan-500 font-mono">Verified</span>
+                  <span class="text-xs text-cyan-500 font-mono">Server data</span>
                 </div>
                 <p class="text-[11px] text-slate-500">Across TX, FL, CA & HVAC</p>
               </div>
@@ -476,7 +476,7 @@
                   <h4 class="text-sm font-black text-white flex items-center gap-2">
                     <span>⏱️</span> Recent Activity
                   </h4>
-                  <span class="text-[10px] font-mono text-slate-500">Real-Time Sync</span>
+                  <span class="text-[10px] font-mono text-slate-500">Server data</span>
                 </div>
                 <div id="overviewActivityList" class="space-y-3 text-xs text-slate-300">
                   <!-- Populated dynamically -->
@@ -1082,7 +1082,7 @@
               <span id="drawerContactName" class="font-bold text-white">Owner / Manager</span>
             </div>
             <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400">Verified Email:</span>
+              <span class="text-slate-400">Email contact:</span>
               <button onclick="window.copyDrawerEmail()" class="font-mono text-emerald-400 hover:underline flex items-center gap-1 font-bold">
                 <span id="drawerEmailVal">email@company.com</span> 📋
               </button>
@@ -1346,7 +1346,7 @@
                 </div>
                 <div class="text-[10px] text-slate-400 font-mono truncate">${escapeHTML(lead.domain)}</div>
                 <div class="flex items-center justify-between text-[10px] pt-1 border-t border-slate-900">
-                  <span class="text-emerald-400 font-mono font-bold">${escapeHTML(lead.opportunityScore)}/100</span>
+                  <span class="text-emerald-400 font-mono font-bold">${lead.opportunityScore == null ? 'Not scored' : `${escapeHTML(lead.opportunityScore)}/100`}</span>
                   <div class="flex items-center gap-1">
                     <button onclick="event.stopPropagation(); window.advanceLeadStage('${escapeHTML(lead.id)}')" title="Advance Stage" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition font-mono">
                       →
@@ -1730,21 +1730,21 @@
           <span class="text-cyan-400 font-bold text-sm">🎯</span>
           <div>
             <p class="text-slate-200 font-bold leading-tight">Pipeline Loaded</p>
-            <span class="text-[10px] text-slate-500 font-mono">${leads.length} saved prospects ready for contact</span>
+            <span class="text-[10px] text-slate-500 font-mono">${leads.length} business records in your CRM</span>
           </div>
         </div>
         <div class="flex items-start gap-2.5 pb-2 border-b border-slate-800/60">
           <span class="text-emerald-400 font-bold text-sm">⚡</span>
           <div>
             <p class="text-slate-200 font-bold leading-tight">Territory Catalog Ingested</p>
-            <span class="text-[10px] text-slate-500 font-mono">Texas, Florida, California, and HVAC datasets verified</span>
+            <span class="text-[10px] text-slate-500 font-mono">Catalog datasets available for Texas, Florida, California, and HVAC; contact coverage varies</span>
           </div>
         </div>
         <div class="flex items-start gap-2.5">
           <span class="text-indigo-400 font-bold text-sm">🔬</span>
           <div>
             <p class="text-slate-200 font-bold leading-tight">Audit Scanner Ready</p>
-            <span class="text-[10px] text-slate-500 font-mono">Full TLS 1.3, TTFB latency & pixel analysis active</span>
+            <span class="text-[10px] text-slate-500 font-mono">Website diagnostics available for reachable sites; scan coverage varies</span>
           </div>
         </div>
       `;
