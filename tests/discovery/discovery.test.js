@@ -35,7 +35,7 @@ const authService = new AuthService({ repository: authRepo });
 const discoveryRepo = new InMemoryDiscoveryRepository();
 setDiscoveryRepository(discoveryRepo);
 
-const discoveryService = new DiscoveryService({ repository: discoveryRepo });
+const discoveryService = new DiscoveryService({ repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
 
 function dispatch(reqObj) {
   return dispatchDiscoveryRoute(reqObj, discoveryService, authService);
@@ -90,7 +90,7 @@ test('Discovery Suite: Deduplicated Crawler Ingestion & History Preservation', a
       }
     ];
 
-    const result = await processLeadIngestionBatch(testBatch, { repository: discoveryRepo });
+    const result = await processLeadIngestionBatch(testBatch, { repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
     assert.equal(result.success, true);
     assert.equal(result.persistedCount, 2);
 
@@ -122,7 +122,7 @@ test('Discovery Suite: Deduplicated Crawler Ingestion & History Preservation', a
       }
     ];
 
-    await processLeadIngestionBatch(recrawlBatch, { repository: discoveryRepo });
+    await processLeadIngestionBatch(recrawlBatch, { repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
 
     const leadAfter = await discoveryRepo.getLeadByDomain('dallasroofer.com');
     assert.ok(leadAfter);
@@ -339,13 +339,23 @@ test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
         cookie: adminUser.cookie,
         origin: 'https://apexintel-b2b.shop',
         'content-type': 'application/json'
+      },
+      body: {
+        leads: [{
+          id: 'test-recrawl.example',
+          company_name: 'Test Recrawl Record',
+          email: 'ops@test-recrawl.example',
+          trade: 'Roofing',
+          city: 'Dallas, TX'
+        }]
       }
     });
 
     assert.equal(res.statusCode, 200);
     assert.equal(res.body.success, true);
-    assert.ok(res.body.persistedCount > 0);
-    assert.match(res.body.message, /verified leads ingested into DynamoDB leads_cache/i);
+    assert.equal(res.body.processedCount, 1);
+    assert.equal(res.body.persistedCount, 1);
+    assert.match(res.body.message, /supplied records/i);
 
     // Verify repository now has ingested leads
     const searchRes = await discoveryRepo.searchLeads();
