@@ -2305,4 +2305,563 @@
   } else {
     window.initCustomerDashboard();
   }
+
+
+  // Restored workspace actions from the original dashboard implementation.
+
+  function renderDrawerNotes(lead) {
+    const list = document.getElementById('drawerNotesList');
+    if (!list) return;
+
+    list.innerHTML = '';
+    const notes = lead.notes || [];
+    if (notes.length === 0) {
+      list.innerHTML = '<p class="text-xs text-slate-500 italic">No notes logged yet.</p>';
+    } else {
+      notes.forEach(n => {
+        const d = document.createElement('div');
+        d.className = 'bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-xs space-y-1';
+        d.innerHTML = `
+          <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+            <span>${escapeHTML(n.author || 'User')}</span>
+            <span>${escapeHTML(n.timestamp)}</span>
+          </div>
+          <p class="text-slate-200">${escapeHTML(n.text)}</p>
+        `;
+        list.appendChild(d);
+      });
+    }
+  }
+
+
+  window.saveDrawerStatusChange = function () {
+    if (!activeLeadInDrawer) return;
+    const val = document.getElementById('drawerStatusSelect').value;
+    activeLeadInDrawer.status = val;
+    const leads = getCrmLeads();
+    const target = leads.find(l => l.id === activeLeadInDrawer.id);
+    if (target) target.status = val;
+    saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { status: val });
+    notify(`Status updated to "${val}"`);
+    renderCrmLeads();
+  };
+
+
+  window.saveDrawerPriorityChange = function () {
+    if (!activeLeadInDrawer) return;
+    const val = document.getElementById('drawerPrioritySelect').value;
+    activeLeadInDrawer.priority = val;
+    const leads = getCrmLeads();
+    const target = leads.find(l => l.id === activeLeadInDrawer.id);
+    if (target) target.priority = val;
+    saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { priority: val });
+    notify(`Priority set to ${val}`);
+    renderCrmLeads();
+  };
+
+
+  window.saveDrawerFollowUpDate = function () {
+    if (!activeLeadInDrawer) return;
+    const val = document.getElementById('drawerFollowUpDateInput').value;
+    activeLeadInDrawer.followUpDate = val;
+    const leads = getCrmLeads();
+    const target = leads.find(l => l.id === activeLeadInDrawer.id);
+    if (target) target.followUpDate = val;
+    saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { followUpDate: val });
+    notify(`Follow-up date scheduled for ${val}`);
+    renderCrmLeads();
+  };
+
+
+  window.saveNewLeadNote = function () {
+    if (!activeLeadInDrawer) return;
+    const inp = document.getElementById('drawerNewNoteInput');
+    const text = inp.value.trim();
+    if (!text) return;
+
+    const newNote = {
+      id: 'n_' + Date.now(),
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      author: getUserData().name || 'Agent',
+      text: text
+    };
+
+    if (!activeLeadInDrawer.notes) activeLeadInDrawer.notes = [];
+    activeLeadInDrawer.notes.unshift(newNote);
+
+    const leads = getCrmLeads();
+    const target = leads.find(l => l.id === activeLeadInDrawer.id);
+    if (target) {
+      if (!target.notes) target.notes = [];
+      target.notes.unshift(newNote);
+    }
+    saveCrmLeads(leads);
+    syncLeadToBackend(activeLeadInDrawer.id, { notes: target ? target.notes : activeLeadInDrawer.notes });
+
+    inp.value = '';
+    renderDrawerNotes(activeLeadInDrawer);
+    notify('Note added to lead record!');
+  };
+
+
+  window.copyDrawerEmail = function () {
+    if (activeLeadInDrawer) {
+      navigator.clipboard.writeText(activeLeadInDrawer.email);
+      notify(`Copied ${activeLeadInDrawer.email} to clipboard!`);
+    }
+  };
+
+
+  window.generateOutreachFromDrawer = function () {
+    if (!activeLeadInDrawer) return;
+    window.closeLeadDrawer();
+    window.closeCustomerDashboard();
+    
+    // Populate Tool 3 Outreach Generator
+    window.currentSelectedLead = {
+      name: activeLeadInDrawer.company,
+      domain: activeLeadInDrawer.domain,
+      speed: `${activeLeadInDrawer.speed_ms || 750}ms`,
+      pixel: activeLeadInDrawer.metaPixel ? 'Meta Pixel Active' : 'No Pixel',
+      tech: activeLeadInDrawer.googleAds ? 'Google Ads Active' : 'Organic Only'
+    };
+
+    location.hash = '#cold-outreach';
+    if (typeof window.regenerateOutreachTemplates === 'function') {
+      window.regenerateOutreachTemplates();
+    }
+    notify(`Generated tailored outreach templates for ${activeLeadInDrawer.company}!`);
+  };
+
+
+  window.deleteLeadFromCrm = function (leadId) {
+    if (!confirm('Are you sure you want to remove this lead from your CRM?')) return;
+    let leads = getCrmLeads();
+    leads = leads.filter(l => l.id !== leadId);
+    saveCrmLeads(leads);
+    deleteLeadFromBackend(leadId);
+    notify('Lead removed from CRM.');
+    renderCrmLeads();
+  };
+
+  window.markFollowUpComplete = function (leadId) {
+    const leads = getCrmLeads();
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) {
+      lead.followUpDate = '';
+      if (lead.status === 'Follow-Up') lead.status = 'Contacted';
+      saveCrmLeads(leads);
+      syncLeadToBackend(leadId, { followUpDate: '', status: lead.status });
+      notify(`Follow-up marked complete for ${lead.company}`);
+      renderCampaignsAndFollowUps();
+      renderCrmLeads();
+    }
+  };
+
+
+  window.snoozeFollowUp = function (leadId, days) {
+    const leads = getCrmLeads();
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) {
+      const current = lead.followUpDate ? new Date(lead.followUpDate) : new Date();
+      current.setDate(current.getDate() + days);
+      lead.followUpDate = current.toISOString().split('T')[0];
+      saveCrmLeads(leads);
+      syncLeadToBackend(leadId, { followUpDate: lead.followUpDate });
+      notify(`Snoozed follow-up to ${lead.followUpDate}`);
+      renderCampaignsAndFollowUps();
+      renderCrmLeads();
+    }
+  };
+
+  window.openAddLeadModal = function () {
+    injectDashboardHTML();
+    const modal = document.getElementById('addLeadModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  };
+
+
+  window.closeAddLeadModal = function () {
+    const modal = document.getElementById('addLeadModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  };
+
+
+  window.submitNewManualLead = function (e) {
+    e.preventDefault();
+    const company = document.getElementById('addLeadCompany').value.trim();
+    const domain = document.getElementById('addLeadDomain').value.trim().toLowerCase();
+    const city = document.getElementById('addLeadCity').value.trim();
+    const email = document.getElementById('addLeadEmail').value.trim();
+    const phone = document.getElementById('addLeadPhone').value.trim();
+    const status = document.getElementById('addLeadStatus').value;
+    const priority = document.getElementById('addLeadPriority').value;
+    const note = document.getElementById('addLeadNote').value.trim();
+
+    const leads = getCrmLeads();
+    const newLead = {
+      id: 'lead_' + Date.now(),
+      company,
+      domain,
+      contactName: 'Executive',
+      email,
+      phone: phone || '+1 555 0100',
+      city,
+      territory: 'custom',
+      industry: 'B2B Client',
+      status,
+      priority,
+      opportunityScore: 88,
+      speed_ms: 650,
+      metaPixel: false,
+      googleAds: true,
+      campaignId: 'camp_tx_01',
+      tags: ['manual-entry'],
+      notes: note ? [{ id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'User', text: note }] : [],
+      followUpDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+      savedAt: new Date().toISOString()
+    };
+
+    leads.unshift(newLead);
+    saveCrmLeads(leads);
+    createLeadOnBackend(newLead);
+    window.closeAddLeadModal();
+    notify(`✓ Saved ${company} to CRM Pipeline!`);
+    renderCrmLeads();
+  };
+
+  window.exportCrmLeadsCsv = function () {
+    const leads = getCrmLeads();
+    let csv = 'Company,Domain,Email,Phone,City,Status,Priority,Opportunity_Score,Follow_Up_Date\n';
+    leads.forEach(l => {
+      csv += `"${l.company}","${l.domain}","${l.email}","${l.phone}","${l.city}","${l.status}","${l.priority}","${l.opportunityScore}","${l.followUpDate || ''}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `apexintel_crm_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    notify(`Exported ${leads.length} CRM prospects to CSV!`);
+  };
+
+  window.exportAuditReport = function (auditId) {
+    const audits = getAuditScans();
+    const audit = audits.find(a => a.id === auditId) || audits[0];
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Website Intelligence Diagnostic — ${audit.domain}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #070B14; color: #E2E8F0; padding: 40px; margin: 0; }
+    .container { max-width: 800px; margin: 0 auto; background: #0F172A; border: 1px solid #1E293B; border-radius: 20px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .header { border-bottom: 1px solid #1E293B; padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+    .card { background: #070B14; border: 1px solid #1E293B; border-radius: 12px; padding: 16px; text-align: center; }
+    .card-label { font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; }
+    .card-val { font-size: 20px; font-weight: 900; color: #38BDF8; margin-top: 6px; font-family: monospace; }
+    .pitch-box { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 20px; margin-top: 24px; }
+    .footer { margin-top: 32px; border-top: 1px solid #1E293B; padding-top: 16px; font-size: 11px; color: #64748B; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <span class="badge">Technical Audit Lab</span>
+        <h1 style="margin: 8px 0 0 0; font-size: 24px; color: #FFFFFF;">${audit.company || audit.domain}</h1>
+        <p style="margin: 4px 0 0 0; font-size: 12px; color: #94A3B8; font-family: monospace;">Target Domain: ${audit.domain}</p>
+      </div>
+      <div style="text-align: right;">
+        <span style="font-size: 11px; color: #64748B;">Audit Date</span>
+        <div style="font-size: 12px; font-weight: 700; color: #E2E8F0;">${audit.scannedAt}</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-label">Mobile TTFB Latency</div>
+        <div class="card-val" style="color: ${audit.speed_ms > 900 ? '#F43F5E' : '#10B981'};">${audit.speed_ms}ms</div>
+      </div>
+      <div class="card">
+        <div class="card-label">CMS Platform</div>
+        <div class="card-val" style="font-size: 14px; color: #F8FAFC;">${audit.cms}</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Opportunity Score</div>
+        <div class="card-val" style="color: #6366F1;">${audit.icpScore}/100</div>
+      </div>
+    </div>
+
+    <div class="pitch-box">
+      <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #34D399; text-transform: uppercase;">Diagnostic Strategic Angle</h3>
+      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">"${audit.pitch}"</p>
+    </div>
+
+    <div class="footer">
+      Generated via ApexIntel B2B Website Intelligence Systems • Cloud Fulfillment ap-southeast-2
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `audit_report_${audit.domain}.html`;
+    link.click();
+    notify(`Exported client audit report for ${audit.domain}!`);
+  };
+
+  window.downloadCustomExtractionCsv = function (reqId) {
+    const list = getCustomRequests();
+    const req = list.find(r => r.id === reqId) || list[0];
+    
+    let csv = 'Company,Email,Phone,City,Industry,Territory,Status\n';
+    csv += `"Phoenix Sun Solar","service@phoenixsun.com","+1 602 555 8920","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
+    csv += `"Desert Ridge Roofing Pros","office@desertridgeroof.com","+1 480 555 1204","Scottsdale, AZ","${req.industry}","${req.territory}","Verified"\n`;
+    csv += `"Camelback Commercial HVAC","dispatch@camelbackmech.com","+1 602 555 4411","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `custom_extraction_${req.id}.csv`;
+    link.click();
+    notify(`Downloaded custom dataset for ${req.id}!`);
+  };
+
+  window.loadUserOrdersFromBackend = async function () {
+    const user = getUserData();
+    if (!user || !user.email) return;
+
+    try {
+      const resp = await fetch('/api/orders', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!resp.ok) {
+        if (resp.status === 401) {
+          userPurchasedOrders = [];
+          populateDatasetsList();
+          return;
+        }
+        throw new Error(`Failed to load orders (${resp.status})`);
+      }
+
+      const data = await resp.json();
+      userPurchasedOrders = data.orders || [];
+      populateDatasetsList();
+    } catch (err) {
+      console.warn('[Orders Load Error]:', err.message);
+      populateDatasetsList();
+    }
+  };
+
+
+  function populateDatasetsList() {
+    const container = document.getElementById('purchasedDatasetsList');
+    const ownedEl = document.getElementById('datasetsOwnedCount');
+    const totalEl = document.getElementById('datasetsTotalLeadsCount');
+    const paidOrders = (userPurchasedOrders || []).filter(o => o.status === 'paid');
+    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
+    if (ownedEl) ownedEl.innerText = String(paidOrders.length);
+    if (totalEl) {
+      const total = paidOrders.reduce((sum, o) => sum + (Number(o.leadsCount) || packLeadCounts[o.productKey] || 0), 0);
+      totalEl.innerText = String(total);
+    }
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!userPurchasedOrders || userPurchasedOrders.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
+          <div class="text-3xl">📦</div>
+          <h5 class="text-white font-bold text-sm">No Purchased Datasets Yet</h5>
+          <p class="text-xs text-slate-400 max-w-sm mx-auto">
+            Your verified commercial datasets will appear here immediately upon completing payment.
+          </p>
+          <button onclick="window.customerDashQuickReorder()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md shadow-indigo-600/30">
+            Browse Intelligence Catalog &rarr;
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    userPurchasedOrders.forEach(order => {
+      const isPaid = order.status === 'paid';
+      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+      const card = document.createElement('div');
+      card.className = 'bg-slate-900/80 border border-slate-800 hover:border-slate-700 p-4 rounded-2xl transition flex flex-col md:flex-row md:items-center justify-between gap-4';
+      card.innerHTML = `
+        <div class="flex items-start gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">
+            📊
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h5 class="font-bold text-white text-sm">${order.productName || 'Intelligence Pack'}</h5>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
+                ${isPaid ? '✓ Unlocked & Verified' : '⏳ Pending Payment'}
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Commercial Dataset • ${order.filename || 'Enriched_Audited.xlsx'}</p>
+            <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-500 font-mono">
+              <span>Ordered: ${orderDate}</span>
+              <span>•</span>
+              <span class="text-slate-400 font-bold">$${order.amount}.00</span>
+              <span>•</span>
+              <span class="text-indigo-400">${order.orderId}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          ${isPaid ? `
+            <button onclick="window.downloadDatasetOrder('${order.orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
+              <span>📥 Download Verified (.XLSX)</span>
+            </button>
+          ` : `
+            <button onclick="window.redirectToStripeHostedCheckout('${order.productKey}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">
+              <span>Complete Payment ($${order.amount}.00)</span>
+            </button>
+          `}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+
+  function refreshDashboardUserInfo() {
+    const user = getUserData();
+    const avatarEl = document.getElementById('dashUserAvatar');
+    const nameEl = document.getElementById('dashUserName');
+    const companyEl = document.getElementById('dashUserCompany');
+    const creditsEl = document.getElementById('dashUserCredits');
+    const planBadge = document.getElementById('dashUserPlanBadge');
+
+    const firstLetter = (user.name || 'User').charAt(0).toUpperCase();
+    if (avatarEl) avatarEl.innerText = firstLetter;
+    if (nameEl) nameEl.innerText = user.name || 'Agency Member';
+    if (planBadge) planBadge.innerText = user.plan || 'Agency Growth';
+    if (creditsEl) creditsEl.innerText = `${user.credits || 250} Leads Available`;
+    if (companyEl) companyEl.innerHTML = `${user.company || 'Direct Agency'} • <span class="text-indigo-400 font-mono font-bold">${user.credits || 250} Leads Available</span>`;
+
+    const setNam = document.getElementById('custSettingName');
+    const setCom = document.getElementById('custSettingCompany');
+    const setEma = document.getElementById('custSettingEmail');
+    const setPla = document.getElementById('custSettingPlan');
+
+    if (setNam) setNam.value = user.name || '';
+    if (setCom) setCom.value = user.company || '';
+    if (setEma) setEma.value = user.email || '';
+    if (setPla) setPla.value = user.plan || 'Enterprise Pro (Lifetime)';
+
+    const key = getCustomerApiKey();
+    const keyInput = document.getElementById('custApiKeyInput');
+    const keyPlaceholder = document.getElementById('curlKeyPlaceholder');
+    if (keyInput) keyInput.value = key;
+    if (keyPlaceholder) keyPlaceholder.innerText = key;
+  }
+
+
+  window.openCustomerDashboard = function (initialTab = 'overview') {
+    injectDashboardHTML();
+    refreshDashboardUserInfo();
+    window.loadCrmLeadsFromBackend();
+    window.loadUserOrdersFromBackend();
+    window.switchCustomerTab(initialTab);
+
+    const modal = document.getElementById('customerDashboard');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  };
+
+
+  window.closeCustomerDashboard = function () {
+    const modal = document.getElementById('customerDashboard');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  };
+
+
+  window.downloadDatasetOrder = async function (orderId) {
+    if (!orderId) {
+      notify('Invalid order reference.');
+      return;
+    }
+
+    notify('⏳ Requesting secure presigned download from AWS S3...');
+
+    try {
+      const resp = await fetch(`/api/downloads/signed-url?orderId=${encodeURIComponent(orderId)}`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || !data.success) {
+        if (resp.status === 401) {
+          notify('Authentication required. Please sign in again.');
+          return;
+        }
+        if (resp.status === 403) {
+          notify(data.error || 'Access denied: Payment verification required.');
+          return;
+        }
+        throw new Error(data.error || 'Failed to generate download URL.');
+      }
+
+      if (data.downloadUrl) {
+        notify('✓ Presigned URL authorized. Starting download...');
+        const link = document.createElement('a');
+        link.href = data.downloadUrl;
+        link.setAttribute('download', data.filename || 'apexintel_dataset.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (err) {
+      console.error('[Download Error]:', err);
+      notify(`Download error: ${err.message}`);
+    }
+  };
+
+
+  window.downloadDatasetPacks = function (keyOrOrderId) {
+    const order = userPurchasedOrders.find(o => o.orderId === keyOrOrderId || o.productKey === keyOrOrderId);
+    if (order) {
+      window.downloadDatasetOrder(order.orderId);
+    } else {
+      notify('No paid order found for this dataset. Please complete checkout to unlock.');
+    }
+  };
+
+
+  window.downloadCombinedMasterDataset = function () {
+    notify('Datasets are securely delivered per verified order. Access individual packs above.');
+  };
+
 })();
