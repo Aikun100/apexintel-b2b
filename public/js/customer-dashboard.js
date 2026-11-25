@@ -969,7 +969,7 @@
         <div class="flex items-start justify-between border-b border-slate-800 pb-4">
           <div>
             <span id="drawerPriorityBadge" class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
-              P1 - High Opportunity
+              Priority not set
             </span>
             <h3 id="drawerCompanyName" class="text-xl font-black text-white mt-1.5 leading-tight">Company Name</h3>
             <p id="drawerDomainAndCity" class="text-xs text-slate-400 mt-0.5 font-mono">domain.com • City, State</p>
@@ -1479,8 +1479,8 @@
 
       const reqId = escapeHTML(req.requestId || req.id);
       const status = escapeHTML(req.status || 'Submitted');
-      const isDelivered = req.status === 'Delivered';
-      const date = escapeHTML((req.createdAt || req.date || 'Nov 2026').slice(0, 16).replace('T', ' '));
+      const isDelivered = String(req.status || '').toLowerCase() === 'delivered';
+      const date = escapeHTML(req.createdAt || req.date ? String(req.createdAt || req.date).slice(0, 16).replace('T', ' ') : 'Date unavailable');
       const industry = escapeHTML(req.industry || '');
       const territory = escapeHTML(req.territory || '');
       const volume = escapeHTML(String(req.volume || ''));
@@ -1749,7 +1749,7 @@
         : (item.metaPixel
           ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta detected</span>'
           : '<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Meta not detected</span>');
-      const scoreLabel = item.opportunityScore == null ? 'Not scored' : `${scoreLabel}`;
+      const scoreLabel = item.opportunityScore == null ? 'Not scored' : String(item.opportunityScore) + '/100';
 
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-800/40 transition';
@@ -1767,7 +1767,7 @@
           ${pixelBadge}
         </td>
         <td class="py-3 px-4 text-center">
-          <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-mono font-black text-xs">${item.opportunityScore}/100</span>
+          <span title="Explainable research-priority heuristic, not a conversion prediction" class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-mono font-black text-xs">${scoreLabel}</span>
         </td>
         <td class="py-3 px-4 text-right">
           <div class="flex items-center justify-end gap-1.5">
@@ -1792,7 +1792,10 @@
   };
 
   // Add discovered lead to CRM
-  window.addDiscoveredLeadToCrm = async function (leadObj) {
+  window.addDiscoveredLeadToCrm = async function (leadRef) {
+    const leadObj = typeof leadRef === 'string'
+      ? getDiscoveryPool().find(item => item.id === leadRef)
+      : leadRef;
     if (!leadObj || !(leadObj.name || leadObj.company)) {
       notify('This discovery result does not contain a business name.');
       return;
