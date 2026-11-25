@@ -757,18 +757,18 @@
                 <div class="text-2xl font-black text-white mt-1"><span id="datasetsOwnedCount">0</span> <span class="text-xs text-slate-500 font-normal">Active</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Leads</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Business Records</span>
                 <div class="text-2xl font-black text-emerald-400 mt-1"><span id="datasetsTotalLeadsCount">0</span> <span class="text-xs text-slate-500 font-normal">Contacts</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Deliverability</span>
-                <div class="text-2xl font-black text-indigo-400 mt-1">— <span class="text-xs text-slate-500 font-normal">MX status</span></div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email Coverage</span>
+                <div class="text-sm font-black text-indigo-300 mt-2">Varies <span class="text-xs text-slate-500 font-normal">by dataset</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Export Formats</span>
                 <div class="text-xs font-bold text-slate-200 mt-2 flex items-center gap-1.5 font-mono">
                   <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">.XLSX</span>
-                  <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">.CSV</span>
+                  
                 </div>
               </div>
             </div>
@@ -779,9 +779,7 @@
                 <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                   <span>📁</span> Purchased Intelligence Packs
                 </h4>
-                <button onclick="window.downloadCombinedMasterDataset()" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition">
-                  <span>📥 Download All (.CSV)</span>
-                </button>
+
               </div>
 
               <div id="purchasedDatasetsList" class="space-y-3">
@@ -2606,76 +2604,64 @@
     const container = document.getElementById('purchasedDatasetsList');
     const ownedEl = document.getElementById('datasetsOwnedCount');
     const totalEl = document.getElementById('datasetsTotalLeadsCount');
-    const paidOrders = (userPurchasedOrders || []).filter(o => o.status === 'paid');
-    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    const paidOrders = orders.filter(order => String(order.status || '').toLowerCase() === 'paid');
+    const packRecordCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
     if (ownedEl) ownedEl.innerText = String(paidOrders.length);
     if (totalEl) {
-      const total = paidOrders.reduce((sum, o) => sum + (Number(o.leadsCount) || packLeadCounts[o.productKey] || 0), 0);
+      const total = paidOrders.reduce((sum, order) => sum + (Number(order.leadsCount) || packRecordCounts[order.productKey] || 0), 0);
       totalEl.innerText = String(total);
     }
     if (!container) return;
-
     container.innerHTML = '';
 
-    if (!userPurchasedOrders || userPurchasedOrders.length === 0) {
+    if (!orders.length) {
       container.innerHTML = `
         <div class="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
           <div class="text-3xl">📦</div>
           <h5 class="text-white font-bold text-sm">No Purchased Datasets Yet</h5>
-          <p class="text-xs text-slate-400 max-w-sm mx-auto">
-            Your verified commercial datasets will appear here immediately upon completing payment.
-          </p>
-          <button onclick="window.customerDashQuickReorder()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md shadow-indigo-600/30">
-            Browse Intelligence Catalog &rarr;
-          </button>
-        </div>
-      `;
+          <p class="text-xs text-slate-400 max-w-sm mx-auto">Paid dataset orders will appear here after payment is confirmed by the server.</p>
+          <button onclick="window.customerDashQuickReorder()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md shadow-indigo-600/30">Browse Dataset Catalog &rarr;</button>
+        </div>`;
       return;
     }
 
-    userPurchasedOrders.forEach(order => {
-      const isPaid = order.status === 'paid';
-      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+    orders.forEach(order => {
+      const isPaid = String(order.status || '').toLowerCase() === 'paid';
+      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Date unavailable';
+      const amountValue = Number(order.amount);
+      const amountLabel = Number.isFinite(amountValue) ? new Intl.NumberFormat('en-US', { style: 'currency', currency: String(order.currency || 'USD').toUpperCase() }).format(amountValue) : 'Amount unavailable';
+      const productName = escapeHTML(order.productName || order.productKey || 'Dataset');
+      const filename = escapeHTML(order.filename || 'Dataset file');
+      const orderId = escapeHTML(order.orderId || '');
+      const productKey = escapeHTML(order.productKey || '');
+      const status = escapeHTML(isPaid ? 'Paid' : (order.status || 'Pending'));
+      const recordCount = Number(order.leadsCount) || packRecordCounts[order.productKey] || null;
       const card = document.createElement('div');
       card.className = 'bg-slate-900/80 border border-slate-800 hover:border-slate-700 p-4 rounded-2xl transition flex flex-col md:flex-row md:items-center justify-between gap-4';
       card.innerHTML = `
         <div class="flex items-start gap-3.5">
-          <div class="w-12 h-12 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">
-            📊
-          </div>
+          <div class="w-12 h-12 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">📊</div>
           <div>
-            <div class="flex items-center gap-2">
-              <h5 class="font-bold text-white text-sm">${order.productName || 'Intelligence Pack'}</h5>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
-                ${isPaid ? '✓ Unlocked & Verified' : '⏳ Pending Payment'}
-              </span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h5 class="font-bold text-white text-sm">${productName}</h5>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">${status}</span>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Commercial Dataset • ${order.filename || 'Enriched_Audited.xlsx'}</p>
-            <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-500 font-mono">
-              <span>Ordered: ${orderDate}</span>
-              <span>•</span>
-              <span class="text-slate-400 font-bold">$${order.amount}.00</span>
-              <span>•</span>
-              <span class="text-indigo-400">${order.orderId}</span>
+            <p class="text-xs text-slate-400 mt-0.5">${recordCount === null ? 'Record count unavailable' : recordCount + ' business records'} • ${filename}</p>
+            <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-500 font-mono flex-wrap">
+              <span>Ordered: ${escapeHTML(orderDate)}</span><span>•</span><span class="text-slate-400 font-bold">${escapeHTML(amountLabel)}</span><span>•</span><span class="text-indigo-400">${orderId || 'Order ID unavailable'}</span>
             </div>
           </div>
         </div>
-
         <div class="flex items-center gap-2 shrink-0">
-          ${isPaid ? `
-            <button onclick="window.downloadDatasetOrder('${order.orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
-              <span>📥 Download Verified (.XLSX)</span>
-            </button>
-          ` : `
-            <button onclick="window.redirectToStripeHostedCheckout('${order.productKey}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">
-              <span>Complete Payment ($${order.amount}.00)</span>
-            </button>
-          `}
-        </div>
-      `;
+          ${isPaid
+            ? `<button onclick="window.downloadDatasetOrder('${orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"><span>📥 Download XLSX</span></button>`
+            : `<button onclick="window.redirectToStripeHostedCheckout('${productKey}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">Complete Payment</button>`}
+        </div>`;
       container.appendChild(card);
     });
   }
+
   function populateLedgerList() {
     const tbody = document.getElementById('dedupeLedgerTableBody');
     const countEl = document.getElementById('customerOrderHistoryCount');
