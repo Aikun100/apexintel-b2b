@@ -244,6 +244,40 @@
     }
   }
 
+  function saveAuditScans(audits) {
+    const key = getTenantStorageKey('apexintel_audit_scans');
+    if (!key) return;
+    try {
+      localStorage.setItem(key, JSON.stringify((Array.isArray(audits) ? audits : []).slice(0, 50)));
+    } catch (error) {
+      console.warn('[Audit History] Could not save browser history:', error.message);
+    }
+  }
+
+  window.recordCustomerAuditScan = function (scan) {
+    if (!scan || !scan.domain || !window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
+    const scannedAt = scan.scannedAt || new Date().toISOString();
+    const entry = {
+      id: `${scan.domain}:${scannedAt}`,
+      domain: String(scan.domain),
+      company: scan.company || scan.domain,
+      scannedAt,
+      speed_ms: typeof scan.speed === 'number' && Number.isFinite(scan.speed) ? scan.speed : null,
+      cms: scan.cms || null,
+      metaPixel: typeof scan.pixels?.meta === 'boolean' ? scan.pixels.meta : null,
+      googleAds: typeof scan.pixels?.googleAds === 'boolean' ? scan.pixels.googleAds : null,
+      icpScore: Number.isFinite(Number(scan.opportunityScore)) ? Number(scan.opportunityScore) : null,
+      pitch: scan.suggestedPitch || null,
+      scanStatus: scan.scanStatus || 'unknown',
+      failedChecks: Array.isArray(scan.failedChecks) ? scan.failedChecks : [],
+      fromCache: Boolean(scan.fromCache)
+    };
+    const current = getAuditScans();
+    const next = [entry, ...current.filter(item => item.id !== entry.id)].slice(0, 50);
+    saveAuditScans(next);
+    renderAuditLab();
+  };
+
   function getCustomRequests() {
     return window.userCustomRequests || [];
   }
@@ -1546,7 +1580,7 @@
 
     tbody.innerHTML = '';
     if (audits.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="py-8 px-4 text-center text-slate-500">No completed website audits are available for this account yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="py-8 px-4 text-center text-slate-500">No scans have been saved in this browser for this account yet. Run a website scan to add one.</td></tr>';
       return;
     }
     audits.forEach(a => {
@@ -1559,16 +1593,16 @@
         </td>
         <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">${escapeHTML(a.scannedAt)}</td>
         <td class="py-3 px-3">
-          <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold ${a.speed_ms > 900 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
-            ${escapeHTML(a.speed_ms)}ms
+          <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold ${a.speed_ms == null ? 'bg-slate-800 text-slate-400' : (a.speed_ms > 900 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400')}">
+            ${a.speed_ms == null ? 'Not measured' : `${escapeHTML(a.speed_ms)}ms`}
           </span>
         </td>
-        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${escapeHTML(a.cms)}</td>
+        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${escapeHTML(a.cms || 'Not detected')}</td>
         <td class="py-3 px-3 text-xs">
           <span class="${a.googleAds ? 'text-emerald-400 font-bold' : 'text-slate-500'}">Ads: ${a.googleAds ? 'Yes' : 'No'}</span> • 
           <span class="${a.metaPixel ? 'text-indigo-400 font-bold' : 'text-slate-500'}">Pixel: ${a.metaPixel ? 'Yes' : 'No'}</span>
         </td>
-        <td class="py-3 px-3 font-mono font-bold text-white">${escapeHTML(a.icpScore)}/100</td>
+        <td class="py-3 px-3 font-mono font-bold text-white">${a.icpScore == null ? 'Not scored' : `${escapeHTML(a.icpScore)}/100`}</td>
         <td class="py-3 px-4 text-right">
           <button onclick="window.exportAuditReport('${escapeHTML(a.id)}')" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5 ml-auto">
             <span>📄</span> Export Report (.html)
