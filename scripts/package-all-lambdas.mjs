@@ -77,7 +77,7 @@ const LAMBDA_CONFIGS = [
     zipName: 'apexintel-crawler-lambda.zip',
     handlerFile: 'lambda-crawler-handler.mjs',
     srcDirs: ['discovery', 'auth'],
-    extraSrcFiles: ['tools/opportunity-scorer.js', 'payments/repository.js', 'requests/repository.js'],
+    extraSrcFiles: ['tools/opportunity-scorer.js', 'payments/repository.js', 'payments/catalog.js', 'requests/repository.js'],
     extraAwsFiles: ['deduplication-engine.mjs'],
     dependencies: BASE_DEPS,
     description: 'ApexIntel B2B Lead Crawler & Ingestion Pipeline'
