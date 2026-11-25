@@ -355,13 +355,17 @@ export function scoreOpportunity(input = {}) {
     if (email && mxVerified && phone) {
       points = 15;
       reason = 'Email domain publishes MX records and a phone is listed; mailbox delivery and phone ownership are not confirmed.';
-      contactProv = PROVENANCE_TIERS.VERIFIED;
+      contactProv = data.emailVerified === true && data.phoneVerified === true
+        ? PROVENANCE_TIERS.VERIFIED
+        : PROVENANCE_TIERS.PUBLICLY_LISTED;
     } else if ((email && mxVerified) || (email && phone)) {
       points = 12;
       reason = email && mxVerified
         ? 'Email domain publishes MX records; mailbox existence and inbox placement are not confirmed.'
         : 'Publicly listed email and phone channels are available.';
-      contactProv = mxVerified ? PROVENANCE_TIERS.VERIFIED : PROVENANCE_TIERS.PUBLICLY_LISTED;
+      contactProv = data.emailVerified === true || data.phoneVerified === true
+        ? PROVENANCE_TIERS.VERIFIED
+        : PROVENANCE_TIERS.PUBLICLY_LISTED;
     } else if (email || phone || mxVerified) {
       points = 8;
       reason = phone
