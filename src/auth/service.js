@@ -53,7 +53,7 @@ export class AuthService {
       name: user.name || null,
       company: user.company || null,
       plan: user.plan || null,
-      credits: Number.isFinite(Number(user.credits)) ? Number(user.credits) : null,
+      credits: user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits)) ? Number(user.credits) : null,
       role: user.role || 'customer',
       accountStatus: user.accountStatus || 'active',
       emailVerified: !!user.emailVerified,
