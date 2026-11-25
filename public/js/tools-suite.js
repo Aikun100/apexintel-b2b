@@ -29,12 +29,16 @@
   window.currentScannedProfile = null;
 
   window.runDomainScan = async function () {
-    const rawInput = document.getElementById('scanDomainInput')?.value.trim();
-    const domain = (rawInput || 'dallasroofer.com').replace(/^(https?:\/\/)?(www\.)?/, '').split(/[\/\?#]/)[0].toLowerCase();
+    const rawInput = document.getElementById('scanDomainInput')?.value.trim() || '';
+    if (!rawInput) {
+      if (typeof window.showToast === 'function') window.showToast('Enter a website domain to scan.');
+      return;
+    }
+    const domain = rawInput.replace(/^(https?:\/\/)?(www\.)?/, '').split(/[\/\?#]/)[0].toLowerCase();
 
     // Client-side quick check
-    if (!domain) {
-      if (typeof window.showToast === 'function') window.showToast('Please enter a target domain.');
+    if (!domain || !domain.includes('.')) {
+      if (typeof window.showToast === 'function') window.showToast('Enter a valid website domain.');
       return;
     }
 
