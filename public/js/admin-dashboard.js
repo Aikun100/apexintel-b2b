@@ -212,7 +212,7 @@
               </div>
               <span class="text-xs text-emerald-400 font-mono font-bold flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                ALL SYSTEMS OPERATIONAL
+                STATUS UNVERIFIED
               </span>
             </div>
 
@@ -226,7 +226,7 @@
                 <div class="text-sm font-mono text-white font-bold truncate">apex-web-app</div>
                 <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
                   <span>Last Invoked:</span>
-                  <span class="text-slate-300 font-mono">2m ago</span>
+                  <span class="text-slate-300 font-mono">Unavailable</span>
                 </div>
                 <div class="text-[11px] text-slate-400 flex justify-between mt-0.5">
                   <span>Runtime:</span>
@@ -259,11 +259,11 @@
                 </div>
                 <div class="text-sm font-mono text-white font-bold">No verified report</div>
                 <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
-                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 98.4%"></div>
+                  <div class="bg-slate-600 h-1.5 rounded-full" style="width: 0%"></div>
                 </div>
                 <div class="text-[10px] text-slate-400 mt-1.5 flex justify-between">
                   <span>Failed Discarded:</span>
-                  <span class="text-slate-400 font-mono">61 invalid</span>
+                  <span class="text-slate-400 font-mono">Unavailable</span>
                 </div>
               </div>
 
@@ -330,7 +330,7 @@
                 <span class="text-sm font-extrabold uppercase tracking-wider text-indigo-400">📋 Live Order & Transaction Feed</span>
                 <span class="text-[10px] font-mono text-slate-500">Synced with Stripe Checkout & Webhooks</span>
               </div>
-              <span class="text-xs text-slate-400">Showing last real-time transactions</span>
+              <span class="text-xs text-slate-400">Live feed requires verified transaction data</span>
             </div>
 
             <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
