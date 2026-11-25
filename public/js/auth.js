@@ -12,69 +12,7 @@
 (function () {
   'use strict';
 
-  const STORAGE_ORDERS = 'apexintel_orders';
-
-  // --- Seed Orders (Local UI Showcase Data) ---
-  const SEED_ORDERS = [
-    {
-      id: 'ord_tx_9011',
-      date: '2026-11-20T14:22:00Z',
-      customerEmail: 'alex@velocitygrowth.io',
-      customerName: 'Alex Rivera',
-      company: 'Velocity Growth Agency',
-      packId: 'texas',
-      packName: 'Texas High-Ticket Contractors',
-      leadsDelivered: 24,
-      amount: 79,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_texas.png',
-      leads: [
-        { domain: 'dallasroofer.com', company: 'T Rock Roofing & Restoration', email: 'info@dallasroofer.com' },
-        { domain: 'suttonroofinginc.com', company: 'Sutton Roofing & Solar', email: 'office@suttonroofinginc.com' },
-        { domain: 'precisionroof.com', company: 'Precision Roof Crafters', email: 'leads@precisionroof.com' },
-        { domain: 'freedomsolar.com', company: 'Freedom Solar Power', email: 'contact@freedomsolar.com' }
-      ]
-    },
-    {
-      id: 'ord_fl_8944',
-      date: '2026-11-19T09:11:00Z',
-      customerEmail: 'alex@velocitygrowth.io',
-      customerName: 'Alex Rivera',
-      company: 'Velocity Growth Agency',
-      packId: 'florida',
-      packName: 'Florida Solar & Storm Restoration',
-      leadsDelivered: 8,
-      amount: 79,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_florida.png',
-      leads: [
-        { domain: 'tampabaysolar.com', company: 'Tampa Bay Solar', email: 'info@tampabaysolar.com' },
-        { domain: 'sunvena.com', company: 'SunVena Solar', email: 'service@sunvena.com' },
-        { domain: 'goldinsolar.com', company: 'Goldin Solar', email: 'contact@goldinsolar.com' }
-      ]
-    },
-    {
-      id: 'ord_ca_7812',
-      date: '2026-11-21T11:45:00Z',
-      customerEmail: 'sarah@outboundsprint.com',
-      customerName: 'Sarah Chen',
-      company: 'OutboundSprint',
-      packId: 'medspas',
-      packName: 'California Luxury MedSpas',
-      leadsDelivered: 9,
-      amount: 89,
-      processor: 'Stripe',
-      status: 'Delivered',
-      downloadUrl: '/covers/cover_medspas.png',
-      leads: [
-        { domain: 'nassifmd.com', company: 'NassifMD Medical Spa', email: 'concierge@nassifmd.com' },
-        { domain: 'skinspirit.com', company: 'SkinSpirit Beverly Hills', email: 'info@skinspirit.com' },
-        { domain: 'ljcmedspa.com', company: 'La Jolla Cosmetic MedSpa', email: 'appointments@ljcmedspa.com' }
-      ]
-    }
-  ];
+  // Orders are authoritative backend records. Never seed or persist orders in browser storage.
 
   // --- Production Auth Engine ---
   const ApexAuth = {
@@ -82,9 +20,7 @@
     _initialized: false,
 
     initStorage: function () {
-      if (!localStorage.getItem(STORAGE_ORDERS)) {
-        localStorage.setItem(STORAGE_ORDERS, JSON.stringify(SEED_ORDERS));
-      }
+      // Kept as a compatibility hook; order data must come from the authenticated API.
     },
 
     /**
@@ -122,26 +58,14 @@
       return this._currentUser;
     },
 
-    getOrders: function (customerEmail) {
-      try {
-        const raw = localStorage.getItem(STORAGE_ORDERS);
-        const all = raw ? JSON.parse(raw) : [];
-        if (!customerEmail) return all;
-        return all.filter(o => o.customerEmail.toLowerCase() === customerEmail.toLowerCase());
-      } catch (e) {
-        return [];
-      }
+    getOrders: function () {
+      // No local/demo order ledger. Fetch orders from the authenticated backend.
+      return [];
     },
 
-    addOrder: function (order) {
-      try {
-        const all = this.getOrders();
-        all.unshift(order);
-        localStorage.setItem(STORAGE_ORDERS, JSON.stringify(all));
-        return true;
-      } catch (e) {
-        return false;
-      }
+    addOrder: function () {
+      // Orders can only be created by the server-side payment/fulfillment workflow.
+      return false;
     },
 
     /**
