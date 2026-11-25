@@ -1581,202 +1581,7 @@
     });
   }
 
-  // --- Curated Discovery Database Catalog (Blueprint v1.0) ---
-  const DISCOVERY_CATALOG_LEADS = [
-    {
-      id: 'disc_tx_01',
-      company: 'T Rock Roofing & Restoration',
-      domain: 'dallasroofer.com',
-      contactName: 'Thomas Rock (Managing Partner)',
-      email: 'info@dallasroofer.com',
-      phone: '+1 469 931 9867',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'texas',
-      industry: 'Roofing & Storm Restoration',
-      speed_ms: 1473,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 92,
-      tags: ['slow-latency', 'missing-pixel', 'dallas']
-    },
-    {
-      id: 'disc_tx_02',
-      company: 'Sutton Roofing & Solar',
-      domain: 'suttonroofinginc.com',
-      contactName: 'Operations Director',
-      email: 'office@suttonroofinginc.com',
-      phone: '+1 512 837 8777',
-      city: 'Austin, TX',
-      territory: 'texas',
-      industry: 'Commercial Solar & Roofing',
-      speed_ms: 620,
-      metaPixel: true,
-      googleAds: false,
-      opportunityScore: 88,
-      tags: ['austin', 'solar']
-    },
-    {
-      id: 'disc_tx_03',
-      company: 'K-Post Company Commercial Roofing',
-      domain: 'kpostcompany.com',
-      contactName: 'Keith Post (President)',
-      email: 'commercial@kpostcompany.com',
-      phone: '+1 972 606 0000',
-      city: 'Dallas, TX',
-      territory: 'texas',
-      industry: 'Commercial & Industrial Roofing',
-      speed_ms: 1840,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 95,
-      tags: ['high-speed-flaw', 'missing-pixel', 'high-ltv']
-    },
-    {
-      id: 'disc_tx_04',
-      company: 'Lonestar Commercial Roofing',
-      domain: 'lonestarroofingpro.com',
-      contactName: 'Robert Vance (Owner)',
-      email: 'service@lonestarroofingpro.com',
-      phone: '+1 832 770 1200',
-      city: 'Houston, TX',
-      territory: 'texas',
-      industry: 'Commercial TPO & Metal Roofing',
-      speed_ms: 1120,
-      metaPixel: false,
-      googleAds: false,
-      opportunityScore: 89,
-      tags: ['houston', 'missing-pixel']
-    },
-    {
-      id: 'disc_fl_01',
-      company: 'Tampa Bay Solar & Energy',
-      domain: 'tampabaysolar.com',
-      contactName: 'Ben Gold (Owner)',
-      email: 'info@tampabaysolar.com',
-      phone: '+1 813 398 3687',
-      city: 'Tampa, FL',
-      territory: 'florida',
-      industry: 'Commercial Solar Energy',
-      speed_ms: 740,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 94,
-      tags: ['missing-pixel', 'tampa', 'solar']
-    },
-    {
-      id: 'disc_fl_02',
-      company: 'Goldin Solar Orlando',
-      domain: 'goldinsolar.com',
-      contactName: 'Dvir Goldin (Founder)',
-      email: 'contact@goldinsolar.com',
-      phone: '+1 407 500 7652',
-      city: 'Orlando, FL',
-      territory: 'florida',
-      industry: 'Commercial Solar & Battery',
-      speed_ms: 1620,
-      metaPixel: true,
-      googleAds: true,
-      opportunityScore: 91,
-      tags: ['slow-latency', 'orlando']
-    },
-    {
-      id: 'disc_fl_03',
-      company: 'Miami Hurricane Mitigation & Roofing',
-      domain: 'miamihurricanepros.com',
-      contactName: 'Carlos Mendez (VP Commercial)',
-      email: 'info@miamihurricanepros.com',
-      phone: '+1 305 558 9200',
-      city: 'Miami, FL',
-      territory: 'florida',
-      industry: 'Disaster Mitigation & Roofing',
-      speed_ms: 1390,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 96,
-      tags: ['high-ltv', 'missing-pixel', 'miami']
-    },
-    {
-      id: 'disc_ca_01',
-      company: 'Beverly Hills Skin & Laser Center',
-      domain: 'bhskinlaser.com',
-      contactName: 'Clinical Director',
-      email: 'concierge@bhskinlaser.com',
-      phone: '+1 310 278 8878',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Aesthetic Dermatology & Laser',
-      speed_ms: 1250,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 93,
-      tags: ['luxury', 'missing-pixel', 'beverly-hills']
-    },
-    {
-      id: 'disc_ca_02',
-      company: 'Union Square Aesthetics & Surgery',
-      domain: 'unionsquareaesthetics.com',
-      contactName: 'Dr. Michael Chen',
-      email: 'frontdesk@unionsquareaesthetics.com',
-      phone: '+1 415 392 3333',
-      city: 'San Francisco, CA',
-      territory: 'medspas',
-      industry: 'Cosmetic Surgery & Injectables',
-      speed_ms: 540,
-      metaPixel: true,
-      googleAds: true,
-      opportunityScore: 86,
-      tags: ['san-francisco', 'injectables']
-    },
-    {
-      id: 'disc_ca_03',
-      company: 'La Jolla Institute of Plastic Surgery',
-      domain: 'lajollaplasticsurg.com',
-      contactName: 'Practice Administrator',
-      email: 'info@lajollaplasticsurg.com',
-      phone: '+1 858 454 4455',
-      city: 'San Diego, CA',
-      territory: 'medspas',
-      industry: 'Plastic Surgery & Medical Spa',
-      speed_ms: 1490,
-      metaPixel: false,
-      googleAds: false,
-      opportunityScore: 90,
-      tags: ['san-diego', 'missing-pixel']
-    },
-    {
-      id: 'disc_hvac_01',
-      company: 'Midwest Mechanical Chiller Systems',
-      domain: 'midwestmechchillers.com',
-      contactName: 'David Kowalski (VP Sales)',
-      email: 'commercial@midwestmechchillers.com',
-      phone: '+1 312 880 4400',
-      city: 'Chicago, IL',
-      territory: 'hvac',
-      industry: 'Industrial Chiller & VRF Systems',
-      speed_ms: 1680,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 95,
-      tags: ['chicago', 'missing-pixel', 'high-speed-flaw']
-    },
-    {
-      id: 'disc_hvac_02',
-      company: 'DFW Industrial Building Automation',
-      domain: 'dfwbuildingauto.com',
-      contactName: 'Engineering Director',
-      email: 'service@dfwbuildingauto.com',
-      phone: '+1 214 740 8820',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'hvac',
-      industry: 'Commercial HVAC Controls',
-      speed_ms: 710,
-      metaPixel: true,
-      googleAds: false,
-      opportunityScore: 87,
-      tags: ['dallas', 'hvac-controls']
-    }
-  ];
-
+  // Discovery records are sourced exclusively from the authenticated discovery API.
   // Tab Aliases for backwards compatibility with legacy UI triggers
   const TAB_ALIASES = {
     auditlab: 'intelligence',
@@ -1784,7 +1589,7 @@
     api: 'settings'
   };
 
-  let liveDiscoveryLeadsCache = null;
+  let liveDiscoveryLeadsCache = [];
   let liveDiscoveryPromise = null;
 
   window.loadLiveDiscoveryLeads = async function () {
@@ -1798,7 +1603,7 @@
         });
         if (res.ok) {
           const data = await res.json();
-          if (data && data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+          if (data && data.success && Array.isArray(data.leads)) {
             liveDiscoveryLeadsCache = data.leads.map(l => ({
               id: l.id || l.domain,
               company: l.company_name || l.name || l.domain,
@@ -1821,10 +1626,18 @@
               isLiveApi: true
             }));
             renderDiscoverTab();
+          } else {
+            liveDiscoveryLeadsCache = [];
+            renderDiscoverTab();
           }
+        } else {
+          liveDiscoveryLeadsCache = [];
+          renderDiscoverTab();
         }
       } catch (err) {
-        console.warn('[Discover] Live API fallback to catalog samples:', err.message);
+        liveDiscoveryLeadsCache = [];
+        console.warn('[Discover] Live API request failed:', err.message);
+        renderDiscoverTab();
       } finally {
         liveDiscoveryPromise = null;
       }
@@ -1834,11 +1647,7 @@
   };
 
   function getDiscoveryPool() {
-    if (Array.isArray(liveDiscoveryLeadsCache) && liveDiscoveryLeadsCache.length > 0) {
-      const seen = new Set(liveDiscoveryLeadsCache.map(l => l.domain));
-      return [...liveDiscoveryLeadsCache, ...DISCOVERY_CATALOG_LEADS.filter(l => !seen.has(l.domain))];
-    }
-    return DISCOVERY_CATALOG_LEADS;
+    return Array.isArray(liveDiscoveryLeadsCache) ? liveDiscoveryLeadsCache : [];
   }
 
   // --- Window Interactive Actions ---
@@ -2718,22 +2527,27 @@
     notify(`Exported client audit report for ${audit.domain}!`);
   };
 
-  // Download custom request CSV
+  // Download only records actually returned with a delivered custom request.
   window.downloadCustomExtractionCsv = function (reqId) {
-    const list = getCustomRequests();
-    const req = list.find(r => r.id === reqId) || list[0];
-    
-    let csv = 'Company,Email,Phone,City,Industry,Territory,Status\n';
-    csv += `"Phoenix Sun Solar","service@phoenixsun.com","+1 602 555 8920","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Desert Ridge Roofing Pros","office@desertridgeroof.com","+1 480 555 1204","Scottsdale, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Camelback Commercial HVAC","dispatch@camelbackmech.com","+1 602 555 4411","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
-
+    const req = getCustomRequests().find(r => r.id === reqId);
+    if (!req || req.status !== 'Delivered') {
+      notify('This request has no verified delivered dataset available.');
+      return;
+    }
+    const records = Array.isArray(req.leads) ? req.leads : (Array.isArray(req.results) ? req.results : []);
+    if (records.length === 0) {
+      notify('No dataset records were returned by the server for this request.');
+      return;
+    }
+    const columns = ['company', 'email', 'phone', 'city', 'industry', 'territory', 'status'];
+    const cell = value => '"' + String(value ?? '').replace(/"/g, '""') + '"';
+    const csv = [columns.join(','), ...records.map(record => columns.map(column => cell(record[column])).join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `custom_extraction_${req.id}.csv`;
     link.click();
-    notify(`Downloaded custom dataset for ${req.id}!`);
+    notify(`Downloaded server-provided dataset for ${req.id}.`);
   };
 
   // --- Server-Authoritative User Purchased Orders & S3 Fulfillment ---
