@@ -1489,8 +1489,9 @@
       const industry = escapeHTML(req.industry || '');
       const territory = escapeHTML(req.territory || '');
       const volume = escapeHTML(String(req.volume || ''));
-      const price = escapeHTML(req.estimatedPrice || '$299.00');
-      const notes = escapeHTML(req.notes || ('Target volume: ' + volume + ' decision makers'));
+      const price = escapeHTML(req.estimatedPrice || 'Quote pending');
+      const notes = escapeHTML(req.notes || ('Requested volume: ' + volume + ' records'));
+      const hasDeliveredRecords = (Array.isArray(req.deliveredRecords) && req.deliveredRecords.length > 0) || (Array.isArray(req.results) && req.results.length > 0);
 
       card.innerHTML = `
         <div class="space-y-1">
@@ -1507,13 +1508,13 @@
 
         <div class="flex items-center gap-3 shrink-0">
           <span class="text-sm font-mono font-bold text-white">${price}</span>
-          ${isDelivered ? `
+          ${isDelivered && hasDeliveredRecords ? `
             <button onclick="window.downloadCustomExtractionCsv('${reqId}')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
               <span>📥</span> Download Dataset (.CSV)
             </button>
           ` : `
             <span class="text-xs font-mono text-slate-500 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800">
-              Mining in Progress...
+              ${isDelivered ? 'Delivery file not attached yet' : 'Awaiting fulfillment update'}
             </span>
           `}
         </div>
@@ -1525,9 +1526,7 @@
   // Discovery records are sourced exclusively from the authenticated discovery API.
   // Tab Aliases for backwards compatibility with legacy UI triggers
   const TAB_ALIASES = {
-    auditlab: 'intelligence',
-    ledger: 'datasets',
-    api: 'settings'
+    auditlab: 'intelligence'
   };
 
   let liveDiscoveryLeadsCache = [];
