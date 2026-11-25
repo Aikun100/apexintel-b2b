@@ -567,12 +567,7 @@
         }
         if (typeof window.openAuthModal === 'function') {
           window.openAuthModal('signin');
-          setTimeout(() => {
-            const emailInput = document.getElementById('signInEmail');
-            if (emailInput && !emailInput.value) {
-              emailInput.value = 'admin@apexintel.io';
-            }
-          }, 150);
+
         }
         return;
       }
