@@ -209,7 +209,7 @@ export function scoreOpportunity(input = {}) {
     let reason = `Fast baseline server response (${speedMs}ms TTFB).`;
     if (speedMs >= 1200) {
       points = 25;
-      reason = `Critical mobile latency (${speedMs}ms TTFB) creates high conversion recovery upside.`;
+      reason = `Critical mobile latency (${speedMs}ms TTFB) may justify a performance review; validate business impact with analytics.`;
     } else if (speedMs >= 800) {
       points = 20;
       reason = `Sub-optimal server latency (${speedMs}ms TTFB) slows mobile landing pages.`;
@@ -301,16 +301,16 @@ export function scoreOpportunity(input = {}) {
     let reason = 'Baseline retargeting and analytics tags are active.';
     if (hasGoogleAds && !hasMeta) {
       points = 25;
-      reason = 'Active Google Ads spend detected without a Meta retargeting pixel.';
+      reason = 'A Google Ads tag was detected without a Meta Pixel in the scanned page; other tracking methods may be in use.';
     } else if (hasGaOrGtm === false && !hasMeta) {
       points = 22;
       reason = 'Missing Meta retargeting pixel and Google Analytics/GTM attribution.';
     } else if (!hasMeta) {
       points = 18;
-      reason = 'Missing Meta retargeting pixel leaves paid/organic visitors uncaptured.';
+      reason = 'No Meta Pixel was detected in the scanned page; this does not rule out server-side or alternative tracking.';
     } else if (hasGaOrGtm === false) {
       points = 12;
-      reason = 'Meta pixel active, but missing GA4/GTM conversion measurement.';
+      reason = 'Meta Pixel detected; GA4/GTM tags were not detected in the scanned page.';
     }
 
     analyticsFactor = {
@@ -331,7 +331,7 @@ export function scoreOpportunity(input = {}) {
   const mxVerified = data.mx_verified === true || hasDnsMx;
 
   const emailProvenance = email
-    ? (mxVerified ? PROVENANCE_TIERS.VERIFIED : PROVENANCE_TIERS.PUBLICLY_LISTED)
+    ? (data.emailVerified === true ? PROVENANCE_TIERS.VERIFIED : PROVENANCE_TIERS.PUBLICLY_LISTED)
     : PROVENANCE_TIERS.UNAVAILABLE;
   const phoneProvenance = phone
     ? (data.phoneVerified === true ? PROVENANCE_TIERS.VERIFIED : PROVENANCE_TIERS.PUBLICLY_LISTED)
@@ -349,24 +349,24 @@ export function scoreOpportunity(input = {}) {
     };
   } else {
     let points = 4;
-    let reason = 'Domain MX telemetry checked without verified direct contact channels.';
+    let reason = 'Domain MX status is available; mailbox existence and phone ownership are not confirmed.';
     let contactProv = PROVENANCE_TIERS.INFERRED;
 
     if (email && mxVerified && phone) {
       points = 15;
-      reason = 'MX-verified email and direct phone line are both available for outreach.';
+      reason = 'Email domain publishes MX records and a phone is listed; mailbox delivery and phone ownership are not confirmed.';
       contactProv = PROVENANCE_TIERS.VERIFIED;
     } else if ((email && mxVerified) || (email && phone)) {
       points = 12;
       reason = email && mxVerified
-        ? 'MX-verified email contact is ready for outbound campaigns.'
+        ? 'Email domain publishes MX records; mailbox existence and inbox placement are not confirmed.'
         : 'Publicly listed email and phone channels are available.';
       contactProv = mxVerified ? PROVENANCE_TIERS.VERIFIED : PROVENANCE_TIERS.PUBLICLY_LISTED;
     } else if (email || phone || mxVerified) {
       points = 8;
       reason = phone
         ? 'Direct phone line available for outreach.'
-        : (email ? 'Publicly listed email available (MX unverified).' : 'Domain MX records verified for email deliverability.');
+        : (email ? 'Publicly listed email available; domain MX status is not confirmed.' : 'Domain publishes MX records; inbox delivery is not guaranteed.');
       contactProv = mxVerified ? PROVENANCE_TIERS.VERIFIED : PROVENANCE_TIERS.PUBLICLY_LISTED;
     }
 
@@ -438,7 +438,7 @@ export function scoreOpportunity(input = {}) {
     let reason = `Standard commercial vertical (${tradeText}).`;
     if (/roof|solar|hvac|mechanical|chiller|medspa|aesthetic|cosmetic|dermatolog|restoration|contractor|plumbing|electrical|high/i.test(tradeText)) {
       points = 10;
-      reason = `High-ticket commercial vertical (${tradeText}) with strong lifetime customer value.`;
+      reason = `Commercial vertical (${tradeText}) is often associated with higher project values; confirm the typical contract size for this business.`;
     } else if (/medium|service|agency|medical|dental|legal/i.test(tradeText)) {
       points = 6;
       reason = `Mid-ticket B2B/service vertical (${tradeText}).`;
