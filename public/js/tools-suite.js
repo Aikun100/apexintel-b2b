@@ -134,6 +134,7 @@
           scanBtn.classList.remove('opacity-50');
         }
         window.currentScannedProfile = data.scan;
+        if (typeof window.recordCustomerAuditScan === 'function') window.recordCustomerAuditScan(data.scan);
         renderScanResults(data.scan);
         if (typeof window.showToast === 'function') {
           window.showToast(`Verified live signal audit complete for ${data.scan.domain}`);
