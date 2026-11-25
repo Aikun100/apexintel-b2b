@@ -1802,6 +1802,12 @@
     filtered.forEach(item => {
       const isAlreadySaved = currentLeads.some(l => l.domain === item.domain || l.id === item.id);
       const speedColor = item.speed_ms == null ? 'text-slate-500' : (item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400'));
+      const pixelBadge = item.metaPixel === null
+        ? '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-bold">Not assessed</span>'
+        : (item.metaPixel
+          ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta detected</span>'
+          : '<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Meta not detected</span>');
+      const scoreLabel = item.opportunityScore == null ? 'Not scored' : `${scoreLabel}`;
 
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-800/40 transition';
@@ -1816,7 +1822,7 @@
         <td class="py-3 px-4 text-slate-300">${escapeHTML(item.industry)}</td>
         <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms == null ? 'Not measured' : `${item.speed_ms}ms`}</td>
         <td class="py-3 px-4">
-          ${item.metaPixel ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta Active</span>' : '<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Missing Pixel</span>'}
+          ${pixelBadge}
         </td>
         <td class="py-3 px-4 text-center">
           <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-mono font-black text-xs">${item.opportunityScore}/100</span>
