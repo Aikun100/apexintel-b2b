@@ -269,7 +269,7 @@
             <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
               <span>💡</span> Auto-Generated Turnkey Cold Pitch Angle:
             </span>
-            <span class="text-[11px] text-indigo-400 font-mono">100% Ready for Outreach</span>
+            <span class="text-[11px] text-indigo-400 font-mono">Review before outreach</span>
           </div>
           <p id="scanPitchText" class="text-xs text-slate-300 font-mono bg-slate-900 p-4 rounded-xl border border-slate-800 leading-relaxed">
             "${suggestedPitch}"
