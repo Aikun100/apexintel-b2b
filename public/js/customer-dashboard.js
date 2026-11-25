@@ -248,8 +248,32 @@
   }
 
   function getCustomerApiKey() {
-    // API keys must be issued and stored by a server-side credential service.
-    return '';
+    const user = window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function'
+      ? window.ApexAuth.getCurrentUser()
+      : null;
+    return user && typeof user.apiKey === 'string' ? user.apiKey : '';
+  }
+
+  async function loadCustomerApiKey() {
+    try {
+      const response = await fetch('/api/auth/api-key', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include'
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success && typeof data.apiKey === 'string') {
+        if (window.ApexAuth && typeof window.ApexAuth.updateCurrentUser === 'function') {
+          window.ApexAuth.updateCurrentUser({ apiKey: data.apiKey });
+        }
+        const input = document.getElementById('custApiKeyInput');
+        const placeholder = document.getElementById('curlKeyPlaceholder');
+        if (input) input.value = data.apiKey;
+        if (placeholder) placeholder.innerText = data.apiKey;
+      }
+    } catch (error) {
+      console.warn('[Settings] API key could not be loaded:', error.message);
+    }
   }
 
   // --- HTML Injection ---
@@ -2702,9 +2726,10 @@
     const firstLetter = (user.name || 'User').charAt(0).toUpperCase();
     if (avatarEl) avatarEl.innerText = firstLetter;
     if (nameEl) nameEl.innerText = user.name || 'Agency Member';
-    if (planBadge) planBadge.innerText = user.plan || 'Agency Growth';
-    if (creditsEl) creditsEl.innerText = `${user.credits || 250} Leads Available`;
-    if (companyEl) companyEl.innerHTML = `${user.company || 'Direct Agency'} • <span class="text-indigo-400 font-mono font-bold">${user.credits || 250} Leads Available</span>`;
+    if (planBadge) planBadge.innerText = user.plan || 'Plan not assigned';
+    const credits = Number.isFinite(Number(user.credits)) ? Number(user.credits) : null;
+    if (creditsEl) creditsEl.innerText = credits === null ? 'Credits unavailable' : `${credits} Leads Available`;
+    if (companyEl) companyEl.innerHTML = `${escapeHTML(user.company || 'Company not set')} • <span class="text-indigo-400 font-mono font-bold">${credits === null ? 'Credits unavailable' : `${credits} Leads Available`}</span>`;
 
     const setNam = document.getElementById('custSettingName');
     const setCom = document.getElementById('custSettingCompany');
@@ -2714,7 +2739,7 @@
     if (setNam) setNam.value = user.name || '';
     if (setCom) setCom.value = user.company || '';
     if (setEma) setEma.value = user.email || '';
-    if (setPla) setPla.value = user.plan || 'Enterprise Pro (Lifetime)';
+    if (setPla) setPla.value = user.plan || '';
 
     const key = getCustomerApiKey();
     const keyInput = document.getElementById('custApiKeyInput');
@@ -2728,6 +2753,7 @@
     refreshDashboardUserInfo();
     window.loadCrmLeadsFromBackend();
     window.loadUserOrdersFromBackend();
+    loadCustomerApiKey();
     window.switchCustomerTab(initialTab);
 
     const modal = document.getElementById('customerDashboard');
@@ -2745,12 +2771,45 @@
     }
   };
 
-  window.copyCustomerApiKey = function () {
-    notify('API key management is not connected to the server yet. No key is available to copy.');
+  window.copyCustomerApiKey = async function () {
+    const key = getCustomerApiKey();
+    if (!key) {
+      notify('No server-issued API key is available for this account.');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(key);
+      notify('API key copied. Keep it private.');
+    } catch {
+      notify('Clipboard access was blocked by the browser.');
+    }
   };
 
-  window.regenerateCustomerApiKey = function () {
-    notify('API key management is not connected to the server yet. A key cannot be generated in the browser.');
+  window.regenerateCustomerApiKey = async function () {
+    if (!confirm('Rotate your API key? Your existing key will stop working immediately.')) return;
+    try {
+      const csrf = typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '';
+      const response = await fetch('/api/auth/api-key/rotate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'x-csrf-token': csrf },
+        credentials: 'include',
+        body: JSON.stringify({})
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success || typeof data.apiKey !== 'string') {
+        throw new Error(data.error || 'API key rotation failed.');
+      }
+      if (window.ApexAuth && typeof window.ApexAuth.updateCurrentUser === 'function') {
+        window.ApexAuth.updateCurrentUser({ apiKey: data.apiKey });
+      }
+      const input = document.getElementById('custApiKeyInput');
+      const placeholder = document.getElementById('curlKeyPlaceholder');
+      if (input) input.value = data.apiKey;
+      if (placeholder) placeholder.innerText = data.apiKey;
+      notify('API key rotated successfully. Update any integrations using the old key.');
+    } catch (error) {
+      notify(error.message || 'Unable to rotate API key.');
+    }
   };
 
   window.saveCustomerWebhook = function () {
