@@ -504,7 +504,7 @@
                   <span>📦</span> My Datasets & Downloads
                 </button>
                 <button onclick="openCustomerDashboard('ledger'); toggleUserDropdown(false);" class="w-full text-left px-3 py-2 rounded-xl text-slate-200 hover:bg-slate-900 hover:text-white flex items-center gap-2 transition">
-                  <span>🛡️</span> Zero-Duplicate Ledger
+                  <span>🛡️</span> Delivery History
                 </button>
                 <button onclick="openCustomerDashboard('api'); toggleUserDropdown(false);" class="w-full text-left px-3 py-2 rounded-xl text-slate-200 hover:bg-slate-900 hover:text-white flex items-center gap-2 transition">
                   <span>🔑</span> CRM & API Credentials
