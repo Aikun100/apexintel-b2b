@@ -828,38 +828,38 @@
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="text-base font-black text-white">Delivery History & Access</h4>
+                    <h4 class="text-base font-black text-white">Order & Download History</h4>
                     <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Backend tracked</span>
                   </div>
                   <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                    The platform stores purchase and download records server-side. This panel displays delivery records only when they are returned by the backend. Check each dataset's listing for its specific overlap or exclusivity terms.
+                    This panel lists orders returned by the authenticated orders API. Purchase and download access are recorded server-side; dataset overlap or territory exclusivity is defined per listing, not guaranteed platform-wide.
                   </p>
                 </div>
               </div>
               <div class="bg-slate-950/90 border border-slate-800 p-3 rounded-xl text-center shrink-0 w-full sm:w-auto">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Unique Records</span>
-                <span class="text-2xl font-black text-emerald-400 font-mono">—</span>
-                <span class="text-[10px] text-slate-500 block">No records loaded</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Orders on Account</span>
+                <span id="customerOrderHistoryCount" class="text-2xl font-black text-emerald-400 font-mono">—</span>
+                <span class="text-[10px] text-slate-500 block">Server records</span>
               </div>
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-3">
                 <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">
-                  Recent Delivered Leads Ledger
+                  Recent Orders
                 </h4>
-                <span class="text-xs font-mono text-slate-500">Live DynamoDB Sync</span>
+                <span class="text-xs font-mono text-slate-500">Server order records</span>
               </div>
 
               <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
                 <table class="w-full text-left text-xs">
                   <thead>
                     <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
-                      <th class="py-3 px-4">Domain Hash / ID</th>
-                      <th class="py-3 px-4">Company Name</th>
-                      <th class="py-3 px-4">Territory</th>
-                      <th class="py-3 px-4">Delivery Timestamp</th>
-                      <th class="py-3 px-4 text-right">Ledger Status</th>
+                      <th class="py-3 px-4">Order ID</th>
+                      <th class="py-3 px-4">Dataset</th>
+                      <th class="py-3 px-4">Records</th>
+                      <th class="py-3 px-4">Order Date</th>
+                      <th class="py-3 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody id="dedupeLedgerTableBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
@@ -2681,17 +2681,21 @@
         if (resp.status === 401) {
           userPurchasedOrders = [];
           populateDatasetsList();
+          populateLedgerList();
           return;
         }
         throw new Error(`Failed to load orders (${resp.status})`);
       }
 
       const data = await resp.json();
-      userPurchasedOrders = data.orders || [];
+      userPurchasedOrders = Array.isArray(data.orders) ? data.orders : [];
       populateDatasetsList();
+      populateLedgerList();
     } catch (err) {
       console.warn('[Orders Load Error]:', err.message);
+      userPurchasedOrders = [];
       populateDatasetsList();
+      populateLedgerList();
     }
   };
 
@@ -2772,31 +2776,38 @@
 
   function populateLedgerList() {
     const tbody = document.getElementById('dedupeLedgerTableBody');
+    const countEl = document.getElementById('customerOrderHistoryCount');
     if (!tbody) return;
 
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    if (countEl) countEl.innerText = String(orders.length);
     tbody.innerHTML = '';
-    if (dedupeLedgerRecords.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No verified deduplication records are available yet.</td></tr>';
+
+    if (orders.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No orders have been recorded for this account yet.</td></tr>';
       return;
     }
-    dedupeLedgerRecords.forEach(rec => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-slate-900/40 transition';
-      tr.innerHTML = `
-        <td class="py-2.5 px-4 text-indigo-400 font-bold flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          ${rec.domain}
-        </td>
-        <td class="py-2.5 px-4 text-white">${rec.company}</td>
-        <td class="py-2.5 px-4 text-slate-400">${rec.territory}</td>
-        <td class="py-2.5 px-4 text-slate-400">${rec.date}</td>
+
+    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
+    orders.forEach(order => {
+      const status = String(order.status || 'unknown');
+      const isPaid = status.toLowerCase() === 'paid';
+      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Date unavailable';
+      const recordCount = Number(order.leadsCount) || packLeadCounts[order.productKey] || null;
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-slate-900/40 transition';
+      row.innerHTML = `
+        <td class="py-2.5 px-4 text-indigo-300 font-bold">${escapeHTML(order.orderId || 'Order reference unavailable')}</td>
+        <td class="py-2.5 px-4 text-white">${escapeHTML(order.productName || order.productKey || 'Dataset')}</td>
+        <td class="py-2.5 px-4 text-slate-300">${recordCount === null ? 'Not specified' : recordCount}</td>
+        <td class="py-2.5 px-4 text-slate-400">${escapeHTML(orderDate)}</td>
         <td class="py-2.5 px-4 text-right">
-          <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
-            ✓ ${rec.status}
+          <span class="px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'} text-[10px] font-bold">
+            ${escapeHTML(status)}
           </span>
         </td>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
   }
 
