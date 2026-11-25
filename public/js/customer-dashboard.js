@@ -1712,7 +1712,7 @@
     if (signalFilter === 'high_score') {
       filtered = filtered.filter(l => l.opportunityScore >= 85);
     } else if (signalFilter === 'missing_pixel') {
-      filtered = filtered.filter(l => !l.metaPixel);
+      filtered = filtered.filter(l => l.metaPixel === false);
     } else if (signalFilter === 'slow_speed') {
       filtered = filtered.filter(l => l.speed_ms > 1000);
     }
