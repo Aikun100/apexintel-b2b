@@ -34,79 +34,9 @@
 
   // CRM starts empty for each account; records are loaded from the authenticated backend.
   const DEFAULT_CRM_LEADS = [];
-  // --- Seed Campaigns ---
-  const DEFAULT_CAMPAIGNS = [
-    {
-      id: 'camp_tx_01',
-      title: 'Texas Q4 Commercial Roofers & Restoration',
-      territory: 'Texas (Dallas, Austin, Houston)',
-      niche: 'Commercial Roofing',
-      status: 'Active',
-      targetCount: 40,
-      createdAt: '2026-11-15'
-    },
-    {
-      id: 'camp_fl_01',
-      title: 'Florida Solar & Hurricane Mitigation',
-      territory: 'Florida (Miami, Tampa, Orlando)',
-      niche: 'Solar & Mitigation',
-      status: 'Active',
-      targetCount: 30,
-      createdAt: '2026-11-18'
-    },
-    {
-      id: 'camp_ca_01',
-      title: 'California Luxury MedSpas & Aesthetic Clinics',
-      territory: 'California (Beverly Hills, SF)',
-      niche: 'Medical Aesthetics',
-      status: 'Active',
-      targetCount: 25,
-      createdAt: '2026-11-20'
-    }
-  ];
-
-  // --- Seed Website Audits ---
-  const DEFAULT_AUDITS = [
-    {
-      id: 'audit_01',
-      domain: 'precisionroof.com',
-      company: 'Precision Roof Crafters',
-      scannedAt: '2026-11-21 16:30',
-      speed_ms: 980,
-      cms: 'WordPress / Apache',
-      metaPixel: false,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 85,
-      pitch: 'Noticed you are running Google Search campaigns for commercial roofing in Houston, but without retargeting pixels active, dropping roughly 35% of clicks.'
-    },
-    {
-      id: 'audit_02',
-      domain: 'tampabaysolar.com',
-      company: 'Tampa Bay Solar',
-      scannedAt: '2026-11-20 14:15',
-      speed_ms: 740,
-      cms: 'Webflow / Fastly',
-      metaPixel: false,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 88,
-      pitch: 'Your site loads fast at 740ms with Google Ads active, but missing Meta Pixel retargeting on commercial solar prospects who do not call immediately.'
-    },
-    {
-      id: 'audit_03',
-      domain: 'nassifmd.com',
-      company: 'NassifMD Medical Spa',
-      scannedAt: '2026-11-19 11:20',
-      speed_ms: 530,
-      cms: 'Custom / NGINX',
-      metaPixel: true,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 96,
-      pitch: 'Excellent tech stack in place with sub-600ms latency. High opportunity for VIP concierge booking automation.'
-    }
-  ];
+  // Campaigns and audits start empty; never inject showcase records into customer workspaces.
+  const DEFAULT_CAMPAIGNS = [];
+  const DEFAULT_AUDITS = [];
 
   // --- Custom Extraction Requests State ---
   window.userCustomRequests = [];
@@ -254,33 +184,40 @@
     userPurchasedOrders = [];
   };
 
+  function getTenantStorageKey(key) {
+    const user = window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function'
+      ? window.ApexAuth.getCurrentUser()
+      : null;
+    const tenant = user && (user.id || user.email);
+    return tenant ? `${key}:${String(tenant).toLowerCase()}` : null;
+  }
+
   function getCrmCampaigns() {
-    const raw = localStorage.getItem('apexintel_crm_campaigns');
-    if (!raw) {
-      localStorage.setItem('apexintel_crm_campaigns', JSON.stringify(DEFAULT_CAMPAIGNS));
-      return DEFAULT_CAMPAIGNS;
-    }
+    const key = getTenantStorageKey('apexintel_crm_campaigns');
+    if (!key) return [];
     try {
-      return JSON.parse(raw);
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      return DEFAULT_CAMPAIGNS;
+      return [];
     }
   }
 
   function saveCrmCampaigns(camps) {
-    localStorage.setItem('apexintel_crm_campaigns', JSON.stringify(camps));
+    const key = getTenantStorageKey('apexintel_crm_campaigns');
+    if (key) localStorage.setItem(key, JSON.stringify(Array.isArray(camps) ? camps : []));
   }
 
   function getAuditScans() {
-    const raw = localStorage.getItem('apexintel_audit_scans');
-    if (!raw) {
-      localStorage.setItem('apexintel_audit_scans', JSON.stringify(DEFAULT_AUDITS));
-      return DEFAULT_AUDITS;
-    }
+    const key = getTenantStorageKey('apexintel_audit_scans');
+    if (!key) return [];
     try {
-      return JSON.parse(raw);
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      return DEFAULT_AUDITS;
+      return [];
     }
   }
 
