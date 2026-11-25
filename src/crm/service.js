@@ -92,18 +92,24 @@ export class CrmService {
       priority = 'P2';
     }
 
-    let opportunityScore = parseInt(input.opportunityScore, 10);
-    if (isNaN(opportunityScore) || opportunityScore < 0 || opportunityScore > 100) {
-      opportunityScore = 75;
-    }
+    const rawOpportunityScore = input.opportunityScore;
+    const parsedOpportunityScore = rawOpportunityScore === null || rawOpportunityScore === undefined || rawOpportunityScore === ''
+      ? null
+      : Number(rawOpportunityScore);
+    const opportunityScore = Number.isFinite(parsedOpportunityScore) && parsedOpportunityScore >= 0 && parsedOpportunityScore <= 100
+      ? Math.round(parsedOpportunityScore)
+      : null;
 
-    let speed_ms = parseInt(input.speed_ms, 10);
-    if (isNaN(speed_ms) || speed_ms < 0) {
-      speed_ms = 850;
-    }
+    const rawSpeed = input.speed_ms;
+    const parsedSpeed = rawSpeed === null || rawSpeed === undefined || rawSpeed === ''
+      ? null
+      : Number(rawSpeed);
+    const speed_ms = Number.isFinite(parsedSpeed) && parsedSpeed >= 0
+      ? Math.round(parsedSpeed)
+      : null;
 
-    const metaPixel = Boolean(input.metaPixel);
-    const googleAds = Boolean(input.googleAds);
+    const metaPixel = typeof input.metaPixel === 'boolean' ? input.metaPixel : null;
+    const googleAds = typeof input.googleAds === 'boolean' ? input.googleAds : null;
     const campaignId = CrmService.sanitizeString(input.campaignId, 100) || null;
 
     // Sanitize tags
@@ -262,7 +268,7 @@ export class CrmService {
     }
     if (updates.opportunityScore !== undefined) {
       const score = parseInt(updates.opportunityScore, 10);
-      cleanUpdates.opportunityScore = !isNaN(score) ? Math.min(Math.max(score, 0), 100) : 75;
+      cleanUpdates.opportunityScore = Number.isFinite(score) ? Math.min(Math.max(score, 0), 100) : null;
     }
     if (updates.tags !== undefined && Array.isArray(updates.tags)) {
       cleanUpdates.tags = updates.tags
