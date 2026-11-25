@@ -731,7 +731,7 @@
                 <h4 class="text-sm font-black text-white flex items-center gap-2">
                   <span>🔬</span> Website Intelligence Audit Lab
                 </h4>
-                <p class="text-xs text-slate-400 mt-0.5">Historical domain diagnostic scans. Export white-labeled client audit reports for your outbound pitches.</p>
+                <p class="text-xs text-slate-400 mt-0.5">Recent website scans. History is saved in this browser for the signed-in account and does not sync across devices.</p>
               </div>
               <button onclick="window.closeCustomerDashboard(); location.hash = '#scanner';" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1.5">
                 <span>⚡</span> Run New Domain Scan
@@ -1599,8 +1599,8 @@
         </td>
         <td class="py-3 px-3 text-slate-300 font-mono text-xs">${escapeHTML(a.cms || 'Not detected')}</td>
         <td class="py-3 px-3 text-xs">
-          <span class="${a.googleAds ? 'text-emerald-400 font-bold' : 'text-slate-500'}">Ads: ${a.googleAds ? 'Yes' : 'No'}</span> • 
-          <span class="${a.metaPixel ? 'text-indigo-400 font-bold' : 'text-slate-500'}">Pixel: ${a.metaPixel ? 'Yes' : 'No'}</span>
+          <span class="${a.googleAds === null ? 'text-slate-500' : (a.googleAds ? 'text-emerald-400 font-bold' : 'text-amber-400')}">Ads: ${a.googleAds === null ? 'Unknown' : (a.googleAds ? 'Detected' : 'Not detected')}</span> • 
+          <span class="${a.metaPixel === null ? 'text-slate-500' : (a.metaPixel ? 'text-indigo-400 font-bold' : 'text-amber-400')}">Pixel: ${a.metaPixel === null ? 'Unknown' : (a.metaPixel ? 'Detected' : 'Not detected')}</span>
         </td>
         <td class="py-3 px-3 font-mono font-bold text-white">${a.icpScore == null ? 'Not scored' : `${escapeHTML(a.icpScore)}/100`}</td>
         <td class="py-3 px-4 text-right">
@@ -2561,12 +2561,23 @@
   window.exportAuditReport = function (auditId) {
     const audits = getAuditScans();
     const audit = audits.find(a => a.id === auditId) || audits[0];
+    if (!audit) {
+      notify('No saved audit is available to export yet.');
+      return;
+    }
+    const safeDomain = escapeHTML(audit.domain || '');
+    const safeCompany = escapeHTML(audit.company || audit.domain || 'Website audit');
+    const safeScannedAt = escapeHTML(audit.scannedAt ? new Date(audit.scannedAt).toLocaleString() : 'Date unavailable');
+    const safeSpeed = audit.speed_ms == null ? 'Not measured' : `${escapeHTML(audit.speed_ms)}ms`;
+    const safeCms = escapeHTML(audit.cms || 'Not detected');
+    const safeScore = audit.icpScore == null ? 'Not scored' : `${escapeHTML(audit.icpScore)}/100`;
+    const safePitch = escapeHTML(audit.pitch || 'No outreach suggestion was generated.');
 
     const htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Website Intelligence Diagnostic — ${audit.domain}</title>
+  <title>Website Intelligence Diagnostic — ${safeDomain}</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #070B14; color: #E2E8F0; padding: 40px; margin: 0; }
     .container { max-width: 800px; margin: 0 auto; background: #0F172A; border: 1px solid #1E293B; border-radius: 20px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
@@ -2585,27 +2596,27 @@
     <div class="header">
       <div>
         <span class="badge">Technical Audit Lab</span>
-        <h1 style="margin: 8px 0 0 0; font-size: 24px; color: #FFFFFF;">${audit.company || audit.domain}</h1>
-        <p style="margin: 4px 0 0 0; font-size: 12px; color: #94A3B8; font-family: monospace;">Target Domain: ${audit.domain}</p>
+        <h1 style="margin: 8px 0 0 0; font-size: 24px; color: #FFFFFF;">${safeCompany}</h1>
+        <p style="margin: 4px 0 0 0; font-size: 12px; color: #94A3B8; font-family: monospace;">Target Domain: ${safeDomain}</p>
       </div>
       <div style="text-align: right;">
         <span style="font-size: 11px; color: #64748B;">Audit Date</span>
-        <div style="font-size: 12px; font-weight: 700; color: #E2E8F0;">${audit.scannedAt}</div>
+        <div style="font-size: 12px; font-weight: 700; color: #E2E8F0;">${safeScannedAt}</div>
       </div>
     </div>
 
     <div class="grid">
       <div class="card">
         <div class="card-label">Mobile TTFB Latency</div>
-        <div class="card-val" style="color: ${audit.speed_ms > 900 ? '#F43F5E' : '#10B981'};">${audit.speed_ms}ms</div>
+        <div class="card-val" style="color: ${audit.speed_ms != null && audit.speed_ms > 900 ? '#F43F5E' : '#10B981'};">${safeSpeed}</div>
       </div>
       <div class="card">
         <div class="card-label">CMS Platform</div>
-        <div class="card-val" style="font-size: 14px; color: #F8FAFC;">${audit.cms}</div>
+        <div class="card-val" style="font-size: 14px; color: #F8FAFC;">${safeCms}</div>
       </div>
       <div class="card">
         <div class="card-label">Opportunity Score</div>
-        <div class="card-val" style="color: #6366F1;">${audit.icpScore}/100</div>
+        <div class="card-val" style="color: #6366F1;">${safeScore}</div>
       </div>
     </div>
 
@@ -2624,7 +2635,7 @@
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `audit_report_${audit.domain}.html`;
+    link.download = `audit_report_${String(audit.domain || "website").replace(/[^a-z0-9.-]/gi, "_")}.html`;
     link.click();
     notify(`Exported client audit report for ${audit.domain}!`);
   };
