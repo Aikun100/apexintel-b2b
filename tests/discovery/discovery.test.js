@@ -26,6 +26,8 @@ import { AuthService } from '../../src/auth/service.js';
 import { InMemoryAuthRepository, setAuthRepository } from '../../src/auth/repository.js';
 import { serializeSessionCookie } from '../../src/auth/session.js';
 import { processLeadIngestionBatch } from '../../aws/lambda-crawler-handler.mjs';
+import { InMemoryOrdersRepository, setOrdersRepository } from '../../src/payments/repository.js';
+import { InMemoryRequestsRepository, setRequestsRepository } from '../../src/requests/repository.js';
 
 // Setup Mock Repositories
 const authRepo = new InMemoryAuthRepository();
@@ -35,7 +37,11 @@ const authService = new AuthService({ repository: authRepo });
 const discoveryRepo = new InMemoryDiscoveryRepository();
 setDiscoveryRepository(discoveryRepo);
 
-const discoveryService = new DiscoveryService({ repository: discoveryRepo });
+const discoveryService = new DiscoveryService({ repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
+const ordersRepo = new InMemoryOrdersRepository();
+setOrdersRepository(ordersRepo);
+const requestsRepo = new InMemoryRequestsRepository();
+setRequestsRepository(requestsRepo);
 
 function dispatch(reqObj) {
   return dispatchDiscoveryRoute(reqObj, discoveryService, authService);
@@ -90,7 +96,7 @@ test('Discovery Suite: Deduplicated Crawler Ingestion & History Preservation', a
       }
     ];
 
-    const result = await processLeadIngestionBatch(testBatch, { repository: discoveryRepo });
+    const result = await processLeadIngestionBatch(testBatch, { repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
     assert.equal(result.success, true);
     assert.equal(result.persistedCount, 2);
 
@@ -122,7 +128,7 @@ test('Discovery Suite: Deduplicated Crawler Ingestion & History Preservation', a
       }
     ];
 
-    await processLeadIngestionBatch(recrawlBatch, { repository: discoveryRepo });
+    await processLeadIngestionBatch(recrawlBatch, { repository: discoveryRepo, resolveMx: async () => [{ exchange: 'mx.test' }] });
 
     const leadAfter = await discoveryRepo.getLeadByDomain('dallasroofer.com');
     assert.ok(leadAfter);
@@ -280,6 +286,8 @@ test('Discovery Suite: Live Search, Filtering, Pagination & Contact Masking', as
 test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
   discoveryRepo.clear();
   authRepo.clear();
+  ordersRepo.clear();
+  requestsRepo.clear();
 
   const customerUser = await createTestUser('customer@agency.com', 'customer', 'Customer');
   const adminUser = await createTestUser('admin@apexintel.io', 'admin', 'Admin');
@@ -332,6 +340,19 @@ test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
   });
 
   await t.test('accepts authenticated admin recrawl and ingests leads into DynamoDB cache', async () => {
+    const emptyRes = await dispatch({
+      method: 'POST',
+      path: '/api/discovery/recrawl',
+      headers: {
+        cookie: adminUser.cookie,
+        origin: 'https://apexintel-b2b.shop',
+        'content-type': 'application/json'
+      },
+      body: { leads: [] }
+    });
+    assert.equal(emptyRes.statusCode, 400);
+    assert.match(emptyRes.body.error, /No crawl candidates/i);
+
     const res = await dispatch({
       method: 'POST',
       path: '/api/discovery/recrawl',
@@ -339,16 +360,77 @@ test('Discovery Suite: Admin Recrawl Execution & Access Control', async (t) => {
         cookie: adminUser.cookie,
         origin: 'https://apexintel-b2b.shop',
         'content-type': 'application/json'
+      },
+      body: {
+        leads: [{
+          id: 'test-recrawl.example',
+          company_name: 'Test Recrawl Record',
+          email: 'ops@test-recrawl.example',
+          trade: 'Roofing',
+          city: 'Dallas, TX'
+        }]
       }
     });
 
     assert.equal(res.statusCode, 200);
     assert.equal(res.body.success, true);
-    assert.ok(res.body.persistedCount > 0);
-    assert.match(res.body.message, /verified leads ingested into DynamoDB leads_cache/i);
+    assert.equal(res.body.processedCount, 1);
+    assert.equal(res.body.persistedCount, 1);
+    assert.match(res.body.message, /supplied records/i);
 
     // Verify repository now has ingested leads
     const searchRes = await discoveryRepo.searchLeads();
     assert.ok(searchRes.totalCount > 0);
+
+    const scoredSearch = await dispatch({
+      method: 'GET',
+      path: '/api/discovery/search?limit=10',
+      headers: { cookie: adminUser.cookie }
+    });
+    assert.equal(scoredSearch.statusCode, 200);
+    assert.ok(Number.isFinite(scoredSearch.body.leads[0].opportunityScore));
+    assert.ok(['A', 'B', 'C', 'D'].includes(scoredSearch.body.leads[0].opportunityGrade));
+    assert.equal(scoredSearch.body.leads[0].provenance.email, 'Publicly Listed');
+    assert.equal(scoredSearch.body.leads[0].opportunityFactors.length, 6);
+
+    await ordersRepo.createOrder({
+      orderId: 'ord_real_test_1',
+      userId: customerUser.user.userId,
+      userEmail: customerUser.user.email,
+      productKey: 'texas',
+      productName: 'Texas High-Ticket Contractors',
+      amount: 79,
+      amountInCents: 7900,
+      currency: 'usd',
+      status: 'paid',
+      stripeSessionId: 'cs_test_real_order',
+      createdAt: '2026-11-25T10:00:00.000Z'
+    });
+    await requestsRepo.createRequest({
+      requestId: 'req_real_test_1',
+      userId: customerUser.user.userId,
+      status: 'Submitted',
+      industry: 'Roofing',
+      territory: 'Dallas, TX',
+      volume: 100,
+      createdAt: '2026-11-25T11:00:00.000Z'
+    });
+
+    const overview = await dispatch({
+      method: 'GET',
+      path: '/api/admin/overview',
+      headers: { cookie: adminUser.cookie }
+    });
+    assert.equal(overview.statusCode, 200);
+    assert.equal(overview.body.metrics.totalRevenue, 79);
+    assert.equal(overview.body.metrics.paidOrdersCount, 1);
+    assert.equal(overview.body.metrics.totalUsers, 2);
+    assert.equal(overview.body.metrics.activeLeadsPool, 1);
+    assert.equal(overview.body.metrics.customRequestsCount, 1);
+    assert.equal(overview.body.metrics.pendingCustomRequests, 1);
+    assert.equal(overview.body.recentOrders[0].id, 'ord_real_test_1');
+    assert.equal(overview.body.customRequests[0].requestId, 'req_real_test_1');
+    assert.equal(overview.body.inventorySummary.length, 4);
+    assert.ok(!JSON.stringify(overview.body).includes('alex@velocitygrowth.io'));
   });
 });

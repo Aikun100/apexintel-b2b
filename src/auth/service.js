@@ -50,15 +50,15 @@ export class AuthService {
     return {
       userId: user.userId,
       email: user.email,
-      name: user.name || 'User',
-      company: user.company || 'Independent Agency',
-      plan: user.plan || 'Agency Growth',
-      credits: user.credits !== undefined ? user.credits : 50,
+      name: user.name || null,
+      company: user.company || null,
+      plan: user.plan || null,
+      credits: user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits)) ? Number(user.credits) : null,
       role: user.role || 'customer',
       accountStatus: user.accountStatus || 'active',
       emailVerified: !!user.emailVerified,
-      apiKey: user.apiKey || 'apex_live_sec_' + user.userId.replace(/-/g, '').substring(0, 16),
-      targetNiche: user.targetNiche || 'Contractors',
+      apiKey: user.apiKey || null,
+      targetNiche: user.targetNiche || null,
       createdAt: user.createdAt,
       lastLoginAt: user.lastLoginAt
     };

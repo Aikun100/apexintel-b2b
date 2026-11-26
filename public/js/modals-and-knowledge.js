@@ -18,18 +18,18 @@
       price: '$79.00',
       packKey: 'texas',
       records: 24,
-      avgContract: '$12,000 – $45,000',
+      avgContract: 'Varies by project and market',
       coverage: { email: '13 / 24', phone: '17 / 24', tech: '17 / 24' },
       fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
       sampleRows: [
-        { company: 'Sutton Roofing', city: 'Austin, TX', email: 'suttonroofinginc@gmail.com', phone: '+1 512 394 9801', tech: 'Google Analytics' },
-        { company: 'T Rock Roofing', city: 'Dallas, TX', email: 'info@dallasroofer.com', phone: '+1 469 931 9867', tech: 'WordPress' },
-        { company: 'Lon Smith Roofing', city: 'Dallas, TX', email: 'info@lonsmith.com', phone: '+1 800 317 4791', tech: 'WordPress, Google Analytics, Meta Pixel' }
+        { company: 'Sutton Roofing', city: 'Austin, TX', email: 's***@gmail.com', phone: '+1 512 *** 9801', tech: 'Google Analytics' },
+        { company: 'T Rock Roofing', city: 'Dallas, TX', email: 'in**@d***.com', phone: '+1 469 *** 9867', tech: 'WordPress' },
+        { company: 'Lon Smith Roofing', city: 'Dallas, TX', email: 'in**@l***.com', phone: '+1 800 *** 4791', tech: 'WordPress, Google Analytics, Meta Pixel' }
       ],
       limitations: 'Where businesses do not publish a direct email or phone, entries are marked Unavailable rather than guessed.',
-      overview: 'Curated dataset of premier commercial and residential storm-restoration, metal roofing, and solar installation contractors across Texas. Each record is pre-audited with exact mobile response speed in milliseconds and ad pixel diagnostics so agencies can pitch specific conversion flaws.',
-      icp: 'Digital marketing agencies, SEO consultants, and web developers selling $2,500/mo - $5,000/mo retainers or $4,000+ website redesigns to construction trades.',
-      pitchAngle: 'Highlight their 800ms+ mobile latency on commercial quote forms and offer a guaranteed 350ms speed rebuild that boosts lead capture.'
+      overview: 'Curated business records across selected Texas metros. Website performance and advertising-technology signals are included only where available; review each record's coverage and limitations before outreach.',
+      icp: 'Digital marketing agencies, SEO consultants, and web developers serving construction and home-service businesses.',
+      pitchAngle: 'Where a site diagnostic is available, discuss the observed response-time result and validate its business impact before proposing improvements.'
     },
     florida: {
       title: 'Florida Solar & Disaster Mitigation Specialists',
@@ -38,18 +38,18 @@
       price: '$79.00',
       packKey: 'florida',
       records: 8,
-      avgContract: '$15,000 – $60,000',
+      avgContract: 'Varies by project and market',
       coverage: { email: '5 / 8', phone: '7 / 8', tech: '7 / 8' },
       fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
       sampleRows: [
-        { company: 'Tampa Bay Solar', city: 'Tampa, FL', email: 'info@tampabaysolar.com', phone: '+1 813 827 6527', tech: 'WordPress, Google Analytics' },
-        { company: 'SunVena Solar', city: 'Orlando, FL', email: 'support@sunvena.com', phone: '+1 407 553 9584', tech: 'WordPress, Google Analytics' },
-        { company: 'Goldin Solar', city: 'Miami, FL', email: 'Unavailable', phone: '+1 855 765 2730', tech: 'WordPress' }
+        { company: 'Tampa Bay Solar', city: 'Tampa, FL', email: 'in**@t***.com', phone: '+1 813 *** 6527', tech: 'WordPress, Google Analytics' },
+        { company: 'SunVena Solar', city: 'Orlando, FL', email: 's***@s***.com', phone: '+1 407 *** 9584', tech: 'WordPress, Google Analytics' },
+        { company: 'Goldin Solar', city: 'Miami, FL', email: 'Unavailable', phone: '+1 855 *** 2730', tech: 'WordPress' }
       ],
       limitations: 'Points-in-time telemetry; unlisted contact channels left Unavailable.',
-      overview: 'Premier South and Central Florida commercial solar integrators and hurricane disaster mitigation operators. Built specifically for high-ticket marketing agencies seeking outfits with large gross margins that invest heavily in customer acquisition.',
-      icp: 'Performance marketing agencies, Google Ads specialists, and outbound sales teams looking for commercial solar & roofing companies with high CAC tolerance.',
-      pitchAngle: 'Target outfits with high ad spend but missing Meta retargeting pixels, showing them how to recapture 95%+ of paid ad clicks.'
+      overview: 'Business records for commercial solar and disaster-mitigation providers across selected Florida metros. Contact coverage and website signals vary by record.',
+      icp: 'Performance marketing agencies and outbound teams serving commercial solar, roofing, and restoration businesses.',
+      pitchAngle: 'Where a Meta Pixel was not detected, check for server-side events or other tracking methods before suggesting a retargeting change.'
     },
     medspas: {
       title: 'California Luxury MedSpas & Aesthetic Clinics',
@@ -58,18 +58,18 @@
       price: '$89.00',
       packKey: 'medspas',
       records: 9,
-      avgContract: '$8,000 – $25,000/mo Patient LTV',
+      avgContract: 'Varies by clinic and service',
       coverage: { email: '4 / 9', phone: '7 / 9', tech: '7 / 9' },
       fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
       sampleRows: [
-        { company: 'SkinSpirit Beverly Hills', city: 'Beverly Hills, CA', email: 'skinspirit@5wpr.com', phone: '+1 855 383 7546', tech: 'Google Analytics' },
-        { company: 'Epi Center MedSpa', city: 'San Francisco, CA', email: 'reception@epicentermedspa.com', phone: '+1 415 362 4754', tech: 'WordPress, Meta Pixel' },
-        { company: 'Nob Hill Aesthetics', city: 'San Francisco, CA', email: 'serviceoffice@nobhillaesthetics.com', tech: 'Shopify, Google Analytics, Meta Pixel', phone: '+1 415 440 6800' }
+        { company: 'SkinSpirit Beverly Hills', city: 'Beverly Hills, CA', email: 's***@5***.com', phone: '+1 855 *** 7546', tech: 'Google Analytics' },
+        { company: 'Epi Center MedSpa', city: 'San Francisco, CA', email: 'r***@e***.com', phone: '+1 415 *** 4754', tech: 'WordPress, Meta Pixel' },
+        { company: 'Nob Hill Aesthetics', city: 'San Francisco, CA', email: 's***@n***.com', tech: 'Shopify, Google Analytics, Meta Pixel', phone: '+1 415 *** 6800' }
       ],
       limitations: 'Clinic front-desk reception emails verified; private surgeon emails not fabricated.',
-      overview: 'Hand-curated intelligence on luxury aesthetic practices, medical spas, and facial plastic surgery centers in high-net-worth California enclaves. Audited for mobile booking friction, missing retargeting, and patient appointment bottlenecks.',
-      icp: 'Healthcare marketing agencies, aesthetic patient acquisition specialists, and high-ticket CRM integrators selling to cash-pay aesthetic practices.',
-      pitchAngle: 'Offer appointment booking friction fixes and Meta/TikTok retargeting ads to re-engage prospective patients who visited treatment pages.'
+      overview: 'Curated records for aesthetic practices and clinics in selected California metros. Website, technology, and contact signals are included where available and should be verified before outreach.',
+      icp: 'Healthcare marketing agencies, patient-acquisition specialists, and CRM providers working with aesthetic practices.',
+      pitchAngle: 'Review the clinic's booking flow, follow-up process, and available tracking signals before proposing an improvement.'
     },
     hvac: {
       title: 'Commercial HVAC & Industrial Mechanical Contractors',
@@ -78,13 +78,13 @@
       price: '$99.00',
       packKey: 'hvac',
       records: 12,
-      avgContract: '$25,000 – $150,000+ Mechanical Bids',
+      avgContract: 'Varies by project and market',
       coverage: { email: '7 / 12', phone: '11 / 12', tech: '7 / 12' },
       fields: ['Company Name', 'Category / Niche', 'City', 'State / Region', 'Primary Phone', 'Verified Email', 'Website', 'Tech Stack', 'SEO / Site Issues', 'Growth Opportunities', 'LinkedIn'],
       sampleRows: [
-        { company: 'Midwest Mechanical', city: 'Chicago, IL', email: 'answers@midwestmech.com', phone: '+1 630 850 2300', tech: 'Google Analytics' },
-        { company: 'Way Mechanical', city: 'Dallas, TX', email: 'sales@waymech.com', phone: '+1 713 672 7545', tech: 'Wix' },
-        { company: 'Shumate Commercial HVAC', city: 'Atlanta, GA', email: 'commercialsales@shumatemech.com', phone: '+1 678 584 0880', tech: 'Google Analytics' }
+        { company: 'Midwest Mechanical', city: 'Chicago, IL', email: 'a***@m***.com', phone: '+1 630 *** 2300', tech: 'Google Analytics' },
+        { company: 'Way Mechanical', city: 'Dallas, TX', email: 's***@w***.com', phone: '+1 713 *** 7545', tech: 'Wix' },
+        { company: 'Shumate Commercial HVAC', city: 'Atlanta, GA', email: 'c***@s***.com', phone: '+1 678 *** 0880', tech: 'Google Analytics' }
       ],
       limitations: 'Cleaned email address entries; malformed legacy spreadsheet cells sanitized.',
       overview: 'High-value dataset targeting commercial mechanical outfits handling commercial chillers, industrial refrigeration, and facility maintenance across the nation’s largest industrial distribution hubs.',
@@ -107,7 +107,7 @@
     setText('pdmTerritory', spec.territory);
     setText('pdmNiche', spec.niche);
     setText('pdmPrice', spec.price);
-    setText('pdmRecords', `${spec.records} Verified Leads`);
+    setText('pdmRecords', `${spec.records} Business Records`);
     setText('pdmAvgContract', spec.avgContract);
     setText('pdmOverview', spec.overview);
     setText('pdmIcp', spec.icp);
@@ -226,12 +226,12 @@
         <h4>The 3-Part Technical Angle Framework:</h4>
         <ol>
           <li><strong>The Objective Observation:</strong> "I was testing mobile contractor sites in Dallas and noticed your page takes 940ms to respond on mobile."</li>
-          <li><strong>The Commercial Consequence:</strong> "In high-ticket commercial roofing, 900ms+ latency causes over 25% of mobile visitors to bounce before the contact form renders."</li>
+          <li><strong>The Commercial Consequence:</strong> "A slow mobile response can add friction to the inquiry process. Use the business's own analytics to quantify any conversion impact."</li>
           <li><strong>The Friction-Free Offer:</strong> "I put together a 2-minute Loom showing the two uncompressed scripts causing this. Mind if I send it over?"</li>
         </ol>
 
         <h4>Handling The Ad Pixel Angle</h4>
-        <p>If an outfit is running Google Ads or local search campaigns but has no Meta Pixel installed, they are effectively burning 97% of their paid visitors. Remind them: <em>"A homeowner who visited your commercial roofing estimate page won't see your brand on Instagram or Facebook unless your retargeting pixel is active."</em></p>
+        <p>A missing Meta Pixel may limit one retargeting channel. Check whether server-side events or other tags are configured before drawing conclusions about campaign performance. Remind them: <em>"A homeowner who visited your commercial roofing estimate page won't see your brand on Instagram or Facebook unless your retargeting pixel is active."</em></p>
       `
     },
     playbook2: {
@@ -239,18 +239,18 @@
       category: 'Data Engineering & Deliverability',
       readTime: '5 min read',
       content: `
-        <h4>What Does "100% DNS MX-Verified" Actually Mean?</h4>
-        <p>A basic scraped list simply extracts emails from raw HTML. Over 35% of those emails are dead, abandoned, or role accounts (like <code>jobs@</code> or <code>press@</code>) that cause high bounce rates and ruin your sending domain reputation.</p>
+        <h4>What Does a DNS MX Check Actually Confirm?</h4>
+        <p>Email addresses can be outdated, role-based, or invalid. Verification claims should identify exactly which syntax, domain, or mailbox checks were performed.</p>
         
         <h4>The 3-Step ApexIntel Verification Protocol:</h4>
         <ol>
-          <li><strong>Syntax & Domain Integrity:</strong> We ensure RFC 5322 compliance and filter out disposable mail providers (Mailinator, GuerillaMail, etc.).</li>
-          <li><strong>DNS MX Ping:</strong> We query authoritative nameservers for the target domain to ensure active Mail Exchange (MX) records exist (Google Workspace, Microsoft 365, etc.).</li>
-          <li><strong>Zero-Duplicate Ledger Check:</strong> Every record is hashed against our global database. If two agencies bought leads in Dallas, our deduplication ledger guarantees they never receive overlapping prospects.</li>
+          <li><strong>Contact field review:</strong> Dataset listings disclose the available contact fields and any documented validation status.</li>
+          <li><strong>DNS MX lookup:</strong> Where an email address is listed, the domain can be checked for published mail-exchange records. This does not prove the individual mailbox exists or guarantee inbox placement.</li>
+          <li><strong>Overlap policy:</strong> Any duplicate or territory policy is disclosed on the individual dataset listing. There is no universal platform-wide exclusivity guarantee.</li>
         </ol>
 
         <h4>Deliverability Best Practices:</h4>
-        <p>Always warm up your secondary sending domains, keep daily sending under 40 emails per inbox, and configure SPF, DKIM, and DMARC before launching outbound campaigns.</p>
+        <p>Follow your sending provider's rules, ramp sending gradually, configure SPF, DKIM, and DMARC, and honor opt-outs and applicable email-marketing laws.</p>
       `
     },
     playbook3: {
@@ -272,11 +272,11 @@
       readTime: '5 min read',
       content: `
         <h4>Understanding Cash-Pay Aesthetic Medicine</h4>
-        <p>Unlike traditional medical practices that bill health insurance, Medical Spas and Aesthetic clinics operate on 100% cash-pay, elective procedures (Botox, CoolSculpting, Morpheus8, dermal fillers).</p>
-        <p>A typical MedSpa patient has an annual lifetime value (LTV) exceeding <strong>$3,500 to $8,000</strong> due to recurring 3-month appointment cycles.</p>
+        <p>Unlike traditional medical practices that bill health insurance, Many aesthetic services are cash-pay, but billing varies by clinic, procedure, and patient.</p>
+        <p>Patient lifetime value varies widely by clinic, treatment mix, pricing, and retention. Use the clinic's own figures when building a business case.</p>
 
         <h4>The Number One Bottleneck in Aesthetic Sites</h4>
-        <p>Prospective patients browse treatment galleries on their iPhones. If the booking engine is slow or requires creating a password, patients bounce. Pitching friction-free SMS booking + Meta Retargeting ads is the highest-converting offer for this niche.</p>
+        <p>Prospective patients browse treatment galleries on their iPhones. If the booking engine is slow or requires creating a password, patients bounce. Potential opportunities include simpler booking flows, follow-up messaging, and appropriately configured retargeting.</p>
       `
     }
   };
@@ -335,8 +335,8 @@
       body: `
         <h4>1. Digital Product Delivery</h4>
         <p>Due to the instant, irrevocable nature of digital intelligence datasets and downloadable spreadsheet files, all completed sales are final once downloaded.</p>
-        <h4>2. Accuracy & Bounce Replacement Guarantee</h4>
-        <p>If any email in your purchased dataset returns a hard bounce (invalid MX or mailbox not found) exceeding 5% of the total dataset within 7 days of purchase, our support team will issue a 1-to-1 replacement with fresh verified prospects or credit your account accordingly.</p>
+        <h4>2. Data Quality Review & Replacement Policy</h4>
+        <p>If more than 5% of the email addresses in a purchased dataset produce hard bounces within 7 days, contact support with your order reference and bounce evidence. The team will review the issue and provide replacements or account credit under this policy. A DNS MX check alone does not prove that an individual mailbox exists or guarantee inbox placement.</p>
       `
     },
     methodology: {
@@ -344,11 +344,11 @@
       updated: 'November 2026',
       body: `
         <h4>1. Multi-Stage Pipeline</h4>
-        <p>Our autonomous intelligence crawler systematically scans state licensing registries, business filings, and active website DOMs to extract structured decision-maker records.</p>
+        <p>Dataset sources and collection methods vary by product. Each listing describes its available provenance and limitations. The current ingestion service accepts explicit candidate batches; it does not autonomously crawl public registries.</p>
         <h4>2. Real-Time Latency & Pixel Auditing</h4>
-        <p>Unlike stale phone directories, each record's domain is pinged directly from our AWS ap-southeast-2 & us-east-1 server nodes to measure exact time-to-first-byte (TTFB) and verify DOM script signatures for Meta Pixel, GA4, and Google Ads tags.</p>
+        <p>Website diagnostics are performed for reachable public sites when a scan is requested. Response-time, TLS, and advertising-tag observations are point-in-time results and can vary by network, location, and site configuration. DNS MX checks confirm domain mail-exchange records only.</p>
         <h4>3. Deduplication Ledger</h4>
-        <p>Our SHA-256 deduplication ledger ensures that every lead allocated to your agency dashboard is retired from the active rotation, protecting your territory and preventing prospect saturation.</p>
+        <p>Purchase and download records are stored server-side. Dataset overlap or territory exclusivity is not guaranteed platform-wide and must be stated on the individual dataset listing.</p>
       `
     }
   };

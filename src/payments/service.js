@@ -319,6 +319,7 @@ export class PaymentsService {
       orderId: o.orderId,
       productKey: o.productKey,
       productName: o.productName,
+      leadsCount: getProductByKey(o.productKey)?.leadsCount ?? null,
       amount: o.amount,
       currency: o.currency,
       status: o.status,

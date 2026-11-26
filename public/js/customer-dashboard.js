@@ -32,275 +32,11 @@
     { id: 'Not Qualified', label: 'Not Qualified', color: 'slate', border: 'border-slate-600/40', bg: 'bg-slate-700/20', text: 'text-slate-400' }
   ];
 
-  // --- Seed CRM Leads ---
-  const DEFAULT_CRM_LEADS = [
-    {
-      id: 'lead_tx_001',
-      company: 'T Rock Roofing & Restoration',
-      domain: 'dallasroofer.com',
-      contactName: 'Thomas Rock (Managing Partner)',
-      email: 'info@dallasroofer.com',
-      phone: '+1 469 931 9867',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'texas',
-      industry: 'Roofing & Storm Restoration',
-      status: 'Ready to Contact',
-      priority: 'P1',
-      opportunityScore: 92,
-      speed_ms: 1473,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['google-ads-active', 'missing-pixel', 'dallas', 'high-ltv'],
-      notes: [
-        { id: 'n1', timestamp: '2026-11-21 14:10', author: 'Alex Rivera', text: 'Prospect is spending on Google Search for storm repair but drops traffic due to 1473ms mobile latency.' }
-      ],
-      followUpDate: '2026-11-24',
-      savedAt: '2026-11-21T10:00:00.000Z'
-    },
-    {
-      id: 'lead_tx_002',
-      company: 'Sutton Roofing & Solar',
-      domain: 'suttonroofinginc.com',
-      contactName: 'Operations Director',
-      email: 'office@suttonroofinginc.com',
-      phone: '+1 512 837 8777',
-      city: 'Austin, TX',
-      territory: 'texas',
-      industry: 'Commercial Solar & Roofing',
-      status: 'Contacted',
-      priority: 'P1',
-      opportunityScore: 88,
-      speed_ms: 620,
-      metaPixel: true,
-      googleAds: false,
-      campaignId: 'camp_tx_01',
-      tags: ['austin', 'solar', 'meta-active'],
-      notes: [
-        { id: 'n2', timestamp: '2026-11-20 09:30', author: 'Alex Rivera', text: 'Sent consultative outbound pitch regarding commercial solar tax credits.' }
-      ],
-      followUpDate: '2026-11-23',
-      savedAt: '2026-11-20T08:00:00.000Z'
-    },
-    {
-      id: 'lead_fl_001',
-      company: 'Tampa Bay Solar',
-      domain: 'tampabaysolar.com',
-      contactName: 'Ben Gold (Owner)',
-      email: 'info@tampabaysolar.com',
-      phone: '+1 813 398 3687',
-      city: 'Tampa, FL',
-      territory: 'florida',
-      industry: 'Solar Energy Contracting',
-      status: 'Meeting Scheduled',
-      priority: 'P1',
-      opportunityScore: 95,
-      speed_ms: 740,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_fl_01',
-      tags: ['florida', 'hot-lead', 'meeting-booked'],
-      notes: [
-        { id: 'n3', timestamp: '2026-11-21 16:45', author: 'Alex Rivera', text: 'Demo call scheduled for Wednesday at 2pm EST to review retargeting pixel setup.' }
-      ],
-      followUpDate: '2026-11-25',
-      savedAt: '2026-11-19T11:00:00.000Z'
-    },
-    {
-      id: 'lead_fl_002',
-      company: 'Best Roofing Florida',
-      domain: 'bestroofing.net',
-      contactName: 'Commercial Estimator',
-      email: 'emergency@bestroofing.net',
-      phone: '+1 888 844 7663',
-      city: 'Fort Lauderdale, FL',
-      territory: 'florida',
-      industry: 'Hurricane Mitigation & Commercial Roofs',
-      status: 'Follow-Up',
-      priority: 'P2',
-      opportunityScore: 82,
-      speed_ms: 890,
-      metaPixel: false,
-      googleAds: false,
-      campaignId: 'camp_fl_01',
-      tags: ['hurricane-mitigation', 'south-fl'],
-      notes: [
-        { id: 'n4', timestamp: '2026-11-21 11:20', author: 'Alex Rivera', text: 'Left voicemail with dispatch; follow up on Tuesday.' }
-      ],
-      followUpDate: '2026-11-22',
-      savedAt: '2026-11-19T12:00:00.000Z'
-    },
-    {
-      id: 'lead_ca_001',
-      company: 'NassifMD Medical Spa',
-      domain: 'nassifmd.com',
-      contactName: 'Practice Concierge',
-      email: 'concierge@nassifmd.com',
-      phone: '+1 310 275 2467',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Luxury Aesthetics & Surgery',
-      status: 'Proposal',
-      priority: 'P1',
-      opportunityScore: 96,
-      speed_ms: 530,
-      metaPixel: true,
-      googleAds: true,
-      campaignId: 'camp_ca_01',
-      tags: ['luxury-medspa', 'beverly-hills', 'proposal-sent'],
-      notes: [
-        { id: 'n5', timestamp: '2026-11-21 17:00', author: 'Alex Rivera', text: 'Sent $4,500/mo retainer proposal for paid patient acquisition and VIP funnel optimization.' }
-      ],
-      followUpDate: '2026-11-26',
-      savedAt: '2026-11-18T15:00:00.000Z'
-    },
-    {
-      id: 'lead_ca_002',
-      company: 'SkinSpirit Beverly Hills',
-      domain: 'skinspirit.com',
-      contactName: 'Clinic General Manager',
-      email: 'info@skinspirit.com',
-      phone: '+1 310 555 7820',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Medical Aesthetics & Injectables',
-      status: 'Responded',
-      priority: 'P1',
-      opportunityScore: 89,
-      speed_ms: 680,
-      metaPixel: true,
-      googleAds: false,
-      campaignId: 'camp_ca_01',
-      tags: ['injectables', 'replied'],
-      notes: [
-        { id: 'n6', timestamp: '2026-11-21 13:15', author: 'Alex Rivera', text: 'GM replied asking for agency case studies in the aesthetic laser space.' }
-      ],
-      followUpDate: '2026-11-23',
-      savedAt: '2026-11-18T16:00:00.000Z'
-    },
-    {
-      id: 'lead_tx_003',
-      company: 'Precision Roof Crafters',
-      domain: 'precisionroof.com',
-      contactName: 'Sales Director',
-      email: 'leads@precisionroof.com',
-      phone: '+1 713 799 8555',
-      city: 'Houston, TX',
-      territory: 'texas',
-      industry: 'Roofing Contractors',
-      status: 'Qualified',
-      priority: 'P2',
-      opportunityScore: 84,
-      speed_ms: 980,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['houston', 'qualified'],
-      notes: [
-        { id: 'n7', timestamp: '2026-11-20 10:00', author: 'Alex Rivera', text: 'Domain verified. Valid MX records. Fast loading CMS.' }
-      ],
-      followUpDate: '2026-11-27',
-      savedAt: '2026-11-20T10:00:00.000Z'
-    },
-    {
-      id: 'lead_hvac_001',
-      company: 'Midwest Mechanical Services',
-      domain: 'midwestmech.com',
-      contactName: 'Commercial Operations Lead',
-      email: 'service@midwestmech.com',
-      phone: '+1 312 555 0192',
-      city: 'Chicago, IL',
-      territory: 'hvac',
-      industry: 'Commercial HVAC & Chillers',
-      status: 'Won',
-      priority: 'P1',
-      opportunityScore: 94,
-      speed_ms: 710,
-      metaPixel: true,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
-      tags: ['closed-won', 'contract-signed'],
-      notes: [
-        { id: 'n8', timestamp: '2026-11-22 09:00', author: 'Alex Rivera', text: 'Won $3,800/mo retainer contract! Onboarding kicks off next Monday.' }
-      ],
-      followUpDate: '',
-      savedAt: '2026-11-15T10:00:00.000Z'
-    }
-  ];
-
-  // --- Seed Campaigns ---
-  const DEFAULT_CAMPAIGNS = [
-    {
-      id: 'camp_tx_01',
-      title: 'Texas Q4 Commercial Roofers & Restoration',
-      territory: 'Texas (Dallas, Austin, Houston)',
-      niche: 'Commercial Roofing',
-      status: 'Active',
-      targetCount: 40,
-      createdAt: '2026-11-15'
-    },
-    {
-      id: 'camp_fl_01',
-      title: 'Florida Solar & Hurricane Mitigation',
-      territory: 'Florida (Miami, Tampa, Orlando)',
-      niche: 'Solar & Mitigation',
-      status: 'Active',
-      targetCount: 30,
-      createdAt: '2026-11-18'
-    },
-    {
-      id: 'camp_ca_01',
-      title: 'California Luxury MedSpas & Aesthetic Clinics',
-      territory: 'California (Beverly Hills, SF)',
-      niche: 'Medical Aesthetics',
-      status: 'Active',
-      targetCount: 25,
-      createdAt: '2026-11-20'
-    }
-  ];
-
-  // --- Seed Website Audits ---
-  const DEFAULT_AUDITS = [
-    {
-      id: 'audit_01',
-      domain: 'precisionroof.com',
-      company: 'Precision Roof Crafters',
-      scannedAt: '2026-11-21 16:30',
-      speed_ms: 980,
-      cms: 'WordPress / Apache',
-      metaPixel: false,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 85,
-      pitch: 'Noticed you are running Google Search campaigns for commercial roofing in Houston, but without retargeting pixels active, dropping roughly 35% of clicks.'
-    },
-    {
-      id: 'audit_02',
-      domain: 'tampabaysolar.com',
-      company: 'Tampa Bay Solar',
-      scannedAt: '2026-11-20 14:15',
-      speed_ms: 740,
-      cms: 'Webflow / Fastly',
-      metaPixel: false,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 88,
-      pitch: 'Your site loads fast at 740ms with Google Ads active, but missing Meta Pixel retargeting on commercial solar prospects who do not call immediately.'
-    },
-    {
-      id: 'audit_03',
-      domain: 'nassifmd.com',
-      company: 'NassifMD Medical Spa',
-      scannedAt: '2026-11-19 11:20',
-      speed_ms: 530,
-      cms: 'Custom / NGINX',
-      metaPixel: true,
-      googleAds: true,
-      mxVerified: true,
-      icpScore: 96,
-      pitch: 'Excellent tech stack in place with sub-600ms latency. High opportunity for VIP concierge booking automation.'
-    }
-  ];
+  // CRM starts empty for each account; records are loaded from the authenticated backend.
+  const DEFAULT_CRM_LEADS = [];
+  // Campaigns and audits start empty; never inject showcase records into customer workspaces.
+  const DEFAULT_CAMPAIGNS = [];
+  const DEFAULT_AUDITS = [];
 
   // --- Custom Extraction Requests State ---
   window.userCustomRequests = [];
@@ -308,17 +44,7 @@
   // --- Server-Authoritative User Purchased Orders ---
   let userPurchasedOrders = [];
 
-  // --- Delivered leads for Deduplication Ledger ---
-  const dedupeLedgerRecords = [
-    { domain: 'dallasroofer.com', company: 'T Rock Roofing & Restoration', territory: 'Dallas, TX', date: '2026-11-15 14:22 UTC', hash: 'e9b2...8f11', status: 'Delivered (Unique)' },
-    { domain: 'suttonroofinginc.com', company: 'Sutton Roofing & Solar', territory: 'Austin, TX', date: '2026-11-15 14:22 UTC', hash: '4a1c...3d90', status: 'Delivered (Unique)' },
-    { domain: 'precisionroof.com', company: 'Precision Roof Crafters', territory: 'Houston, TX', date: '2026-11-15 14:22 UTC', hash: '7c8d...1e44', status: 'Delivered (Unique)' },
-    { domain: 'freedomsolar.com', company: 'Freedom Solar Power', territory: 'Austin, TX', date: '2026-11-15 14:22 UTC', hash: '1f0b...92a6', status: 'Delivered (Unique)' },
-    { domain: 'tampabaysolar.com', company: 'Tampa Bay Solar', territory: 'Tampa, FL', date: '2026-11-18 09:15 UTC', hash: '88c1...5d23', status: 'Delivered (Unique)' },
-    { domain: 'sunvena.com', company: 'SunVena Solar', territory: 'Orlando, FL', date: '2026-11-18 09:15 UTC', hash: '3e4f...7a89', status: 'Delivered (Unique)' },
-    { domain: 'nassifmd.com', company: 'NassifMD Medical Spa', territory: 'Beverly Hills, CA', date: '2026-11-20 16:40 UTC', hash: '5b99...2f10', status: 'Delivered (Unique)' },
-    { domain: 'skinspirit.com', company: 'SkinSpirit Beverly Hills', territory: 'Beverly Hills, CA', date: '2026-11-20 16:40 UTC', hash: '99d0...11bc', status: 'Delivered (Unique)' }
-  ];
+  // Ledger rows must come from verified purchase/deduplication records; no demo entries.
 
   // --- Notification Helper ---
   function notify(msg) {
@@ -332,6 +58,8 @@
   // --- In-Memory Multi-Tenant CRM Cache & Server-Authoritative Sync ---
   let crmLeadsCache = null;
   let crmFetchPromise = null;
+  let crmCampaignsCache = null;
+  let crmCampaignsFetchPromise = null;
 
   async function syncLeadToBackend(leadId, updates) {
     if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
@@ -349,26 +77,21 @@
       console.warn('[CRM Sync] Failed to update lead on server:', err);
     }
   }
-
   async function createLeadOnBackend(lead) {
-    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
-    try {
-      const res = await fetch('/api/crm/leads', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(lead)
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.lead;
-      }
-    } catch (err) {
-      console.warn('[CRM Sync] Failed to create lead on server:', err);
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
+      throw new Error('Sign in before adding a CRM record.');
     }
+    const response = await fetch('/api/crm/leads', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(lead)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.success || !data.lead) {
+      throw new Error(data.error || 'The server could not save this CRM record.');
+    }
+    return data.lead;
   }
 
   async function deleteLeadFromBackend(leadId) {
@@ -390,7 +113,7 @@
     if (crmFetchPromise) return crmFetchPromise;
 
     if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
-      crmLeadsCache = DEFAULT_CRM_LEADS;
+      crmLeadsCache = [];
       renderCrmLeads();
       renderCampaignsAndFollowUps();
       return crmLeadsCache;
@@ -407,27 +130,8 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.success && Array.isArray(data.leads)) {
-            if (data.leads.length > 0) {
-              crmLeadsCache = data.leads;
-            } else {
-              // Brand new user with 0 leads: seed initial sample data into backend
-              try {
-                const seedRes = await fetch('/api/crm/leads', {
-                  method: 'POST',
-                  credentials: 'include',
-                  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                  body: JSON.stringify({ leads: DEFAULT_CRM_LEADS })
-                });
-                if (seedRes.ok) {
-                  const seedData = await seedRes.json();
-                  crmLeadsCache = seedData.leads || DEFAULT_CRM_LEADS;
-                } else {
-                  crmLeadsCache = DEFAULT_CRM_LEADS;
-                }
-              } catch {
-                crmLeadsCache = DEFAULT_CRM_LEADS;
-              }
-            }
+            // An empty server response is a genuinely empty CRM, not a request to seed demo records.
+            crmLeadsCache = data.leads;
           } else {
             crmLeadsCache = DEFAULT_CRM_LEADS;
           }
@@ -463,39 +167,111 @@
   window.clearCustomerDashboardCache = function () {
     crmLeadsCache = null;
     crmFetchPromise = null;
+    crmCampaignsCache = null;
+    crmCampaignsFetchPromise = null;
     activeLeadInDrawer = null;
     userPurchasedOrders = [];
   };
 
-  function getCrmCampaigns() {
-    const raw = localStorage.getItem('apexintel_crm_campaigns');
-    if (!raw) {
-      localStorage.setItem('apexintel_crm_campaigns', JSON.stringify(DEFAULT_CAMPAIGNS));
-      return DEFAULT_CAMPAIGNS;
-    }
-    try {
-      return JSON.parse(raw);
-    } catch (e) {
-      return DEFAULT_CAMPAIGNS;
-    }
+  function getTenantStorageKey(key) {
+    const user = window.ApexAuth && typeof window.ApexAuth.getCurrentUser === 'function'
+      ? window.ApexAuth.getCurrentUser()
+      : null;
+    const tenant = user && (user.userId || user.id || user.email);
+    return tenant ? `${key}:${String(tenant).toLowerCase()}` : null;
   }
 
-  function saveCrmCampaigns(camps) {
-    localStorage.setItem('apexintel_crm_campaigns', JSON.stringify(camps));
+  function getCrmCampaigns() {
+    if (crmCampaignsCache === null) {
+      crmCampaignsCache = [];
+      window.loadCrmCampaignsFromBackend();
+    }
+    return crmCampaignsCache;
   }
+
+  function saveCrmCampaigns(campaigns) {
+    crmCampaignsCache = Array.isArray(campaigns) ? campaigns : [];
+    renderCampaignsAndFollowUps();
+  }
+
+  window.loadCrmCampaignsFromBackend = async function () {
+    if (crmCampaignsFetchPromise) return crmCampaignsFetchPromise;
+
+    if (!window.ApexAuth || !window.ApexAuth.isLoggedIn()) {
+      crmCampaignsCache = [];
+      renderCampaignsAndFollowUps();
+      return crmCampaignsCache;
+    }
+
+    crmCampaignsFetchPromise = (async () => {
+      try {
+        const response = await fetch('/api/crm/campaigns', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await response.json().catch(() => ({}));
+        crmCampaignsCache = response.ok && data.success && Array.isArray(data.campaigns)
+          ? data.campaigns
+          : [];
+      } catch (error) {
+        console.warn('[CRM] Failed to fetch campaigns from server:', error);
+        crmCampaignsCache = [];
+      } finally {
+        crmCampaignsFetchPromise = null;
+        renderCampaignsAndFollowUps();
+      }
+      return crmCampaignsCache;
+    })();
+
+    return crmCampaignsFetchPromise;
+  };
 
   function getAuditScans() {
-    const raw = localStorage.getItem('apexintel_audit_scans');
-    if (!raw) {
-      localStorage.setItem('apexintel_audit_scans', JSON.stringify(DEFAULT_AUDITS));
-      return DEFAULT_AUDITS;
-    }
+    const key = getTenantStorageKey('apexintel_audit_scans');
+    if (!key) return [];
     try {
-      return JSON.parse(raw);
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
-      return DEFAULT_AUDITS;
+      return [];
     }
   }
+
+  function saveAuditScans(audits) {
+    const key = getTenantStorageKey('apexintel_audit_scans');
+    if (!key) return;
+    try {
+      localStorage.setItem(key, JSON.stringify((Array.isArray(audits) ? audits : []).slice(0, 50)));
+    } catch (error) {
+      console.warn('[Audit History] Could not save browser history:', error.message);
+    }
+  }
+
+  window.recordCustomerAuditScan = function (scan) {
+    if (!scan || !scan.domain || !window.ApexAuth || !window.ApexAuth.isLoggedIn()) return;
+    const scannedAt = scan.scannedAt || new Date().toISOString();
+    const entry = {
+      id: `${scan.domain}:${scannedAt}`,
+      domain: String(scan.domain),
+      company: scan.company || scan.domain,
+      scannedAt,
+      speed_ms: typeof scan.speed === 'number' && Number.isFinite(scan.speed) ? scan.speed : null,
+      cms: scan.cms || null,
+      metaPixel: typeof scan.pixels?.meta === 'boolean' ? scan.pixels.meta : null,
+      googleAds: typeof scan.pixels?.googleAds === 'boolean' ? scan.pixels.googleAds : null,
+      icpScore: Number.isFinite(Number(scan.opportunityScore)) ? Number(scan.opportunityScore) : null,
+      pitch: scan.suggestedPitch || null,
+      scanStatus: scan.scanStatus || 'unknown',
+      failedChecks: Array.isArray(scan.failedChecks) ? scan.failedChecks : [],
+      fromCache: Boolean(scan.fromCache)
+    };
+    const current = getAuditScans();
+    const next = [entry, ...current.filter(item => item.id !== entry.id)].slice(0, 50);
+    saveAuditScans(next);
+    renderAuditLab();
+  };
 
   function getCustomRequests() {
     return window.userCustomRequests || [];
@@ -524,22 +300,13 @@
       if (u) return u;
     }
     return {
-      name: 'User',
+      name: null,
       email: '',
-      company: 'Agency',
-      plan: 'Community',
-      credits: 0,
+      company: null,
+      plan: null,
+      credits: null,
       role: 'customer'
     };
-  }
-
-  function getCustomerApiKey() {
-    let key = localStorage.getItem('apexintel_api_key');
-    if (!key) {
-      key = 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + '2026';
-      localStorage.setItem('apexintel_api_key', key);
-    }
-    return key;
   }
 
   // --- HTML Injection ---
@@ -559,7 +326,7 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h3 id="dashUserName" class="text-base font-black text-white leading-tight">Alex Rivera</h3>
+                <h3 id="dashUserName" class="text-base font-black text-white leading-tight">Your Account</h3>
                 <span id="dashUserPlanBadge" class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   Enterprise Pro
                 </span>
@@ -567,7 +334,7 @@
                   CRM v2.0
                 </span>
               </div>
-              <p id="dashUserCompany" class="text-xs text-slate-400 mt-0.5 font-medium">Velocity Growth Agency • <span id="dashUserCredits" class="text-indigo-400 font-mono font-bold">250 Leads Available</span></p>
+              <p id="dashUserCompany" class="text-xs text-slate-400 mt-0.5 font-medium" >Company not set • <span id="dashUserCredits" class="text-indigo-400 font-mono font-bold">Credits unavailable</span></p>
             </div>
           </div>
 
@@ -638,7 +405,7 @@
                 <span class="text-xs font-mono text-slate-400 uppercase">Available Discoveries</span>
                 <div class="flex items-baseline gap-2">
                   <span id="overviewDiscoverCount" class="text-3xl font-black text-cyan-400 font-display">96</span>
-                  <span class="text-xs text-cyan-500 font-mono">Verified</span>
+                  <span class="text-xs text-cyan-500 font-mono">Server data</span>
                 </div>
                 <p class="text-[11px] text-slate-500">Across TX, FL, CA & HVAC</p>
               </div>
@@ -704,7 +471,7 @@
                   <h4 class="text-sm font-black text-white flex items-center gap-2">
                     <span>⏱️</span> Recent Activity
                   </h4>
-                  <span class="text-[10px] font-mono text-slate-500">Real-Time Sync</span>
+                  <span class="text-[10px] font-mono text-slate-500">Server data</span>
                 </div>
                 <div id="overviewActivityList" class="space-y-3 text-xs text-slate-300">
                   <!-- Populated dynamically -->
@@ -930,7 +697,7 @@
                 <h4 class="text-sm font-black text-white flex items-center gap-2">
                   <span>🔬</span> Website Intelligence Audit Lab
                 </h4>
-                <p class="text-xs text-slate-400 mt-0.5">Historical domain diagnostic scans. Export white-labeled client audit reports for your outbound pitches.</p>
+                <p class="text-xs text-slate-400 mt-0.5">Recent website scans. History is saved in this browser for the signed-in account and does not sync across devices.</p>
               </div>
               <button onclick="window.closeCustomerDashboard(); location.hash = '#scanner';" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1.5">
                 <span>⚡</span> Run New Domain Scan
@@ -985,18 +752,18 @@
                 <div class="text-2xl font-black text-white mt-1"><span id="datasetsOwnedCount">0</span> <span class="text-xs text-slate-500 font-normal">Active</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Leads</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Business Records</span>
                 <div class="text-2xl font-black text-emerald-400 mt-1"><span id="datasetsTotalLeadsCount">0</span> <span class="text-xs text-slate-500 font-normal">Contacts</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Deliverability</span>
-                <div class="text-2xl font-black text-indigo-400 mt-1">100% <span class="text-xs text-slate-500 font-normal">MX-OK</span></div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email Coverage</span>
+                <div class="text-sm font-black text-indigo-300 mt-2">Varies <span class="text-xs text-slate-500 font-normal">by dataset</span></div>
               </div>
               <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Export Formats</span>
                 <div class="text-xs font-bold text-slate-200 mt-2 flex items-center gap-1.5 font-mono">
                   <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">.XLSX</span>
-                  <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">.CSV</span>
+                  
                 </div>
               </div>
             </div>
@@ -1007,9 +774,7 @@
                 <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                   <span>📁</span> Purchased Intelligence Packs
                 </h4>
-                <button onclick="window.downloadCombinedMasterDataset()" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition">
-                  <span>📥 Download All (.CSV)</span>
-                </button>
+
               </div>
 
               <div id="purchasedDatasetsList" class="space-y-3">
@@ -1027,38 +792,38 @@
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h4 class="text-base font-black text-white">Zero-Duplicate Cloud Guarantee</h4>
-                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Active & Syncing</span>
+                    <h4 class="text-base font-black text-white">Order & Download History</h4>
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Backend tracked</span>
                   </div>
                   <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                    Every lead delivered to your agency is hashed and mapped into our <strong>Amazon DynamoDB</strong> ledger. When you order additional territories or renewal batches, our fulfillment engine automatically purges any lead you have ever received.
+                    This panel lists orders returned by the authenticated orders API. Purchase and download access are recorded server-side; dataset overlap or territory exclusivity is defined per listing, not guaranteed platform-wide.
                   </p>
                 </div>
               </div>
               <div class="bg-slate-950/90 border border-slate-800 p-3 rounded-xl text-center shrink-0 w-full sm:w-auto">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Unique Records</span>
-                <span class="text-2xl font-black text-emerald-400 font-mono">72 / 72</span>
-                <span class="text-[10px] text-slate-500 block">0 Duplicates Sent</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Orders on Account</span>
+                <span id="customerOrderHistoryCount" class="text-2xl font-black text-emerald-400 font-mono">—</span>
+                <span class="text-[10px] text-slate-500 block">Server records</span>
               </div>
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-3">
                 <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">
-                  Recent Delivered Leads Ledger
+                  Recent Orders
                 </h4>
-                <span class="text-xs font-mono text-slate-500">Live DynamoDB Sync</span>
+                <span class="text-xs font-mono text-slate-500">Server order records</span>
               </div>
 
               <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
                 <table class="w-full text-left text-xs">
                   <thead>
                     <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
-                      <th class="py-3 px-4">Domain Hash / ID</th>
-                      <th class="py-3 px-4">Company Name</th>
-                      <th class="py-3 px-4">Territory</th>
-                      <th class="py-3 px-4">Delivery Timestamp</th>
-                      <th class="py-3 px-4 text-right">Ledger Status</th>
+                      <th class="py-3 px-4">Order ID</th>
+                      <th class="py-3 px-4">Dataset</th>
+                      <th class="py-3 px-4">Records</th>
+                      <th class="py-3 px-4">Order Date</th>
+                      <th class="py-3 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody id="dedupeLedgerTableBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
@@ -1071,149 +836,73 @@
 
           <!-- ==================== TAB: API ACCESS ==================== -->
           <div id="custTab-api" class="space-y-6 hidden">
-            <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h4 class="text-sm font-black text-white flex items-center gap-2">
-                    <span>🔑</span> Agency Bearer API Key
-                  </h4>
-                  <p class="text-xs text-slate-400 mt-0.5">Use this key to fetch newly mined leads directly into GoHighLevel, HubSpot, Instantly, or Smartlead.</p>
-                </div>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Production (120 req/m)</span>
+            <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between gap-3">
+                <h4 class="text-sm font-black text-white">External Integrations</h4>
+                <span class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">Not enabled</span>
               </div>
-
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <div class="relative flex-1">
-                  <input type="text" id="custApiKeyInput" readonly class="w-full pl-4 pr-10 py-3 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono text-emerald-400 focus:outline-none">
-                </div>
-                <button onclick="window.copyCustomerApiKey()" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition shadow shrink-0">
-                  Copy Key 📋
-                </button>
-                <button onclick="window.regenerateCustomerApiKey()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition border border-slate-700 shrink-0">
-                  Regenerate
-                </button>
-              </div>
-            </div>
-
-            <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-4">
-              <div>
-                <h4 class="text-sm font-black text-white flex items-center gap-2">
-                  <span>⚡</span> Automated CRM Webhook Dispatch
-                </h4>
-                <p class="text-xs text-slate-400 mt-0.5">Enter your GoHighLevel, Zapier, or Make webhook URL. As soon as a territory scrape finishes, leads are dispatched automatically.</p>
-              </div>
-
-              <div class="flex flex-col sm:flex-row gap-2">
-                <input type="url" id="custWebhookInput" placeholder="https://services.leadconnectorhq.com/hooks/..." value="https://services.leadconnectorhq.com/hooks/apex_live_feed" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500">
-                <button onclick="window.saveCustomerWebhook()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition shrink-0">
-                  Save Webhook URL
-                </button>
-              </div>
-            </div>
-
-            <div class="bg-slate-950 border border-slate-800 p-5 rounded-2xl space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-mono text-slate-400">cURL Example — Automated Lead Extraction</span>
-                <button onclick="window.copyCustomerCurlSnippet()" class="text-xs text-indigo-400 hover:text-white font-bold transition">Copy Code 📋</button>
-              </div>
-              <pre class="bg-slate-900/90 p-4 rounded-xl text-xs font-mono text-indigo-300 overflow-x-auto border border-slate-800 leading-relaxed" id="custCurlCode">curl -X GET "https://api.apexintel.io/v1/leads?territory=texas&niche=roofing&limit=50" \\
-  -H "Authorization: Bearer <span id="curlKeyPlaceholder">YOUR_API_KEY</span>" \\
-  -H "Content-Type: application/json"</pre>
+              <p class="text-sm text-slate-300 leading-relaxed">
+                External API-key authentication and automated webhook delivery are not enabled yet. The current workspace supports authenticated browser sessions; third-party services cannot use an account key to access the API or receive automatic lead dispatches.
+              </p>
+              <p class="text-xs text-slate-500">This section will be updated when API-key authentication, documented endpoints, and webhook delivery are available end to end.</p>
             </div>
           </div>
 
           <!-- ==================== TAB: BILLING (#custTab-billing) ==================== -->
           <div id="custTab-billing" class="space-y-6 hidden">
-            <!-- Plan Overview Card -->
             <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div class="space-y-2">
                 <div class="flex items-center gap-2">
-                  <span class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">Active Subscription</span>
-                  <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active • Renews Monthly</span>
+                  <span class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-bold">Account Plan</span>
+                  <span id="billingPlanStatus" class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Status unavailable</span>
                 </div>
-                <h3 class="text-2xl font-black text-white font-display">Professional Intelligence Workspace</h3>
-                <p class="text-xs text-slate-400 leading-relaxed max-w-xl">
-                  Includes 500 verified monthly lead extractions, 250 real-time website scans, full 11-stage CRM pipeline, cold outreach generator, and priority queue fulfillment.
+                <h3 id="billingPlanName" class="text-2xl font-black text-white font-display">No plan assigned</h3>
+                <p id="billingPlanDescription" class="text-xs text-slate-400 leading-relaxed max-w-xl">
+                  Plan details and account allowances will appear here when provided by the account service.
                 </p>
               </div>
               <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
-                <span class="text-3xl font-black text-white font-display">$79.00 <span class="text-xs text-slate-400 font-mono font-normal">/ month</span></span>
-                <button onclick="window.openStripeCustomerPortal ? window.openStripeCustomerPortal() : (typeof window.showToast === 'function' ? window.showToast('Opening Stripe Customer Portal...') : null)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs transition border border-slate-700 shadow flex items-center gap-1.5">
-                  <span>⚙️</span> Manage on Stripe Portal
-                </button>
+                <span id="billingCreditBalance" class="text-2xl font-black text-white font-display">Credits unavailable</span>
+                <span class="text-[10px] text-slate-500 font-mono">Server account balance</span>
               </div>
             </div>
 
-            <!-- Quota Utilization -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-bold">Monthly Lead Quota</span>
-                  <span id="billingLeadQuotaText" class="font-mono text-cyan-400 font-bold">6 / 500 Leads</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div class="bg-cyan-500 h-2 rounded-full" style="width: 1.2%"></div>
-                </div>
-                <p class="text-[11px] text-slate-500 font-mono">Resets on next billing cycle</p>
+                <span class="text-xs text-slate-400 font-bold">CRM Records</span>
+                <div id="billingLeadQuotaText" class="text-2xl font-black text-cyan-400 font-mono">—</div>
+                <p class="text-[11px] text-slate-500">Server-backed records for this account</p>
               </div>
-
               <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-bold">Website Scans Quota</span>
-                  <span class="font-mono text-indigo-400 font-bold">12 / 250 Scans</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div class="bg-indigo-500 h-2 rounded-full" style="width: 4.8%"></div>
-                </div>
-                <p class="text-[11px] text-slate-500 font-mono">Live latency & pixel audits</p>
+                <span class="text-xs text-slate-400 font-bold">Saved Website Scans</span>
+                <div id="billingScanCountText" class="text-2xl font-black text-indigo-400 font-mono">—</div>
+                <p class="text-[11px] text-slate-500">Saved in this browser; not synced across devices</p>
               </div>
-
               <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                  <span class="text-slate-400 font-bold">Custom Research Hours</span>
-                  <span class="font-mono text-emerald-400 font-bold">Priority Queuing</span>
-                </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div>
-                </div>
-                <p class="text-[11px] text-slate-500 font-mono">48-hour SLA turn-around</p>
+                <span class="text-xs text-slate-400 font-bold">Custom Research Requests</span>
+                <div id="billingRequestCountText" class="text-2xl font-black text-emerald-400 font-mono">—</div>
+                <p class="text-[11px] text-slate-500">Requests returned by the account service</p>
               </div>
             </div>
 
-            <!-- Invoices / Order Receipts -->
             <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">
-                  Billing & Order Receipts
-                </h4>
-                <span class="text-xs font-mono text-slate-500">Stripe Invoices</span>
+                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-300">Order &amp; Payment History</h4>
+                <span class="text-xs font-mono text-slate-500">Server order records</span>
               </div>
               <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
                 <table class="w-full text-left text-xs">
                   <thead>
                     <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 font-bold uppercase">
-                      <th class="py-3 px-4">Invoice / Order ID</th>
-                      <th class="py-3 px-4">Description</th>
+                      <th class="py-3 px-4">Order ID</th>
+                      <th class="py-3 px-4">Dataset</th>
                       <th class="py-3 px-4">Date</th>
                       <th class="py-3 px-4">Amount</th>
                       <th class="py-3 px-4 text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody id="billingInvoicesBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
-                    <tr>
-                      <td class="py-3 px-4 text-cyan-400">inv_apex_2026_01</td>
-                      <td class="py-3 px-4 font-sans text-white">Professional Workspace Subscription</td>
-                      <td class="py-3 px-4 text-slate-400">2026-11-01</td>
-                      <td class="py-3 px-4 font-bold text-white">$79.00</td>
-                      <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">PAID</span></td>
-                    </tr>
-                    <tr>
-                      <td class="py-3 px-4 text-cyan-400">ord_tx_pack_01</td>
-                      <td class="py-3 px-4 font-sans text-white">Texas High-Ticket Contractors (Dataset)</td>
-                      <td class="py-3 px-4 text-slate-400">2026-11-20</td>
-                      <td class="py-3 px-4 font-bold text-white">$79.00</td>
-                      <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">PAID</span></td>
-                    </tr>
+                    <tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No payment records have been returned for this account yet.</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1223,72 +912,22 @@
           <!-- ==================== TAB: SETTINGS ==================== -->
           <div id="custTab-settings" class="space-y-6 hidden">
             <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-4">
-              <h4 class="text-sm font-black text-white flex items-center gap-2">
-                <span>👤</span> Agency Profile & Billing Details
-              </h4>
+              <h4 class="text-sm font-black text-white flex items-center gap-2"><span>👤</span> Account Profile</h4>
+              <p class="text-xs text-slate-500">These details are read from your authenticated account. Profile editing is not available in this workspace yet.</p>
               <div class="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Full Name</label>
-                  <input type="text" id="custSettingName" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Agency / Company Name</label>
-                  <input type="text" id="custSettingCompany" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Account Email</label>
-                  <input type="email" id="custSettingEmail" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Active Plan Tier</label>
-                  <input type="text" id="custSettingPlan" readonly class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 font-mono">
-                </div>
-              </div>
-              <div class="flex justify-end pt-2">
-                <button onclick="window.saveCustomerSettingsProfile()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition shadow">
-                  Save Changes
-                </button>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Full Name</label><div id="custSettingNameDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">Account name unavailable</div></div>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Company</label><div id="custSettingCompanyDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">Company not set</div></div>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Account Email</label><div id="custSettingEmailDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">Email unavailable</div></div>
+                <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Account Plan</label><div id="custSettingPlanDisplay" class="px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono">No plan assigned</div></div>
               </div>
             </div>
 
-            <!-- Invoices -->
-            <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl space-y-3">
-              <h4 class="text-sm font-black text-white flex items-center gap-2">
-                <span>🧾</span> Invoices & Transaction Receipts
-              </h4>
-              <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
-                <table class="w-full text-left text-xs">
-                  <thead>
-                    <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase bg-slate-900/50">
-                      <th class="py-2.5 px-3">Invoice #</th>
-                      <th class="py-2.5 px-3">Dataset / Product</th>
-                      <th class="py-2.5 px-3">Date</th>
-                      <th class="py-2.5 px-3">Amount</th>
-                      <th class="py-2.5 px-3 text-right">Receipt</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-800 font-mono text-slate-300">
-                    <tr>
-                      <td class="py-2.5 px-3 text-indigo-400">INV-2026-1022</td>
-                      <td class="text-white">California Luxury MedSpas</td>
-                      <td class="text-slate-400">Nov 20, 2026</td>
-                      <td class="text-emerald-400">$89.00</td>
-                      <td class="text-right py-2.5 px-3">
-                        <button onclick="window.downloadCustomerInvoice('INV-2026-1022', 'California Luxury MedSpas', '$89.00', 'Nov 20, 2026')" class="text-xs text-indigo-400 hover:underline">Download .txt</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="py-2.5 px-3 text-indigo-400">INV-2026-0944</td>
-                      <td class="text-white">Florida Solar & Restoration</td>
-                      <td class="text-slate-400">Nov 18, 2026</td>
-                      <td class="text-emerald-400">$79.00</td>
-                      <td class="text-right py-2.5 px-3">
-                        <button onclick="window.downloadCustomerInvoice('INV-2026-0944', 'Florida Solar & Restoration', '$79.00', 'Nov 18, 2026')" class="text-xs text-indigo-400 hover:underline">Download .txt</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h4 class="text-sm font-black text-white">Order &amp; Payment History</h4>
+                <p class="text-xs text-slate-400 mt-1">Your server-backed purchases and payment status are listed in the Billing tab.</p>
               </div>
+              <button onclick="window.switchCustomerTab('billing')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold">Open Billing</button>
             </div>
 
             <!-- Sign Out -->
@@ -1310,13 +949,13 @@
           <div class="flex items-center gap-3">
             <span class="flex items-center gap-1.5 text-emerald-400 font-bold">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Live CRM Sync Active
+              Server sync active
             </span>
             <span>•</span>
-            <span>AWS Region: <code>ap-southeast-2</code></span>
+            <span>Authenticated workspace</span>
           </div>
           <div>
-            Need custom leads? <a href="#custom-request" onclick="window.closeCustomerDashboard()" class="text-emerald-400 font-semibold underline">Request Extraction ($299+)</a>
+            Need additional data? <a href="#custom-request" onclick="window.closeCustomerDashboard()" class="text-emerald-400 font-semibold underline">Request custom research</a>
           </div>
         </div>
 
@@ -1330,7 +969,7 @@
         <div class="flex items-start justify-between border-b border-slate-800 pb-4">
           <div>
             <span id="drawerPriorityBadge" class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
-              P1 - High Opportunity
+              Priority not set
             </span>
             <h3 id="drawerCompanyName" class="text-xl font-black text-white mt-1.5 leading-tight">Company Name</h3>
             <p id="drawerDomainAndCity" class="text-xs text-slate-400 mt-0.5 font-mono">domain.com • City, State</p>
@@ -1386,7 +1025,7 @@
               <span id="drawerContactName" class="font-bold text-white">Owner / Manager</span>
             </div>
             <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-400">Verified Email:</span>
+              <span class="text-slate-400">Email contact:</span>
               <button onclick="window.copyDrawerEmail()" class="font-mono text-emerald-400 hover:underline flex items-center gap-1 font-bold">
                 <span id="drawerEmailVal">email@company.com</span> 📋
               </button>
@@ -1467,8 +1106,8 @@
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-slate-400 uppercase font-bold mb-1">Contact Email *</label>
-              <input type="email" id="addLeadEmail" required placeholder="owner@company.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
+              <label class="block text-slate-400 uppercase font-bold mb-1">Contact Email (optional)</label>
+              <input type="email" id="addLeadEmail" placeholder="owner@company.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500">
             </div>
             <div>
               <label class="block text-slate-400 uppercase font-bold mb-1">Phone Number</label>
@@ -1485,8 +1124,8 @@
             <div>
               <label class="block text-slate-400 uppercase font-bold mb-1">Priority</label>
               <select id="addLeadPriority" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 focus:outline-none">
+                <option value="P2" selected>P2 - Moderate</option>
                 <option value="P1">P1 - High Priority</option>
-                <option value="P2">P2 - Moderate</option>
                 <option value="P3">P3 - Standard</option>
               </select>
             </div>
@@ -1566,7 +1205,7 @@
           const cty = escapeHTML(l.city || '');
           const prio = escapeHTML(l.priority || 'P2');
           const fuDate = escapeHTML(l.followUpDate || '');
-          const score = typeof l.opportunityScore === 'number' ? l.opportunityScore : 80;
+          const score = typeof l.opportunityScore === 'number' ? l.opportunityScore : null;
 
           tr.innerHTML = `
             <td class="py-3 px-4" onclick="window.openLeadDrawer('${escapeHTML(l.id)}')">
@@ -1650,7 +1289,7 @@
                 </div>
                 <div class="text-[10px] text-slate-400 font-mono truncate">${escapeHTML(lead.domain)}</div>
                 <div class="flex items-center justify-between text-[10px] pt-1 border-t border-slate-900">
-                  <span class="text-emerald-400 font-mono font-bold">${escapeHTML(lead.opportunityScore)}/100</span>
+                  <span class="text-emerald-400 font-mono font-bold">${lead.opportunityScore == null ? 'Not scored' : `${escapeHTML(lead.opportunityScore)}/100`}</span>
                   <div class="flex items-center gap-1">
                     <button onclick="event.stopPropagation(); window.advanceLeadStage('${escapeHTML(lead.id)}')" title="Advance Stage" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition font-mono">
                       →
@@ -1675,7 +1314,10 @@
     if (campGrid) {
       campGrid.innerHTML = '';
       campaigns.forEach(c => {
-        const assigned = leads.filter(l => l.campaignId === c.id);
+        const campaignId = c.campaignId || c.id;
+        const campaignName = c.name || c.title || 'Untitled campaign';
+        const assigned = leads.filter(l => l.campaignId === campaignId || (Array.isArray(c.leadIds) && c.leadIds.includes(l.id)));
+        const assignedCount = Math.max(assigned.length, Array.isArray(c.leadIds) ? c.leadIds.length : 0);
         const contacted = assigned.filter(l => ['Contacted', 'Follow-Up', 'Responded', 'Meeting Scheduled', 'Proposal', 'Won'].includes(l.status)).length;
         const meetings = assigned.filter(l => ['Meeting Scheduled', 'Proposal', 'Won'].includes(l.status)).length;
         const won = assigned.filter(l => l.status === 'Won').length;
@@ -1686,7 +1328,7 @@
           <div class="flex items-start justify-between">
             <div>
               <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">${c.status}</span>
-              <h5 class="text-xs font-black text-white mt-1.5 leading-snug">${c.title}</h5>
+              <h5 class="text-xs font-black text-white mt-1.5 leading-snug">${escapeHTML(campaignName)}</h5>
               <p class="text-[11px] text-slate-400 font-mono mt-0.5">${c.territory}</p>
             </div>
           </div>
@@ -1694,7 +1336,7 @@
           <div class="grid grid-cols-4 gap-1.5 text-center bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
             <div>
               <span class="text-[9px] text-slate-500 block uppercase">Leads</span>
-              <span class="text-xs font-mono font-bold text-white">${assigned.length}</span>
+              <span class="text-xs font-mono font-bold text-white">${assignedCount}</span>
             </div>
             <div>
               <span class="text-[9px] text-slate-500 block uppercase">Sent</span>
@@ -1775,6 +1417,10 @@
     if (!tbody) return;
 
     tbody.innerHTML = '';
+    if (audits.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="py-8 px-4 text-center text-slate-500">No scans have been saved in this browser for this account yet. Run a website scan to add one.</td></tr>';
+      return;
+    }
     audits.forEach(a => {
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-900/50 transition border-b border-slate-800/60';
@@ -1785,16 +1431,16 @@
         </td>
         <td class="py-3 px-3 text-slate-400 font-mono text-[11px]">${escapeHTML(a.scannedAt)}</td>
         <td class="py-3 px-3">
-          <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold ${a.speed_ms > 900 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}">
-            ${escapeHTML(a.speed_ms)}ms
+          <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold ${a.speed_ms == null ? 'bg-slate-800 text-slate-400' : (a.speed_ms > 900 ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400')}">
+            ${a.speed_ms == null ? 'Not measured' : `${escapeHTML(a.speed_ms)}ms`}
           </span>
         </td>
-        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${escapeHTML(a.cms)}</td>
+        <td class="py-3 px-3 text-slate-300 font-mono text-xs">${escapeHTML(a.cms || 'Not detected')}</td>
         <td class="py-3 px-3 text-xs">
-          <span class="${a.googleAds ? 'text-emerald-400 font-bold' : 'text-slate-500'}">Ads: ${a.googleAds ? 'Yes' : 'No'}</span> • 
-          <span class="${a.metaPixel ? 'text-indigo-400 font-bold' : 'text-slate-500'}">Pixel: ${a.metaPixel ? 'Yes' : 'No'}</span>
+          <span class="${a.googleAds === null ? 'text-slate-500' : (a.googleAds ? 'text-emerald-400 font-bold' : 'text-amber-400')}">Ads: ${a.googleAds === null ? 'Unknown' : (a.googleAds ? 'Detected' : 'Not detected')}</span> • 
+          <span class="${a.metaPixel === null ? 'text-slate-500' : (a.metaPixel ? 'text-indigo-400 font-bold' : 'text-amber-400')}">Pixel: ${a.metaPixel === null ? 'Unknown' : (a.metaPixel ? 'Detected' : 'Not detected')}</span>
         </td>
-        <td class="py-3 px-3 font-mono font-bold text-white">${escapeHTML(a.icpScore)}/100</td>
+        <td class="py-3 px-3 font-mono font-bold text-white">${a.icpScore == null ? 'Not scored' : `${escapeHTML(a.icpScore)}/100`}</td>
         <td class="py-3 px-4 text-right">
           <button onclick="window.exportAuditReport('${escapeHTML(a.id)}')" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5 ml-auto">
             <span>📄</span> Export Report (.html)
@@ -1833,13 +1479,14 @@
 
       const reqId = escapeHTML(req.requestId || req.id);
       const status = escapeHTML(req.status || 'Submitted');
-      const isDelivered = req.status === 'Delivered';
-      const date = escapeHTML((req.createdAt || req.date || 'Nov 2026').slice(0, 16).replace('T', ' '));
+      const isDelivered = String(req.status || '').toLowerCase() === 'delivered';
+      const date = escapeHTML(req.createdAt || req.date ? String(req.createdAt || req.date).slice(0, 16).replace('T', ' ') : 'Date unavailable');
       const industry = escapeHTML(req.industry || '');
       const territory = escapeHTML(req.territory || '');
       const volume = escapeHTML(String(req.volume || ''));
-      const price = escapeHTML(req.estimatedPrice || '$299.00');
-      const notes = escapeHTML(req.notes || ('Target volume: ' + volume + ' decision makers'));
+      const price = escapeHTML(req.estimatedPrice || 'Quote pending');
+      const notes = escapeHTML(req.notes || ('Requested volume: ' + volume + ' records'));
+      const hasDeliveredRecords = (Array.isArray(req.deliveredRecords) && req.deliveredRecords.length > 0) || (Array.isArray(req.results) && req.results.length > 0);
 
       card.innerHTML = `
         <div class="space-y-1">
@@ -1856,13 +1503,13 @@
 
         <div class="flex items-center gap-3 shrink-0">
           <span class="text-sm font-mono font-bold text-white">${price}</span>
-          ${isDelivered ? `
+          ${isDelivered && hasDeliveredRecords ? `
             <button onclick="window.downloadCustomExtractionCsv('${reqId}')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow">
               <span>📥</span> Download Dataset (.CSV)
             </button>
           ` : `
             <span class="text-xs font-mono text-slate-500 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800">
-              Mining in Progress...
+              ${isDelivered ? 'Delivery file not attached yet' : 'Awaiting fulfillment update'}
             </span>
           `}
         </div>
@@ -1871,210 +1518,13 @@
     });
   }
 
-  // --- Curated Discovery Database Catalog (Blueprint v1.0) ---
-  const DISCOVERY_CATALOG_LEADS = [
-    {
-      id: 'disc_tx_01',
-      company: 'T Rock Roofing & Restoration',
-      domain: 'dallasroofer.com',
-      contactName: 'Thomas Rock (Managing Partner)',
-      email: 'info@dallasroofer.com',
-      phone: '+1 469 931 9867',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'texas',
-      industry: 'Roofing & Storm Restoration',
-      speed_ms: 1473,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 92,
-      tags: ['slow-latency', 'missing-pixel', 'dallas']
-    },
-    {
-      id: 'disc_tx_02',
-      company: 'Sutton Roofing & Solar',
-      domain: 'suttonroofinginc.com',
-      contactName: 'Operations Director',
-      email: 'office@suttonroofinginc.com',
-      phone: '+1 512 837 8777',
-      city: 'Austin, TX',
-      territory: 'texas',
-      industry: 'Commercial Solar & Roofing',
-      speed_ms: 620,
-      metaPixel: true,
-      googleAds: false,
-      opportunityScore: 88,
-      tags: ['austin', 'solar']
-    },
-    {
-      id: 'disc_tx_03',
-      company: 'K-Post Company Commercial Roofing',
-      domain: 'kpostcompany.com',
-      contactName: 'Keith Post (President)',
-      email: 'commercial@kpostcompany.com',
-      phone: '+1 972 606 0000',
-      city: 'Dallas, TX',
-      territory: 'texas',
-      industry: 'Commercial & Industrial Roofing',
-      speed_ms: 1840,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 95,
-      tags: ['high-speed-flaw', 'missing-pixel', 'high-ltv']
-    },
-    {
-      id: 'disc_tx_04',
-      company: 'Lonestar Commercial Roofing',
-      domain: 'lonestarroofingpro.com',
-      contactName: 'Robert Vance (Owner)',
-      email: 'service@lonestarroofingpro.com',
-      phone: '+1 832 770 1200',
-      city: 'Houston, TX',
-      territory: 'texas',
-      industry: 'Commercial TPO & Metal Roofing',
-      speed_ms: 1120,
-      metaPixel: false,
-      googleAds: false,
-      opportunityScore: 89,
-      tags: ['houston', 'missing-pixel']
-    },
-    {
-      id: 'disc_fl_01',
-      company: 'Tampa Bay Solar & Energy',
-      domain: 'tampabaysolar.com',
-      contactName: 'Ben Gold (Owner)',
-      email: 'info@tampabaysolar.com',
-      phone: '+1 813 398 3687',
-      city: 'Tampa, FL',
-      territory: 'florida',
-      industry: 'Commercial Solar Energy',
-      speed_ms: 740,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 94,
-      tags: ['missing-pixel', 'tampa', 'solar']
-    },
-    {
-      id: 'disc_fl_02',
-      company: 'Goldin Solar Orlando',
-      domain: 'goldinsolar.com',
-      contactName: 'Dvir Goldin (Founder)',
-      email: 'contact@goldinsolar.com',
-      phone: '+1 407 500 7652',
-      city: 'Orlando, FL',
-      territory: 'florida',
-      industry: 'Commercial Solar & Battery',
-      speed_ms: 1620,
-      metaPixel: true,
-      googleAds: true,
-      opportunityScore: 91,
-      tags: ['slow-latency', 'orlando']
-    },
-    {
-      id: 'disc_fl_03',
-      company: 'Miami Hurricane Mitigation & Roofing',
-      domain: 'miamihurricanepros.com',
-      contactName: 'Carlos Mendez (VP Commercial)',
-      email: 'info@miamihurricanepros.com',
-      phone: '+1 305 558 9200',
-      city: 'Miami, FL',
-      territory: 'florida',
-      industry: 'Disaster Mitigation & Roofing',
-      speed_ms: 1390,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 96,
-      tags: ['high-ltv', 'missing-pixel', 'miami']
-    },
-    {
-      id: 'disc_ca_01',
-      company: 'Beverly Hills Skin & Laser Center',
-      domain: 'bhskinlaser.com',
-      contactName: 'Clinical Director',
-      email: 'concierge@bhskinlaser.com',
-      phone: '+1 310 278 8878',
-      city: 'Beverly Hills, CA',
-      territory: 'medspas',
-      industry: 'Aesthetic Dermatology & Laser',
-      speed_ms: 1250,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 93,
-      tags: ['luxury', 'missing-pixel', 'beverly-hills']
-    },
-    {
-      id: 'disc_ca_02',
-      company: 'Union Square Aesthetics & Surgery',
-      domain: 'unionsquareaesthetics.com',
-      contactName: 'Dr. Michael Chen',
-      email: 'frontdesk@unionsquareaesthetics.com',
-      phone: '+1 415 392 3333',
-      city: 'San Francisco, CA',
-      territory: 'medspas',
-      industry: 'Cosmetic Surgery & Injectables',
-      speed_ms: 540,
-      metaPixel: true,
-      googleAds: true,
-      opportunityScore: 86,
-      tags: ['san-francisco', 'injectables']
-    },
-    {
-      id: 'disc_ca_03',
-      company: 'La Jolla Institute of Plastic Surgery',
-      domain: 'lajollaplasticsurg.com',
-      contactName: 'Practice Administrator',
-      email: 'info@lajollaplasticsurg.com',
-      phone: '+1 858 454 4455',
-      city: 'San Diego, CA',
-      territory: 'medspas',
-      industry: 'Plastic Surgery & Medical Spa',
-      speed_ms: 1490,
-      metaPixel: false,
-      googleAds: false,
-      opportunityScore: 90,
-      tags: ['san-diego', 'missing-pixel']
-    },
-    {
-      id: 'disc_hvac_01',
-      company: 'Midwest Mechanical Chiller Systems',
-      domain: 'midwestmechchillers.com',
-      contactName: 'David Kowalski (VP Sales)',
-      email: 'commercial@midwestmechchillers.com',
-      phone: '+1 312 880 4400',
-      city: 'Chicago, IL',
-      territory: 'hvac',
-      industry: 'Industrial Chiller & VRF Systems',
-      speed_ms: 1680,
-      metaPixel: false,
-      googleAds: true,
-      opportunityScore: 95,
-      tags: ['chicago', 'missing-pixel', 'high-speed-flaw']
-    },
-    {
-      id: 'disc_hvac_02',
-      company: 'DFW Industrial Building Automation',
-      domain: 'dfwbuildingauto.com',
-      contactName: 'Engineering Director',
-      email: 'service@dfwbuildingauto.com',
-      phone: '+1 214 740 8820',
-      city: 'Dallas-Fort Worth, TX',
-      territory: 'hvac',
-      industry: 'Commercial HVAC Controls',
-      speed_ms: 710,
-      metaPixel: true,
-      googleAds: false,
-      opportunityScore: 87,
-      tags: ['dallas', 'hvac-controls']
-    }
-  ];
-
+  // Discovery records are sourced exclusively from the authenticated discovery API.
   // Tab Aliases for backwards compatibility with legacy UI triggers
   const TAB_ALIASES = {
-    auditlab: 'intelligence',
-    ledger: 'datasets',
-    api: 'settings'
+    auditlab: 'intelligence'
   };
 
-  let liveDiscoveryLeadsCache = null;
+  let liveDiscoveryLeadsCache = [];
   let liveDiscoveryPromise = null;
 
   window.loadLiveDiscoveryLeads = async function () {
@@ -2088,12 +1538,12 @@
         });
         if (res.ok) {
           const data = await res.json();
-          if (data && data.success && Array.isArray(data.leads) && data.leads.length > 0) {
+          if (data && data.success && Array.isArray(data.leads)) {
             liveDiscoveryLeadsCache = data.leads.map(l => ({
               id: l.id || l.domain,
               company: l.company_name || l.name || l.domain,
               domain: l.domain || l.id,
-              contactName: 'Verified Decision Maker',
+              contactName: l.contact_name || l.contactName || '',
               email: l.email || '',
               phone: l.phone || '',
               city: l.city || l.location || '',
@@ -2101,20 +1551,28 @@
                 : /FL\b/i.test(l.city || '') ? 'florida'
                 : /medspa|aesthetic/i.test(l.trade || '') ? 'medspas'
                 : /hvac|mechanical/i.test(l.trade || '') ? 'hvac'
-                : 'texas',
-              industry: l.trade || l.category || 'Commercial Services',
-              speed_ms: Number(l.speed_ms) || 750,
-              metaPixel: Boolean(l.meta_pixel),
-              googleAds: Boolean(l.google_ads),
-              opportunityScore: Math.min(98, 70 + (l.meta_pixel ? 0 : 15) + ((Number(l.speed_ms) || 0) > 850 ? 12 : 4)),
-              tags: [l.meta_pixel ? 'meta-active' : 'missing-pixel'],
+                : 'other',
+              industry: l.trade || l.category || 'Not specified',
+              speed_ms: Number.isFinite(Number(l.speed_ms)) && Number(l.speed_ms) > 0 ? Number(l.speed_ms) : null,
+              metaPixel: typeof l.meta_pixel === 'boolean' ? l.meta_pixel : null,
+              googleAds: typeof l.google_ads === 'boolean' ? l.google_ads : null,
+              opportunityScore: typeof l.opportunityScore === 'number' ? l.opportunityScore : null,
+              tags: [l.meta_pixel === null || l.meta_pixel === undefined ? 'tracking-unknown' : (l.meta_pixel ? 'meta-active' : 'missing-pixel')],
               isLiveApi: true
             }));
             renderDiscoverTab();
+          } else {
+            liveDiscoveryLeadsCache = [];
+            renderDiscoverTab();
           }
+        } else {
+          liveDiscoveryLeadsCache = [];
+          renderDiscoverTab();
         }
       } catch (err) {
-        console.warn('[Discover] Live API fallback to catalog samples:', err.message);
+        liveDiscoveryLeadsCache = [];
+        console.warn('[Discover] Live API request failed:', err.message);
+        renderDiscoverTab();
       } finally {
         liveDiscoveryPromise = null;
       }
@@ -2124,11 +1582,7 @@
   };
 
   function getDiscoveryPool() {
-    if (Array.isArray(liveDiscoveryLeadsCache) && liveDiscoveryLeadsCache.length > 0) {
-      const seen = new Set(liveDiscoveryLeadsCache.map(l => l.domain));
-      return [...liveDiscoveryLeadsCache, ...DISCOVERY_CATALOG_LEADS.filter(l => !seen.has(l.domain))];
-    }
-    return DISCOVERY_CATALOG_LEADS;
+    return Array.isArray(liveDiscoveryLeadsCache) ? liveDiscoveryLeadsCache : [];
   }
 
   // --- Window Interactive Actions ---
@@ -2185,7 +1639,7 @@
 
     if (savedEl) savedEl.innerText = leads.length;
     if (discoverEl) discoverEl.innerText = String(discoveryPool.length);
-    if (highOppEl) highOppEl.innerText = String(leads.filter(l => (l.opportunityScore || 0) >= 85).length);
+    if (highOppEl) highOppEl.innerText = String(leads.filter(l => typeof l.opportunityScore === 'number' && l.opportunityScore >= 85).length);
     if (activeReqEl) activeReqEl.innerText = requests.filter(r => r.status !== 'Delivered' && r.status !== 'Cancelled').length;
 
     // Render pipeline status progress bars
@@ -2218,21 +1672,21 @@
           <span class="text-cyan-400 font-bold text-sm">🎯</span>
           <div>
             <p class="text-slate-200 font-bold leading-tight">Pipeline Loaded</p>
-            <span class="text-[10px] text-slate-500 font-mono">${leads.length} saved prospects ready for contact</span>
+            <span class="text-[10px] text-slate-500 font-mono">${leads.length} business records in your CRM</span>
           </div>
         </div>
         <div class="flex items-start gap-2.5 pb-2 border-b border-slate-800/60">
           <span class="text-emerald-400 font-bold text-sm">⚡</span>
           <div>
             <p class="text-slate-200 font-bold leading-tight">Territory Catalog Ingested</p>
-            <span class="text-[10px] text-slate-500 font-mono">Texas, Florida, California, and HVAC datasets verified</span>
+            <span class="text-[10px] text-slate-500 font-mono">Catalog datasets available for Texas, Florida, California, and HVAC; contact coverage varies</span>
           </div>
         </div>
         <div class="flex items-start gap-2.5">
           <span class="text-indigo-400 font-bold text-sm">🔬</span>
           <div>
             <p class="text-slate-200 font-bold leading-tight">Audit Scanner Ready</p>
-            <span class="text-[10px] text-slate-500 font-mono">Full TLS 1.3, TTFB latency & pixel analysis active</span>
+            <span class="text-[10px] text-slate-500 font-mono">Website diagnostics available for reachable sites; scan coverage varies</span>
           </div>
         </div>
       `;
@@ -2258,7 +1712,7 @@
     if (signalFilter === 'high_score') {
       filtered = filtered.filter(l => l.opportunityScore >= 85);
     } else if (signalFilter === 'missing_pixel') {
-      filtered = filtered.filter(l => !l.metaPixel);
+      filtered = filtered.filter(l => l.metaPixel === false);
     } else if (signalFilter === 'slow_speed') {
       filtered = filtered.filter(l => l.speed_ms > 1000);
     }
@@ -2289,7 +1743,13 @@
 
     filtered.forEach(item => {
       const isAlreadySaved = currentLeads.some(l => l.domain === item.domain || l.id === item.id);
-      const speedColor = item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400');
+      const speedColor = item.speed_ms == null ? 'text-slate-500' : (item.speed_ms > 1000 ? 'text-rose-400' : (item.speed_ms > 700 ? 'text-amber-400' : 'text-emerald-400'));
+      const pixelBadge = item.metaPixel === null
+        ? '<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-bold">Not assessed</span>'
+        : (item.metaPixel
+          ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta detected</span>'
+          : '<span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">Meta not detected</span>');
+      const scoreLabel = item.opportunityScore == null ? 'Not scored' : String(item.opportunityScore) + '/100';
 
       const tr = document.createElement('tr');
       tr.className = 'hover:bg-slate-800/40 transition';
@@ -2302,12 +1762,12 @@
         </td>
         <td class="py-3 px-4 font-mono text-slate-300 text-[11px]">${escapeHTML(item.city)}</td>
         <td class="py-3 px-4 text-slate-300">${escapeHTML(item.industry)}</td>
-        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms}ms</td>
+        <td class="py-3 px-4 font-mono font-bold ${speedColor}">${item.speed_ms == null ? 'Not measured' : `${item.speed_ms}ms`}</td>
         <td class="py-3 px-4">
-          ${item.metaPixel ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">Meta Active</span>' : '<span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold">Missing Pixel</span>'}
+          ${pixelBadge}
         </td>
         <td class="py-3 px-4 text-center">
-          <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-mono font-black text-xs">${item.opportunityScore}/100</span>
+          <span title="Explainable research-priority heuristic, not a conversion prediction" class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 font-mono font-black text-xs">${scoreLabel}</span>
         </td>
         <td class="py-3 px-4 text-right">
           <div class="flex items-center justify-end gap-1.5">
@@ -2332,46 +1792,59 @@
   };
 
   // Add discovered lead to CRM
-  window.addDiscoveredLeadToCrm = function (leadId) {
-    const item = getDiscoveryPool().find(l => l.id === leadId);
-    if (!item) return;
-
+  window.addDiscoveredLeadToCrm = async function (leadRef) {
+    const leadObj = typeof leadRef === 'string'
+      ? getDiscoveryPool().find(item => item.id === leadRef)
+      : leadRef;
+    if (!leadObj || !(leadObj.name || leadObj.company)) {
+      notify('This discovery result does not contain a business name.');
+      return;
+    }
     const leads = getCrmLeads();
-    if (leads.some(l => l.domain === item.domain)) {
-      notify('This company is already in your CRM pipeline.');
+    const companyName = String(leadObj.name || leadObj.company);
+    const domain = String(leadObj.domain || '').toLowerCase();
+    const existing = leads.find(item =>
+      (domain && item.domain === domain) ||
+      ((item.company || '').toLowerCase() === companyName.toLowerCase())
+    );
+    if (existing) {
+      notify('This business is already in your CRM.');
+      window.openCustomerDashboard('crm');
+      window.openLeadDrawer(existing.id);
       return;
     }
 
     const newLead = {
-      id: 'crm_' + Date.now().toString(36),
-      company: item.company,
-      domain: item.domain,
-      contactName: item.contactName,
-      email: item.email,
-      phone: item.phone,
-      city: item.city,
-      territory: item.territory,
-      industry: item.industry,
+      company: companyName,
+      domain: domain || null,
+      contactName: leadObj.contactName || null,
+      email: leadObj.email || null,
+      phone: leadObj.phone || null,
+      city: leadObj.city || null,
+      territory: leadObj.territory || null,
+      industry: leadObj.category || leadObj.industry || null,
       status: 'New',
-      priority: 'P1',
-      opportunityScore: item.opportunityScore,
-      speed_ms: item.speed_ms,
-      metaPixel: item.metaPixel,
-      googleAds: item.googleAds,
-      tags: [...(item.tags || [])],
-      notes: [
-        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'System Discovery', text: `Added from ${String(item.territory || 'discovery').toUpperCase()} discovery catalog.` }
-      ],
-      savedAt: new Date().toISOString()
+      priority: 'P2',
+      opportunityScore: typeof leadObj.opportunityScore === 'number' ? leadObj.opportunityScore : null,
+      speed_ms: typeof leadObj.speed_ms === 'number' ? leadObj.speed_ms : null,
+      metaPixel: typeof leadObj.metaPixel === 'boolean' ? leadObj.metaPixel : null,
+      googleAds: typeof leadObj.googleAds === 'boolean' ? leadObj.googleAds : null,
+      campaignId: null,
+      tags: ['saved-from-discovery'],
+      notes: [],
+      followUpDate: null
     };
 
-    leads.unshift(newLead);
-    saveCrmLeads(leads);
-    createLeadOnBackend(newLead);
-    notify(`Added ${item.company} to your CRM Pipeline!`);
-    renderDiscoverTab();
-    renderCrmLeads();
-  };
+    try {
+      const savedLead = await createLeadOnBackend(newLead);
+      saveCrmLeads([savedLead, ...getCrmLeads()]);
+      notify('Business record added to your CRM.');
+      renderCrmLeads();
+    } catch (error) {
+      console.warn('[CRM] Could not save discovery record:', error);
+      notify(error.message || 'Unable to save this record. Please retry.');
+    }
+  }
 
   // Quick audit launcher from discovery row
   window.auditDiscoveredDomain = function (domain) {
@@ -2449,7 +1922,7 @@
           </span>
         </td>
         <td class="py-3 px-4 text-center">
-          <span class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-300 font-mono font-bold text-xs">${lead.opportunityScore || 90}</span>
+          <span class="px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-300 font-mono font-bold text-xs">${lead.opportunityScore == null ? 'Not scored' : lead.opportunityScore}</span>
         </td>
         <td class="py-3 px-4 font-mono text-[11px] text-slate-400">
           ${lead.followUpDate ? `📅 ${lead.followUpDate}` : '<span class="text-slate-600">—</span>'}
@@ -2468,12 +1941,76 @@
     renderMyLeadsTab();
   };
 
-  // Render Billing Tab
+  // Render billing from account and order data returned by the server.
   function renderBillingTab() {
-    const quotaText = document.getElementById('billingLeadQuotaText');
-    if (quotaText) {
-      quotaText.innerText = `${getCrmLeads().length} / 500 Leads`;
+    const user = getUserData();
+    const planName = document.getElementById('billingPlanName');
+    const planStatus = document.getElementById('billingPlanStatus');
+    const planDescription = document.getElementById('billingPlanDescription');
+    const creditBalance = document.getElementById('billingCreditBalance');
+    const leadCount = document.getElementById('billingLeadQuotaText');
+    const scanCount = document.getElementById('billingScanCountText');
+    const requestCount = document.getElementById('billingRequestCountText');
+
+    const credits = user && user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits))
+      ? Number(user.credits)
+      : null;
+    if (planName) planName.innerText = user && user.plan ? user.plan : 'No plan assigned';
+    if (planStatus) planStatus.innerText = user && user.accountStatus ? user.accountStatus : 'Status unavailable';
+    if (creditBalance) creditBalance.innerText = credits === null ? 'Credits unavailable' : `${credits} credits`;
+    if (planDescription) {
+      planDescription.innerText = credits === null
+        ? 'Plan limits, subscription status, and renewal dates are not currently available from the account service.'
+        : 'Your account balance is shown above. Any additional plan limits or renewal terms should be confirmed in your account agreement.';
     }
+    if (leadCount) leadCount.innerText = `${getCrmLeads().length} records`;
+    if (scanCount) scanCount.innerText = String(getAuditScans().length);
+    if (requestCount) requestCount.innerText = Array.isArray(window.userCustomRequests)
+      ? String(window.userCustomRequests.length)
+      : '—';
+
+    populateBillingInvoices();
+  }
+
+  function populateBillingInvoices() {
+    const tbody = document.getElementById('billingInvoicesBody');
+    if (!tbody) return;
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    tbody.innerHTML = '';
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No payment records have been returned for this account yet.</td></tr>';
+      return;
+    }
+
+    orders.forEach(order => {
+      const cents = order.amountInCents !== null && order.amountInCents !== undefined
+        ? Number(order.amountInCents)
+        : null;
+      const amount = cents !== null && Number.isFinite(cents)
+        ? cents / 100
+        : (Number.isFinite(Number(order.amount)) ? Number(order.amount) : null);
+      const currency = String(order.currency || 'USD').toUpperCase();
+      let amountLabel = '—';
+      if (amount !== null) {
+        try {
+          amountLabel = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+        } catch {
+          amountLabel = `${amount.toFixed(2)} ${currency}`;
+        }
+      }
+      const dateLabel = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Date unavailable';
+      const status = String(order.status || 'unknown');
+      const paid = status.toLowerCase() === 'paid';
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="py-3 px-4 text-cyan-300">${escapeHTML(order.orderId || 'Order ID unavailable')}</td>
+        <td class="py-3 px-4 font-sans text-white">${escapeHTML(order.productName || order.productKey || 'Dataset')}</td>
+        <td class="py-3 px-4 text-slate-400">${escapeHTML(dateLabel)}</td>
+        <td class="py-3 px-4 font-bold text-white">${escapeHTML(amountLabel)}</td>
+        <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded ${paid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'} text-[10px]">${escapeHTML(status.toUpperCase())}</span></td>
+      `;
+      tbody.appendChild(row);
+    });
   }
 
   // Switch CRM view mode
@@ -2534,80 +2071,92 @@
   };
 
   // Save lead to CRM from outside (Table / Scanner)
-  window.saveLeadToCrm = function (leadObj) {
+  window.saveLeadToCrm = async function (leadObj) {
+    if (!leadObj || !(leadObj.name || leadObj.company)) {
+      notify('This result does not contain a business name.');
+      return;
+    }
     const leads = getCrmLeads();
-    const domain = (leadObj.domain || (leadObj.email ? leadObj.email.split('@')[1] : '') || '').toLowerCase().trim();
-    
-    // Check if already in CRM
-    const existing = leads.find(l => l.domain === domain || (leadObj.name && l.company.toLowerCase() === leadObj.name.toLowerCase()));
+    const domain = String(leadObj.domain || (leadObj.email ? leadObj.email.split('@')[1] : '') || '').toLowerCase().trim();
+    const companyName = String(leadObj.name || leadObj.company);
+    const existing = leads.find(item =>
+      (domain && item.domain === domain) ||
+      ((item.company || '').toLowerCase() === companyName.toLowerCase())
+    );
     if (existing) {
-      notify(`ℹ️ ${existing.company} is already in your CRM (${existing.status})`);
+      notify(existing.company + ' is already in your CRM (' + (existing.status || 'New') + ').');
       window.openCustomerDashboard('crm');
-      window.openLeadDrawer(existing.id);
+      window.openLeadDrawer(existing.id || existing.leadId);
       return;
     }
 
     const newLead = {
-      id: 'lead_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-      company: leadObj.name || leadObj.company || 'New Prospect',
-      domain: domain || 'unknown.com',
-      contactName: leadObj.contactName || 'Managing Partner / Owner',
-      email: leadObj.email || `contact@${domain}`,
-      phone: leadObj.phone || '+1 555 0100',
-      city: leadObj.city || 'Dallas, TX',
-      territory: leadObj.territory || 'texas',
-      industry: leadObj.category || leadObj.industry || 'Commercial Services',
+      company: companyName,
+      domain: domain || null,
+      contactName: leadObj.contactName || null,
+      email: leadObj.email || null,
+      phone: leadObj.phone || null,
+      city: leadObj.city || null,
+      territory: leadObj.territory || null,
+      industry: leadObj.category || leadObj.industry || null,
       status: 'New',
-      priority: 'P1',
-      opportunityScore: 85,
-      speed_ms: parseInt(leadObj.speed) || 750,
-      metaPixel: (leadObj.pixel || '').toLowerCase().includes('meta'),
-      googleAds: (leadObj.pixel || '').toLowerCase().includes('google'),
-      campaignId: 'camp_tx_01',
-      tags: ['saved-from-table'],
-      notes: [
-        { id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'User', text: 'Saved from live dataset preview table.' }
-      ],
-      followUpDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-      savedAt: new Date().toISOString()
+      priority: 'P2',
+      opportunityScore: typeof leadObj.opportunityScore === 'number' ? leadObj.opportunityScore : null,
+      speed_ms: typeof leadObj.speed_ms === 'number' ? leadObj.speed_ms : null,
+      metaPixel: typeof leadObj.metaPixel === 'boolean' ? leadObj.metaPixel : null,
+      googleAds: typeof leadObj.googleAds === 'boolean' ? leadObj.googleAds : null,
+      campaignId: null,
+      tags: ['saved-from-discovery'],
+      notes: [],
+      followUpDate: null
     };
 
-    leads.unshift(newLead);
-    saveCrmLeads(leads);
-    createLeadOnBackend(newLead);
-    notify(`✓ Added ${newLead.company} to CRM Pipeline!`);
+    try {
+      const savedLead = await createLeadOnBackend(newLead);
+      saveCrmLeads([savedLead, ...getCrmLeads()]);
+      notify('Business record added to your CRM.');
+      window.openCustomerDashboard('crm');
+      renderCrmLeads();
+    } catch (error) {
+      console.warn('[CRM] Could not save discovery record:', error);
+      notify(error.message || 'Unable to save this record. Please retry.');
+    }
   };
 
   // Open Lead Profile Drawer
   window.openLeadDrawer = function (leadId) {
     const leads = getCrmLeads();
-    const lead = leads.find(l => l.id === leadId);
+    const lead = leads.find(item => item.id === leadId || item.leadId === leadId);
     if (!lead) return;
 
     activeLeadInDrawer = lead;
-
-    document.getElementById('drawerCompanyName').innerText = lead.company;
-    document.getElementById('drawerDomainAndCity').innerText = `${lead.domain} • ${lead.city}`;
-    document.getElementById('drawerContactName').innerText = lead.contactName || 'Decision Maker';
-    document.getElementById('drawerEmailVal').innerText = lead.email;
-    document.getElementById('drawerPhoneVal').innerText = lead.phone;
-    document.getElementById('drawerSpeedVal').innerText = `${lead.speed_ms || 700}ms`;
-    document.getElementById('drawerScoreVal').innerText = `${lead.opportunityScore || 85}/100`;
-    document.getElementById('drawerTrackingVal').innerText = `${lead.metaPixel ? 'Meta' : 'No Pixel'} / ${lead.googleAds ? 'Google Ads' : 'No Ads'}`;
+    const setText = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) element.innerText = value == null || value === '' ? 'Not provided' : String(value);
+    };
+    setText('drawerCompanyName', lead.company || 'Business record');
+    setText('drawerDomainAndCity', [lead.domain, lead.city].filter(Boolean).join(' • ') || 'Location and domain unavailable');
+    setText('drawerContactName', lead.contactName || 'Not provided');
+    setText('drawerEmailVal', lead.email || 'Not provided');
+    setText('drawerPhoneVal', lead.phone || 'Not provided');
+    setText('drawerSpeedVal', lead.speed_ms == null ? 'Not measured' : String(lead.speed_ms) + 'ms');
+    setText('drawerScoreVal', lead.opportunityScore == null ? 'Not scored' : String(lead.opportunityScore) + '/100');
+    const tracking = lead.metaPixel === null || lead.metaPixel === undefined
+      ? 'Meta: Not assessed'
+      : (lead.metaPixel ? 'Meta: Detected' : 'Meta: Not detected');
+    const ads = lead.googleAds === null || lead.googleAds === undefined
+      ? 'Google Ads: Not assessed'
+      : (lead.googleAds ? 'Google Ads: Detected' : 'Google Ads: Not detected');
+    setText('drawerTrackingVal', tracking + ' / ' + ads);
 
     const statusSel = document.getElementById('drawerStatusSelect');
-    if (statusSel) statusSel.value = lead.status;
-
-    const prioSel = document.getElementById('drawerPrioritySelect');
-    if (prioSel) prioSel.value = lead.priority || 'P1';
-
-    const prioBadge = document.getElementById('drawerPriorityBadge');
-    if (prioBadge) prioBadge.innerText = `${lead.priority || 'P1'} - Opportunity Tier`;
-
-    const dateInp = document.getElementById('drawerFollowUpDateInput');
-    if (dateInp) dateInp.value = lead.followUpDate || '';
-
-    // Render notes
+    if (statusSel) statusSel.value = lead.status || 'New';
+    const prioritySel = document.getElementById('drawerPrioritySelect');
+    if (prioritySel) prioritySel.value = lead.priority || 'P2';
+    const priorityBadge = document.getElementById('drawerPriorityBadge');
+    if (priorityBadge) priorityBadge.innerText = (lead.priority || 'P2') + ' - Priority';
+    const followUp = document.getElementById('drawerFollowUpDateInput');
+    if (followUp) followUp.value = lead.followUpDate || '';
     renderDrawerNotes(lead);
 
     const drawer = document.getElementById('leadProfileDrawer');
@@ -2615,7 +2164,7 @@
       drawer.classList.remove('hidden');
       drawer.classList.add('flex');
     }
-  };
+  }
 
   window.closeLeadDrawer = function () {
     const drawer = document.getElementById('leadProfileDrawer');
@@ -2670,34 +2219,62 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'x-csrf-token': csrfToken
       },
       credentials: 'include',
       body: JSON.stringify(campaign)
-    }).then(res => res.json()).then(data => {
-      if (typeof window.showToast === 'function') {
-        window.showToast(`✓ Campaign plan "${name}" created with ${leadIds.length} target leads!`);
+    }).then(async response => {
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success || !data.campaign) {
+        throw new Error(data.error || 'The server could not save this campaign.');
       }
-      if (typeof renderCampaignsTab === 'function') {
-        renderCampaignsTab();
+      crmCampaignsCache = [data.campaign, ...(crmCampaignsCache || [])];
+      renderCampaignsAndFollowUps();
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Campaign "${name}" saved to your account with ${leadIds.length} target records.`);
       }
     }).catch(err => {
       console.warn('Campaign save error:', err);
       if (typeof window.showToast === 'function') {
-        window.showToast(`✓ Campaign "${name}" staged locally.`);
+        window.showToast(err.message || 'Campaign could not be saved. Please retry.');
       }
     });
   };
 
   // Open Stripe Customer Portal
-  window.openStripeCustomerPortal = function () {
-    if (typeof window.showToast === 'function') {
-      window.showToast('Connecting to Stripe Customer Self-Service Portal...');
+  window.customerDashQuickReorder = function () {
+    window.closeCustomerDashboard();
+    if (typeof window.openQuickBuyModal === 'function') {
+      window.openQuickBuyModal();
     }
-    setTimeout(() => {
-      alert('Subscription management: To update payment methods, cancel, or change seats, access Stripe Customer Portal or email billing@apexintel-b2b.shop.');
-    }, 300);
   };
+
+  window.customerDashLogout = function () {
+    window.closeCustomerDashboard();
+    window.clearCustomerDashboardCache();
+    if (window.ApexAuth && typeof window.ApexAuth.logout === 'function') {
+      window.ApexAuth.logout();
+    } else {
+      if (typeof window.updateNavbarState === 'function') {
+        window.updateNavbarState();
+      }
+      notify('Logged out successfully.');
+    }
+  };
+
+  window.initCustomerDashboard = function () {
+    injectDashboardHTML();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.initCustomerDashboard);
+  } else {
+    window.initCustomerDashboard();
+  }
+
+
+  // Restored workspace actions from the original dashboard implementation.
 
   function renderDrawerNotes(lead) {
     const list = document.getElementById('drawerNotesList');
@@ -2723,6 +2300,7 @@
     }
   }
 
+
   window.saveDrawerStatusChange = function () {
     if (!activeLeadInDrawer) return;
     const val = document.getElementById('drawerStatusSelect').value;
@@ -2735,6 +2313,7 @@
     notify(`Status updated to "${val}"`);
     renderCrmLeads();
   };
+
 
   window.saveDrawerPriorityChange = function () {
     if (!activeLeadInDrawer) return;
@@ -2749,6 +2328,7 @@
     renderCrmLeads();
   };
 
+
   window.saveDrawerFollowUpDate = function () {
     if (!activeLeadInDrawer) return;
     const val = document.getElementById('drawerFollowUpDateInput').value;
@@ -2761,6 +2341,7 @@
     notify(`Follow-up date scheduled for ${val}`);
     renderCrmLeads();
   };
+
 
   window.saveNewLeadNote = function () {
     if (!activeLeadInDrawer) return;
@@ -2791,34 +2372,38 @@
     renderDrawerNotes(activeLeadInDrawer);
     notify('Note added to lead record!');
   };
-
   window.copyDrawerEmail = function () {
-    if (activeLeadInDrawer) {
-      navigator.clipboard.writeText(activeLeadInDrawer.email);
-      notify(`Copied ${activeLeadInDrawer.email} to clipboard!`);
+    if (!activeLeadInDrawer || !activeLeadInDrawer.email) {
+      notify('No email address is listed for this record.');
+      return;
     }
-  };
-
+    navigator.clipboard.writeText(activeLeadInDrawer.email);
+    notify('Email address copied.');
+  }
   window.generateOutreachFromDrawer = function () {
     if (!activeLeadInDrawer) return;
     window.closeLeadDrawer();
     window.closeCustomerDashboard();
-    
-    // Populate Tool 3 Outreach Generator
+
     window.currentSelectedLead = {
-      name: activeLeadInDrawer.company,
-      domain: activeLeadInDrawer.domain,
-      speed: `${activeLeadInDrawer.speed_ms || 750}ms`,
-      pixel: activeLeadInDrawer.metaPixel ? 'Meta Pixel Active' : 'No Pixel',
-      tech: activeLeadInDrawer.googleAds ? 'Google Ads Active' : 'Organic Only'
+      name: activeLeadInDrawer.company || 'Business record',
+      domain: activeLeadInDrawer.domain || '',
+      speed: activeLeadInDrawer.speed_ms == null ? 'Not measured' : String(activeLeadInDrawer.speed_ms) + 'ms',
+      pixel: activeLeadInDrawer.metaPixel === null || activeLeadInDrawer.metaPixel === undefined
+        ? 'Not assessed'
+        : (activeLeadInDrawer.metaPixel ? 'Meta Pixel detected' : 'Meta Pixel not detected'),
+      tech: activeLeadInDrawer.googleAds === null || activeLeadInDrawer.googleAds === undefined
+        ? 'Not assessed'
+        : (activeLeadInDrawer.googleAds ? 'Google Ads tag detected' : 'Google Ads tag not detected')
     };
 
     location.hash = '#cold-outreach';
     if (typeof window.regenerateOutreachTemplates === 'function') {
       window.regenerateOutreachTemplates();
     }
-    notify(`Generated tailored outreach templates for ${activeLeadInDrawer.company}!`);
-  };
+    notify('Outreach draft context prepared. Verify all details before sending.');
+  }
+
 
   window.deleteLeadFromCrm = function (leadId) {
     if (!confirm('Are you sure you want to remove this lead from your CRM?')) return;
@@ -2830,7 +2415,6 @@
     renderCrmLeads();
   };
 
-  // Follow-up actions
   window.markFollowUpComplete = function (leadId) {
     const leads = getCrmLeads();
     const lead = leads.find(l => l.id === leadId);
@@ -2844,6 +2428,7 @@
       renderCrmLeads();
     }
   };
+
 
   window.snoozeFollowUp = function (leadId, days) {
     const leads = getCrmLeads();
@@ -2860,7 +2445,6 @@
     }
   };
 
-  // Add Manual Lead Modal
   window.openAddLeadModal = function () {
     injectDashboardHTML();
     const modal = document.getElementById('addLeadModal');
@@ -2870,6 +2454,7 @@
     }
   };
 
+
   window.closeAddLeadModal = function () {
     const modal = document.getElementById('addLeadModal');
     if (modal) {
@@ -2877,9 +2462,8 @@
       modal.classList.remove('flex');
     }
   };
-
-  window.submitNewManualLead = function (e) {
-    e.preventDefault();
+  window.submitNewManualLead = async function (event) {
+    event.preventDefault();
     const company = document.getElementById('addLeadCompany').value.trim();
     const domain = document.getElementById('addLeadDomain').value.trim().toLowerCase();
     const city = document.getElementById('addLeadCity').value.trim();
@@ -2889,313 +2473,293 @@
     const priority = document.getElementById('addLeadPriority').value;
     const note = document.getElementById('addLeadNote').value.trim();
 
-    const leads = getCrmLeads();
     const newLead = {
-      id: 'lead_' + Date.now(),
       company,
-      domain,
-      contactName: 'Executive',
-      email,
-      phone: phone || '+1 555 0100',
-      city,
-      territory: 'custom',
-      industry: 'B2B Client',
+      domain: domain || null,
+      contactName: null,
+      email: email || null,
+      phone: phone || null,
+      city: city || null,
+      territory: null,
+      industry: null,
       status,
       priority,
-      opportunityScore: 88,
-      speed_ms: 650,
-      metaPixel: false,
-      googleAds: true,
-      campaignId: 'camp_tx_01',
+      opportunityScore: null,
+      speed_ms: null,
+      metaPixel: null,
+      googleAds: null,
+      campaignId: null,
       tags: ['manual-entry'],
-      notes: note ? [{ id: 'n_' + Date.now(), timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'User', text: note }] : [],
-      followUpDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-      savedAt: new Date().toISOString()
+      notes: note ? [{
+        id: 'n_' + Date.now(),
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        author: getUserData().name || 'User',
+        text: note
+      }] : [],
+      followUpDate: null
     };
 
-    leads.unshift(newLead);
-    saveCrmLeads(leads);
-    createLeadOnBackend(newLead);
-    window.closeAddLeadModal();
-    notify(`✓ Saved ${company} to CRM Pipeline!`);
-    renderCrmLeads();
-  };
-
-  // Export CRM CSV
+    try {
+      const savedLead = await createLeadOnBackend(newLead);
+      saveCrmLeads([savedLead, ...getCrmLeads()]);
+      window.closeAddLeadModal();
+      notify('Business record saved to your CRM.');
+      renderCrmLeads();
+    } catch (error) {
+      console.warn('[CRM] Manual lead creation failed:', error);
+      notify(error.message || 'Unable to save this record. Please retry.');
+    }
+  }
   window.exportCrmLeadsCsv = function () {
     const leads = getCrmLeads();
-    let csv = 'Company,Domain,Email,Phone,City,Status,Priority,Opportunity_Score,Follow_Up_Date\n';
-    leads.forEach(l => {
-      csv += `"${l.company}","${l.domain}","${l.email}","${l.phone}","${l.city}","${l.status}","${l.priority}","${l.opportunityScore}","${l.followUpDate || ''}"\n`;
-    });
+    if (!leads.length) {
+      notify('There are no CRM records to export yet.');
+      return;
+    }
+    const headers = ['Company', 'Domain', 'Email', 'Phone', 'City', 'Status', 'Priority', 'Opportunity Score', 'Follow-up Date'];
+    const escapeCsv = value => '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+    const csv = [headers.map(escapeCsv).join(',')]
+      .concat(leads.map(lead => [
+        lead.company, lead.domain, lead.email, lead.phone, lead.city,
+        lead.status, lead.priority, lead.opportunityScore, lead.followUpDate
+      ].map(escapeCsv).join(',')))
+      .join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `apexintel_crm_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.href = url;
+    link.download = 'apexintel_crm_export_' + new Date().toISOString().split('T')[0] + '.csv';
+    document.body.appendChild(link);
     link.click();
-    notify(`Exported ${leads.length} CRM prospects to CSV!`);
-  };
-
-  // Export Audit Report
+    link.remove();
+    URL.revokeObjectURL(url);
+    notify('Exported ' + leads.length + ' CRM records.');
+  }
   window.exportAuditReport = function (auditId) {
     const audits = getAuditScans();
-    const audit = audits.find(a => a.id === auditId) || audits[0];
+    const audit = audits.find(item => item.id === auditId) || audits[0];
+    if (!audit) {
+      notify('No saved audit is available to export yet.');
+      return;
+    }
 
-    const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Website Intelligence Diagnostic — ${audit.domain}</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #070B14; color: #E2E8F0; padding: 40px; margin: 0; }
-    .container { max-width: 800px; margin: 0 auto; background: #0F172A; border: 1px solid #1E293B; border-radius: 20px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-    .header { border-bottom: 1px solid #1E293B; padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-    .badge { background: rgba(99, 102, 241, 0.15); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
-    .card { background: #070B14; border: 1px solid #1E293B; border-radius: 12px; padding: 16px; text-align: center; }
-    .card-label { font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 700; }
-    .card-val { font-size: 20px; font-weight: 900; color: #38BDF8; margin-top: 6px; font-family: monospace; }
-    .pitch-box { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 20px; margin-top: 24px; }
-    .footer { margin-top: 32px; border-top: 1px solid #1E293B; padding-top: 16px; font-size: 11px; color: #64748B; text-align: center; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <span class="badge">Technical Audit Lab</span>
-        <h1 style="margin: 8px 0 0 0; font-size: 24px; color: #FFFFFF;">${audit.company || audit.domain}</h1>
-        <p style="margin: 4px 0 0 0; font-size: 12px; color: #94A3B8; font-family: monospace;">Target Domain: ${audit.domain}</p>
-      </div>
-      <div style="text-align: right;">
-        <span style="font-size: 11px; color: #64748B;">Audit Date</span>
-        <div style="font-size: 12px; font-weight: 700; color: #E2E8F0;">${audit.scannedAt}</div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="card-label">Mobile TTFB Latency</div>
-        <div class="card-val" style="color: ${audit.speed_ms > 900 ? '#F43F5E' : '#10B981'};">${audit.speed_ms}ms</div>
-      </div>
-      <div class="card">
-        <div class="card-label">CMS Platform</div>
-        <div class="card-val" style="font-size: 14px; color: #F8FAFC;">${audit.cms}</div>
-      </div>
-      <div class="card">
-        <div class="card-label">Opportunity Score</div>
-        <div class="card-val" style="color: #6366F1;">${audit.icpScore}/100</div>
-      </div>
-    </div>
-
-    <div class="pitch-box">
-      <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #34D399; text-transform: uppercase;">Diagnostic Strategic Angle</h3>
-      <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #CBD5E1;">"${audit.pitch}"</p>
-    </div>
-
-    <div class="footer">
-      Generated via ApexIntel B2B Website Intelligence Systems • Cloud Fulfillment ap-southeast-2
-    </div>
-  </div>
-</body>
-</html>`;
-
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+    const safe = {
+      domain: escapeHTML(audit.domain || ''),
+      company: escapeHTML(audit.company || audit.domain || 'Website audit'),
+      scannedAt: escapeHTML(audit.scannedAt ? new Date(audit.scannedAt).toLocaleString() : 'Date unavailable'),
+      speed: audit.speed_ms == null ? 'Not measured' : escapeHTML(audit.speed_ms) + 'ms',
+      cms: escapeHTML(audit.cms || 'Not detected'),
+      meta: audit.metaPixel === null || audit.metaPixel === undefined ? 'Unknown' : (audit.metaPixel ? 'Detected' : 'Not detected'),
+      ads: audit.googleAds === null || audit.googleAds === undefined ? 'Unknown' : (audit.googleAds ? 'Detected' : 'Not detected'),
+      score: audit.icpScore == null ? 'Not scored' : escapeHTML(audit.icpScore) + '/100',
+      pitch: escapeHTML(audit.pitch || 'No outreach suggestion was generated.'),
+      failed: escapeHTML(Array.isArray(audit.failedChecks) ? audit.failedChecks.join(', ') : 'Not available')
+    };
+    const report = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Website Diagnostic — ' + safe.domain + '</title>' +
+      '<style>body{font:15px/1.6 Arial,sans-serif;background:#070b14;color:#e2e8f0;padding:32px}.card{max-width:760px;margin:auto;background:#0f172a;border:1px solid #334155;border-radius:18px;padding:28px}h1{font-size:24px}small{color:#94a3b8}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.metric{background:#070b14;border:1px solid #334155;border-radius:12px;padding:14px}.label{font-size:11px;color:#94a3b8;text-transform:uppercase}.value{font-size:20px;font-weight:800;color:#38bdf8}.note{margin-top:22px;padding:16px;border:1px solid #334155;border-radius:12px}</style></head><body><main class="card"><small>APEXINTEL • WEBSITE DIAGNOSTIC</small><h1>' + safe.company + '</h1><p>Target domain: ' + safe.domain + '</p><p><small>Scanned: ' + safe.scannedAt + '</small></p><section class="grid"><div class="metric"><div class="label">Response time</div><div class="value">' + safe.speed + '</div></div><div class="metric"><div class="label">Technology</div><div class="value">' + safe.cms + '</div></div><div class="metric"><div class="label">Meta Pixel</div><div class="value">' + safe.meta + '</div></div><div class="metric"><div class="label">Google Ads tag</div><div class="value">' + safe.ads + '</div></div><div class="metric"><div class="label">Research score</div><div class="value">' + safe.score + '</div></div><div class="metric"><div class="label">Failed checks</div><div class="value">' + safe.failed + '</div></div></section><section class="note"><h2>Suggested research angle</h2><p>' + safe.pitch + '</p><small>Point-in-time website diagnostics are not a guarantee of performance, tracking coverage, or conversion outcomes.</small></section></main></body></html>';
+    const blob = new Blob([report], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `audit_report_${audit.domain}.html`;
+    link.href = url;
+    link.download = 'audit_report_' + String(audit.domain || 'website').replace(/[^a-z0-9.-]/gi, '_') + '.html';
+    document.body.appendChild(link);
     link.click();
-    notify(`Exported client audit report for ${audit.domain}!`);
-  };
+    link.remove();
+    URL.revokeObjectURL(url);
+    notify('Audit report exported.');
+  }
+  window.downloadCustomExtractionCsv = function (requestId) {
+    const requests = Array.isArray(window.userCustomRequests) ? window.userCustomRequests : [];
+    const request = requests.find(item => item.requestId === requestId || item.id === requestId);
+    if (!request) {
+      notify('Custom research request was not found for this account.');
+      return;
+    }
 
-  // Download custom request CSV
-  window.downloadCustomExtractionCsv = function (reqId) {
-    const list = getCustomRequests();
-    const req = list.find(r => r.id === reqId) || list[0];
-    
-    let csv = 'Company,Email,Phone,City,Industry,Territory,Status\n';
-    csv += `"Phoenix Sun Solar","service@phoenixsun.com","+1 602 555 8920","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Desert Ridge Roofing Pros","office@desertridgeroof.com","+1 480 555 1204","Scottsdale, AZ","${req.industry}","${req.territory}","Verified"\n`;
-    csv += `"Camelback Commercial HVAC","dispatch@camelbackmech.com","+1 602 555 4411","Phoenix, AZ","${req.industry}","${req.territory}","Verified"\n`;
+    const records = Array.isArray(request.deliveredRecords)
+      ? request.deliveredRecords
+      : (Array.isArray(request.results) ? request.results : []);
+    if (!records.length) {
+      notify('No delivered records are attached to this request yet.');
+      return;
+    }
 
+    const headers = Array.from(new Set(records.flatMap(record => Object.keys(record || {}))));
+    const escapeCsv = value => '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+    const csv = [headers.map(escapeCsv).join(',')]
+      .concat(records.map(record => headers.map(key => escapeCsv(record[key])).join(',')))
+      .join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `custom_extraction_${req.id}.csv`;
+    link.href = url;
+    link.download = 'custom_research_' + String(request.requestId || request.id).replace(/[^a-z0-9_-]/gi, '_') + '.csv';
+    document.body.appendChild(link);
     link.click();
-    notify(`Downloaded custom dataset for ${req.id}!`);
-  };
-
-  // --- Server-Authoritative User Purchased Orders & S3 Fulfillment ---
+    link.remove();
+    URL.revokeObjectURL(url);
+    notify('Delivered records exported.');
+  }
   window.loadUserOrdersFromBackend = async function () {
     const user = getUserData();
-    if (!user || !user.email) return;
+    if (!user || !user.email) {
+      userPurchasedOrders = [];
+      populateDatasetsList();
+      populateLedgerList();
+      populateBillingInvoices();
+      return;
+    }
 
     try {
-      const resp = await fetch('/api/orders', {
+      const response = await fetch('/api/orders', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Accept': 'application/json' },
         credentials: 'include'
       });
-
-      if (!resp.ok) {
-        if (resp.status === 401) {
-          userPurchasedOrders = [];
-          populateDatasetsList();
-          return;
-        }
-        throw new Error(`Failed to load orders (${resp.status})`);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !Array.isArray(data.orders)) {
+        if (response.status === 401) userPurchasedOrders = [];
+        else throw new Error(data.error || 'Unable to load account orders.');
+      } else {
+        userPurchasedOrders = data.orders;
       }
-
-      const data = await resp.json();
-      userPurchasedOrders = data.orders || [];
-      populateDatasetsList();
-    } catch (err) {
-      console.warn('[Orders Load Error]:', err.message);
-      populateDatasetsList();
+    } catch (error) {
+      console.warn('[Orders Load Error]:', error.message);
+      userPurchasedOrders = [];
     }
-  };
+
+    populateDatasetsList();
+    populateLedgerList();
+    populateBillingInvoices();
+    renderBillingTab();
+  }
+
 
   function populateDatasetsList() {
     const container = document.getElementById('purchasedDatasetsList');
     const ownedEl = document.getElementById('datasetsOwnedCount');
     const totalEl = document.getElementById('datasetsTotalLeadsCount');
-    const paidOrders = (userPurchasedOrders || []).filter(o => o.status === 'paid');
-    const packLeadCounts = { texas: 24, florida: 8, medspas: 9, hvac: 12 };
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    const paidOrders = orders.filter(order => String(order.status || '').toLowerCase() === 'paid');
     if (ownedEl) ownedEl.innerText = String(paidOrders.length);
     if (totalEl) {
-      const total = paidOrders.reduce((sum, o) => sum + (Number(o.leadsCount) || packLeadCounts[o.productKey] || 0), 0);
+      const total = paidOrders.reduce((sum, order) => sum + (order.leadsCount !== null && order.leadsCount !== undefined && Number.isFinite(Number(order.leadsCount)) ? Number(order.leadsCount) : 0), 0);
       totalEl.innerText = String(total);
     }
     if (!container) return;
-
     container.innerHTML = '';
 
-    if (!userPurchasedOrders || userPurchasedOrders.length === 0) {
+    if (!orders.length) {
       container.innerHTML = `
         <div class="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-3">
           <div class="text-3xl">📦</div>
           <h5 class="text-white font-bold text-sm">No Purchased Datasets Yet</h5>
-          <p class="text-xs text-slate-400 max-w-sm mx-auto">
-            Your verified commercial datasets will appear here immediately upon completing payment.
-          </p>
-          <button onclick="window.customerDashQuickReorder()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md shadow-indigo-600/30">
-            Browse Intelligence Catalog &rarr;
-          </button>
-        </div>
-      `;
+          <p class="text-xs text-slate-400 max-w-sm mx-auto">Paid dataset orders will appear here after payment is confirmed by the server.</p>
+          <button onclick="window.customerDashQuickReorder()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shadow-md shadow-indigo-600/30">Browse Dataset Catalog &rarr;</button>
+        </div>`;
       return;
     }
 
-    userPurchasedOrders.forEach(order => {
-      const isPaid = order.status === 'paid';
-      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent';
+    orders.forEach(order => {
+      const isPaid = String(order.status || '').toLowerCase() === 'paid';
+      const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Date unavailable';
+      const centsValue = order.amountInCents !== null && order.amountInCents !== undefined ? Number(order.amountInCents) : null;
+      const amountValue = centsValue !== null && Number.isFinite(centsValue) ? centsValue / 100 : Number(order.amount);
+      const amountLabel = Number.isFinite(amountValue) ? new Intl.NumberFormat('en-US', { style: 'currency', currency: String(order.currency || 'USD').toUpperCase() }).format(amountValue) : 'Amount unavailable';
+      const productName = escapeHTML(order.productName || order.productKey || 'Dataset');
+      const filename = escapeHTML(order.filename || 'Dataset file');
+      const orderId = escapeHTML(order.orderId || '');
+      const productKey = escapeHTML(order.productKey || '');
+      const status = escapeHTML(isPaid ? 'Paid' : (order.status || 'Pending'));
+      const recordCount = order.leadsCount !== null && order.leadsCount !== undefined && Number.isFinite(Number(order.leadsCount)) ? Number(order.leadsCount) : null;
       const card = document.createElement('div');
       card.className = 'bg-slate-900/80 border border-slate-800 hover:border-slate-700 p-4 rounded-2xl transition flex flex-col md:flex-row md:items-center justify-between gap-4';
       card.innerHTML = `
         <div class="flex items-start gap-3.5">
-          <div class="w-12 h-12 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">
-            📊
-          </div>
+          <div class="w-12 h-12 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">📊</div>
           <div>
-            <div class="flex items-center gap-2">
-              <h5 class="font-bold text-white text-sm">${order.productName || 'Intelligence Pack'}</h5>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
-                ${isPaid ? '✓ Unlocked & Verified' : '⏳ Pending Payment'}
-              </span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h5 class="font-bold text-white text-sm">${productName}</h5>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">${status}</span>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Commercial Dataset • ${order.filename || 'Enriched_Audited.xlsx'}</p>
-            <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-500 font-mono">
-              <span>Ordered: ${orderDate}</span>
-              <span>•</span>
-              <span class="text-slate-400 font-bold">$${order.amount}.00</span>
-              <span>•</span>
-              <span class="text-indigo-400">${order.orderId}</span>
+            <p class="text-xs text-slate-400 mt-0.5">${recordCount === null ? 'Record count unavailable' : recordCount + ' business records'} • ${filename}</p>
+            <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-500 font-mono flex-wrap">
+              <span>Ordered: ${escapeHTML(orderDate)}</span><span>•</span><span class="text-slate-400 font-bold">${escapeHTML(amountLabel)}</span><span>•</span><span class="text-indigo-400">${orderId || 'Order ID unavailable'}</span>
             </div>
           </div>
         </div>
-
         <div class="flex items-center gap-2 shrink-0">
-          ${isPaid ? `
-            <button onclick="window.downloadDatasetOrder('${order.orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
-              <span>📥 Download Verified (.XLSX)</span>
-            </button>
-          ` : `
-            <button onclick="window.redirectToStripeHostedCheckout('${order.productKey}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md">
-              <span>Complete Payment ($${order.amount}.00)</span>
-            </button>
-          `}
-        </div>
-      `;
+          ${isPaid
+            ? `<button onclick="window.downloadDatasetOrder('${orderId}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"><span>📥 Download XLSX</span></button>`
+            : `<span class="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-bold">Awaiting payment confirmation</span>`}
+        </div>`;
       container.appendChild(card);
     });
   }
 
   function populateLedgerList() {
     const tbody = document.getElementById('dedupeLedgerTableBody');
+    const countEl = document.getElementById('customerOrderHistoryCount');
     if (!tbody) return;
-
+    const orders = Array.isArray(userPurchasedOrders) ? userPurchasedOrders : [];
+    if (countEl) countEl.innerText = String(orders.length);
     tbody.innerHTML = '';
-    dedupeLedgerRecords.forEach(rec => {
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-slate-900/40 transition';
-      tr.innerHTML = `
-        <td class="py-2.5 px-4 text-indigo-400 font-bold flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          ${rec.domain}
-        </td>
-        <td class="py-2.5 px-4 text-white">${rec.company}</td>
-        <td class="py-2.5 px-4 text-slate-400">${rec.territory}</td>
-        <td class="py-2.5 px-4 text-slate-400">${rec.date}</td>
-        <td class="py-2.5 px-4 text-right">
-          <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">
-            ✓ ${rec.status}
-          </span>
-        </td>
-      `;
-      tbody.appendChild(tr);
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-slate-500">No orders have been recorded for this account yet.</td></tr>';
+      return;
+    }
+    orders.forEach(order => {
+      const status = String(order.status || 'unknown');
+      const recordCount = order.leadsCount !== null && order.leadsCount !== undefined && Number.isFinite(Number(order.leadsCount)) ? Number(order.leadsCount) : null;
+      const date = order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Date unavailable';
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-slate-900/40 transition';
+      row.innerHTML = '<td class="py-2.5 px-4 text-indigo-300 font-bold">' + escapeHTML(order.orderId || 'Order ID unavailable') + '</td>' +
+        '<td class="py-2.5 px-4 text-white">' + escapeHTML(order.productName || order.productKey || 'Dataset') + '</td>' +
+        '<td class="py-2.5 px-4 text-slate-300">' + (recordCount === null ? 'Not specified' : recordCount) + '</td>' +
+        '<td class="py-2.5 px-4 text-slate-400">' + escapeHTML(date) + '</td>' +
+        '<td class="py-2.5 px-4 text-right"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-bold">' + escapeHTML(status) + '</span></td>';
+      tbody.appendChild(row);
     });
   }
 
   function refreshDashboardUserInfo() {
-    const user = getUserData();
+    const user = getUserData() || {};
     const avatarEl = document.getElementById('dashUserAvatar');
     const nameEl = document.getElementById('dashUserName');
     const companyEl = document.getElementById('dashUserCompany');
     const creditsEl = document.getElementById('dashUserCredits');
     const planBadge = document.getElementById('dashUserPlanBadge');
+    const displayName = user.name || 'Account';
+    const credits = user.credits !== null && user.credits !== undefined && Number.isFinite(Number(user.credits))
+      ? Number(user.credits)
+      : null;
+    const creditsLabel = credits === null ? 'Credits unavailable' : credits + ' Account Credits';
 
-    const firstLetter = (user.name || 'User').charAt(0).toUpperCase();
-    if (avatarEl) avatarEl.innerText = firstLetter;
-    if (nameEl) nameEl.innerText = user.name || 'Agency Member';
-    if (planBadge) planBadge.innerText = user.plan || 'Agency Growth';
-    if (creditsEl) creditsEl.innerText = `${user.credits || 250} Leads Available`;
-    if (companyEl) companyEl.innerHTML = `${user.company || 'Direct Agency'} • <span class="text-indigo-400 font-mono font-bold">${user.credits || 250} Leads Available</span>`;
+    if (avatarEl) avatarEl.innerText = displayName.charAt(0).toUpperCase();
+    if (nameEl) nameEl.innerText = displayName;
+    if (planBadge) planBadge.innerText = user.plan || 'No plan assigned';
+    if (creditsEl) creditsEl.innerText = creditsLabel;
+    if (companyEl) companyEl.innerHTML = escapeHTML(user.company || 'Company not set') +
+      ' • <span class="text-indigo-400 font-mono font-bold">' + escapeHTML(creditsLabel) + '</span>';
 
-    const setNam = document.getElementById('custSettingName');
-    const setCom = document.getElementById('custSettingCompany');
-    const setEma = document.getElementById('custSettingEmail');
-    const setPla = document.getElementById('custSettingPlan');
-
-    if (setNam) setNam.value = user.name || '';
-    if (setCom) setCom.value = user.company || '';
-    if (setEma) setEma.value = user.email || '';
-    if (setPla) setPla.value = user.plan || 'Enterprise Pro (Lifetime)';
-
-    const key = getCustomerApiKey();
-    const keyInput = document.getElementById('custApiKeyInput');
-    const keyPlaceholder = document.getElementById('curlKeyPlaceholder');
-    if (keyInput) keyInput.value = key;
-    if (keyPlaceholder) keyPlaceholder.innerText = key;
+    const fields = {
+      custSettingNameDisplay: displayName,
+      custSettingCompanyDisplay: user.company || 'Company not set',
+      custSettingEmailDisplay: user.email || 'Email unavailable',
+      custSettingPlanDisplay: user.plan || 'No plan assigned'
+    };
+    Object.entries(fields).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = value;
+    });
   }
-
   window.openCustomerDashboard = function (initialTab = 'overview') {
     injectDashboardHTML();
     refreshDashboardUserInfo();
     window.loadCrmLeadsFromBackend();
     window.loadUserOrdersFromBackend();
+    if (typeof window.loadCrmCampaignsFromBackend === 'function') window.loadCrmCampaignsFromBackend();
     window.switchCustomerTab(initialTab);
 
     const modal = document.getElementById('customerDashboard');
@@ -3203,7 +2767,8 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
     }
-  };
+  }
+
 
   window.closeCustomerDashboard = function () {
     const modal = document.getElementById('customerDashboard');
@@ -3213,57 +2778,6 @@
     }
   };
 
-  window.copyCustomerApiKey = function () {
-    const input = document.getElementById('custApiKeyInput');
-    if (input) {
-      navigator.clipboard.writeText(input.value);
-      notify('API Key copied to clipboard! Keep it secure.');
-    }
-  };
-
-  window.regenerateCustomerApiKey = function () {
-    if (confirm('Regenerating will revoke your existing API key immediately. Proceed?')) {
-      const newKey = 'apex_live_sec_' + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10) + '2026';
-      localStorage.setItem('apexintel_api_key', newKey);
-      refreshDashboardUserInfo();
-      notify('New API Key generated & activated!');
-    }
-  };
-
-  window.saveCustomerWebhook = function () {
-    const url = document.getElementById('custWebhookInput').value.trim();
-    if (url) {
-      localStorage.setItem('apexintel_webhook_url', url);
-      notify('Webhook endpoint saved & verified!');
-    }
-  };
-
-  window.copyCustomerCurlSnippet = function () {
-    const snippet = document.getElementById('custCurlCode').innerText;
-    navigator.clipboard.writeText(snippet);
-    notify('cURL code snippet copied to clipboard!');
-  };
-
-  window.saveCustomerSettingsProfile = function () {
-    const name = document.getElementById('custSettingName').value.trim();
-    const company = document.getElementById('custSettingCompany').value.trim();
-    const email = document.getElementById('custSettingEmail').value.trim();
-
-    const user = getUserData();
-    user.name = name || user.name;
-    user.company = company || user.company;
-    user.email = email || user.email;
-
-    if (window.ApexAuth && typeof window.ApexAuth.updateCurrentUser === 'function') {
-      window.ApexAuth.updateCurrentUser(user);
-    }
-    if (typeof window.updateNavbarState === 'function') {
-      window.updateNavbarState();
-    }
-
-    refreshDashboardUserInfo();
-    notify('Profile & Agency settings updated successfully!');
-  };
 
   window.downloadDatasetOrder = async function (orderId) {
     if (!orderId) {
@@ -3307,83 +2821,18 @@
       notify(`Download error: ${err.message}`);
     }
   };
-
   window.downloadDatasetPacks = function (keyOrOrderId) {
-    const order = userPurchasedOrders.find(o => o.orderId === keyOrOrderId || o.productKey === keyOrOrderId);
+    const order = (userPurchasedOrders || []).find(item =>
+      item.status === 'paid' && (item.orderId === keyOrOrderId || item.productKey === keyOrOrderId)
+    );
     if (order) {
       window.downloadDatasetOrder(order.orderId);
     } else {
-      notify('No paid order found for this dataset. Please complete checkout to unlock.');
+      notify('No paid order found for this dataset. Complete checkout to unlock the download.');
     }
-  };
-
-  window.downloadCombinedMasterDataset = function () {
-    notify('Datasets are securely delivered per verified order. Access individual packs above.');
-  };
-
-  window.downloadCustomerInvoice = function (invId, product, amount, date) {
-    const user = getUserData();
-    const receipt = `=====================================================
-APEXINTEL B2B COMMERCIAL INTELLIGENCE — OFFICIAL RECEIPT
-=====================================================
-Invoice ID:      ${invId}
-Date:            ${date}
-Client Name:     ${user.name}
-Agency:          ${user.company}
-Email:           ${user.email}
------------------------------------------------------
-Item Description:
-1x ${product}
-- Verified Decision-Maker Dataset Access
-- 100% Live DNS MX Resolution
-- Exact Mobile Latency Speed (ms)
-- Ad Pixel Tracking Status (Meta / Google)
------------------------------------------------------
-Subtotal:        ${amount}
-Tax (0.0%):      $0.00 USD
-TOTAL PAID:      ${amount}
-Payment Status:  PAID (Stripe 256-bit SSL)
-AWS Ledger Hash: sha256:${Math.random().toString(36).substring(2, 14)}...
-=====================================================
-ApexIntel Intelligence Systems • Cloud Fulfillment
-Support: support@apexintel-b2b.shop
-=====================================================`;
-
-    const blob = new Blob([receipt], { type: 'text/plain;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${invId}_receipt.txt`;
-    link.click();
-    notify(`Receipt ${invId} downloaded!`);
-  };
-
-  window.customerDashQuickReorder = function () {
-    window.closeCustomerDashboard();
-    if (typeof window.openQuickBuyModal === 'function') {
-      window.openQuickBuyModal();
-    }
-  };
-
-  window.customerDashLogout = function () {
-    window.closeCustomerDashboard();
-    window.clearCustomerDashboardCache();
-    if (window.ApexAuth && typeof window.ApexAuth.logout === 'function') {
-      window.ApexAuth.logout();
-    } else {
-      if (typeof window.updateNavbarState === 'function') {
-        window.updateNavbarState();
-      }
-      notify('Logged out successfully.');
-    }
-  };
-
-  window.initCustomerDashboard = function () {
-    injectDashboardHTML();
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', window.initCustomerDashboard);
-  } else {
-    window.initCustomerDashboard();
   }
+  window.downloadCombinedMasterDataset = function () {
+    notify('Datasets are delivered per paid order. Use the download action on each purchased dataset.');
+  }
+
 })();

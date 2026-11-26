@@ -29,12 +29,16 @@
   window.currentScannedProfile = null;
 
   window.runDomainScan = async function () {
-    const rawInput = document.getElementById('scanDomainInput')?.value.trim();
-    const domain = (rawInput || 'dallasroofer.com').replace(/^(https?:\/\/)?(www\.)?/, '').split(/[\/\?#]/)[0].toLowerCase();
+    const rawInput = document.getElementById('scanDomainInput')?.value.trim() || '';
+    if (!rawInput) {
+      if (typeof window.showToast === 'function') window.showToast('Enter a website domain to scan.');
+      return;
+    }
+    const domain = rawInput.replace(/^(https?:\/\/)?(www\.)?/, '').split(/[\/\?#]/)[0].toLowerCase();
 
     // Client-side quick check
-    if (!domain) {
-      if (typeof window.showToast === 'function') window.showToast('Please enter a target domain.');
+    if (!domain || !domain.includes('.')) {
+      if (typeof window.showToast === 'function') window.showToast('Enter a valid website domain.');
       return;
     }
 
@@ -130,6 +134,7 @@
           scanBtn.classList.remove('opacity-50');
         }
         window.currentScannedProfile = data.scan;
+        if (typeof window.recordCustomerAuditScan === 'function') window.recordCustomerAuditScan(data.scan);
         renderScanResults(data.scan);
         if (typeof window.showToast === 'function') {
           window.showToast(`Verified live signal audit complete for ${data.scan.domain}`);
@@ -269,7 +274,7 @@
             <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
               <span>💡</span> Auto-Generated Turnkey Cold Pitch Angle:
             </span>
-            <span class="text-[11px] text-indigo-400 font-mono">100% Ready for Outreach</span>
+            <span class="text-[11px] text-indigo-400 font-mono">Review before outreach</span>
           </div>
           <p id="scanPitchText" class="text-xs text-slate-300 font-mono bg-slate-900 p-4 rounded-xl border border-slate-800 leading-relaxed">
             "${suggestedPitch}"
@@ -440,7 +445,7 @@
     const retEl = document.getElementById('roiRetainerVal');
     const monEl = document.getElementById('roiMonthsVal');
 
-    if (vEl) vEl.innerText = `${volume} Verified Leads`;
+    if (vEl) vEl.innerText = `${volume} Business Records`;
     if (rEl) rEl.innerText = `${(replyRate * 100).toFixed(1)}%`;
     if (mEl) mEl.innerText = `${(meetingRate * 100).toFixed(0)}%`;
     if (cEl) cEl.innerText = `${(closeRate * 100).toFixed(0)}%`;

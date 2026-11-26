@@ -63,7 +63,7 @@ export async function dispatchCrmRoute(reqObj, service = crmService, authSvc = u
   const userId = authenticatedUser.userId;
 
   // 3. CSRF & Content-Type validation on mutation operations
-  if (['POST', 'PUT', 'DELETE'].includes(method)) {
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
     const origin = headers.origin || headers.Origin || null;
     const referer = headers.referer || headers.Referer || null;
     const originCheck = validateRequestOrigin(origin, referer);
@@ -75,7 +75,7 @@ export async function dispatchCrmRoute(reqObj, service = crmService, authSvc = u
       };
     }
 
-    if (['POST', 'PUT'].includes(method)) {
+    if (['POST', 'PUT', 'PATCH'].includes(method)) {
       const contentType = headers['content-type'] || headers['Content-Type'] || '';
       if (!validateJsonContentType(contentType)) {
         return {

@@ -79,7 +79,7 @@
 
     if (imgEl) imgEl.src = pack.img;
     if (titleEl) titleEl.innerText = pack.title;
-    if (descEl) descEl.innerText = `${pack.leadsCount} Leads • 100% DNS MX-Verified • ${pack.territory}`;
+    if (descEl) descEl.innerText = `${pack.leadsCount} Leads • Verification coverage shown • ${pack.territory}`;
     if (priceEl) priceEl.innerHTML = `$${pack.price}<span class="text-xs text-slate-400">.00</span>`;
     if (btnLabelEl) btnLabelEl.innerText = `⚡ Continue to Secure Stripe Checkout ($${pack.price}.00)`;
 

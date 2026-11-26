@@ -17,135 +17,9 @@
       .replace(/'/g, '&#39;');
   }
 
-  // --- Sample Admin Seed Data ---
-  const ADMIN_METRICS = {
-    grossRevenue: 14820,
-    revenueGrowth: '+2,370',
-    netProfit: 14480,
-    profitMargin: '97.7%',
-    awsCost: 0,
-    activeLeads: 3840,
-    uniqueBuyers: 88,
-    reorderRate: '42%'
-  };
-
-  const SEED_TRANSACTIONS = [
-    {
-      id: 'tx_ord_9011',
-      time: '2026-11-21 14:32',
-      customerEmail: 'alex@velocitygrowth.io',
-      agency: 'Velocity Growth Agency',
-      product: 'Texas Commercial Contractors',
-      tier: 'Pack (24 leads)',
-      amount: '$79.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8944',
-      time: '2026-11-21 11:45',
-      customerEmail: 'sarah@outboundsprint.com',
-      agency: 'OutboundSprint',
-      product: 'California Luxury MedSpas',
-      tier: 'Pack (9 leads)',
-      amount: '$89.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8820',
-      time: '2026-11-21 08:30',
-      customerEmail: 'david@zenithb2b.com',
-      agency: 'Zenith B2B Media',
-      product: 'Custom Scrape: Phoenix Solar & Roofing',
-      tier: 'Custom (250 leads)',
-      amount: '$299.00',
-      processor: 'Stripe Invoice',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8755',
-      time: '2026-11-20 18:04',
-      customerEmail: 'marcus@leadcraft.agency',
-      agency: 'LeadCraft Outbound',
-      product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (12 leads)',
-      amount: '$99.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8612',
-      time: '2026-11-20 13:22',
-      customerEmail: 'elena@skylinegrowth.com',
-      agency: 'Skyline Growth Partners',
-      product: 'Florida Solar & Storm Restoration',
-      tier: 'Pack (8 leads)',
-      amount: '$79.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    },
-    {
-      id: 'tx_ord_8501',
-      time: '2026-11-19 21:10',
-      customerEmail: 'mike@industrialgrowth.io',
-      agency: 'Industrial Growth Partners',
-      product: 'Commercial HVAC & Mechanical',
-      tier: 'Pack (12 leads)',
-      amount: '$99.00',
-      processor: 'Stripe Checkout',
-      status: 'Delivered',
-      statusColor: 'emerald'
-    }
-  ];
-
-  const INVENTORY_DATA = [
-    {
-      territory: 'Texas Commercial Contractors',
-      niche: 'Roofing & Restoration (Austin, DFW, Houston)',
-      unassigned: 1420,
-      delivered: 180,
-      total: 1600,
-      pct: 88,
-      status: 'Optimal',
-      badgeColor: 'emerald'
-    },
-    {
-      territory: 'Florida Solar & Storm Recovery',
-      niche: 'Commercial Solar & Hurricane Mitigation',
-      unassigned: 980,
-      delivered: 120,
-      total: 1100,
-      pct: 89,
-      status: 'Optimal',
-      badgeColor: 'sky'
-    },
-    {
-      territory: 'California Luxury MedSpas',
-      niche: 'Aesthetic Medicine & Injectables (BH, SF, SD)',
-      unassigned: 740,
-      delivered: 95,
-      total: 835,
-      pct: 88,
-      status: 'High Demand',
-      badgeColor: 'pink'
-    },
-    {
-      territory: 'Commercial HVAC & Mechanical',
-      niche: 'Industrial Chillers & Building Automation',
-      unassigned: 700,
-      delivered: 85,
-      total: 785,
-      pct: 89,
-      status: 'Optimal',
-      badgeColor: 'emerald'
-    }
-  ];
+  // These panels render only verified backend data. No sample business metrics or transactions.
+  const SEED_TRANSACTIONS = [];
+  const INVENTORY_DATA = [];
 
   // --- Admin Custom Requests Backend State ---
   window.adminCustomRequestsList = [];
@@ -193,22 +67,72 @@
   };
 
   function updateAdminOverviewUI(data) {
+    const metrics = data.metrics || {};
     const revEl = document.getElementById('adminGrossRevenueVal');
     const ordersCountEl = document.getElementById('adminOrdersCountVal');
     const leadsPoolEl = document.getElementById('adminLeadsPoolVal');
     const usersCountEl = document.getElementById('adminUsersCountVal');
+    const allLeadsEl = document.getElementById('adminAllTimeLeads');
+    const allRevenueEl = document.getElementById('adminAllTimeRevenue');
 
-    if (revEl && data.metrics?.totalRevenue !== undefined) {
-      revEl.innerText = `$${Number(data.metrics.totalRevenue).toLocaleString()}`;
+    const currency = metrics.revenueCurrency || 'USD';
+    const money = value => new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency
+    }).format(Number(value) || 0);
+
+    if (revEl && metrics.totalRevenue !== undefined) revEl.innerText = money(metrics.totalRevenue);
+    if (ordersCountEl && metrics.paidOrdersCount !== undefined) ordersCountEl.innerText = String(metrics.paidOrdersCount);
+    if (leadsPoolEl && metrics.activeLeadsPool !== undefined) leadsPoolEl.innerText = Number(metrics.activeLeadsPool).toLocaleString();
+    if (usersCountEl && metrics.totalUsers !== undefined) usersCountEl.innerText = String(metrics.totalUsers);
+    if (allLeadsEl && metrics.activeLeadsPool !== undefined) allLeadsEl.innerText = Number(metrics.activeLeadsPool).toLocaleString();
+    if (allRevenueEl && metrics.totalRevenue !== undefined) allRevenueEl.innerText = money(metrics.totalRevenue);
+
+    const inventoryGrid = document.getElementById('adminInventoryGrid');
+    if (inventoryGrid && Array.isArray(data.inventorySummary)) {
+      inventoryGrid.innerHTML = data.inventorySummary.length
+        ? data.inventorySummary.map(item => `
+          <article class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
+            <div class="flex items-center justify-between gap-3">
+              <h4 class="text-sm font-bold text-white">${escapeHTML(item.title || item.packKey || 'Dataset')}</h4>
+              <span class="text-[10px] uppercase font-bold text-cyan-300">${escapeHTML(item.status || 'Catalogued')}</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">${escapeHTML(item.territory || 'Territory not specified')}</p>
+            <div class="flex items-end justify-between mt-4">
+              <span class="text-xs text-slate-500">${escapeHTML(item.niche || 'Business dataset')}</span>
+              <strong class="font-mono text-white">${Number(item.count || 0).toLocaleString()} records</strong>
+            </div>
+          </article>`).join('')
+        : '<div class="col-span-full py-6 text-center text-slate-500">No catalog entries are available.</div>';
     }
-    if (ordersCountEl && data.metrics?.paidOrdersCount !== undefined) {
-      ordersCountEl.innerText = `${data.metrics.paidOrdersCount}`;
-    }
-    if (leadsPoolEl && data.metrics?.activeLeadsPool !== undefined) {
-      leadsPoolEl.innerText = `${Number(data.metrics.activeLeadsPool).toLocaleString()}`;
-    }
-    if (usersCountEl && data.metrics?.totalUsers !== undefined) {
-      usersCountEl.innerText = `${data.metrics.totalUsers}`;
+
+    const ordersBody = document.getElementById('adminRecentOrdersBody');
+    if (ordersBody && Array.isArray(data.recentOrders)) {
+      ordersBody.innerHTML = data.recentOrders.length
+        ? data.recentOrders.map(order => {
+          const paid = ['paid', 'fulfilled', 'delivered'].includes(String(order.status || '').toLowerCase());
+          const timestamp = order.time ? new Date(order.time).toLocaleString() : 'Time unavailable';
+          return `
+            <tr class="hover:bg-slate-800/40 transition">
+              <td class="py-3 px-4 text-slate-400 text-[11px] whitespace-nowrap">${escapeHTML(timestamp)}</td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-white font-sans">${escapeHTML(order.agency || 'Customer')}</div>
+                <div class="text-[11px] text-slate-400">${escapeHTML(order.customerEmail || 'Email unavailable')}</div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-indigo-300 font-sans">${escapeHTML(order.product || 'Dataset')}</div>
+                <div class="text-[10px] text-slate-500 font-sans">${escapeHTML(order.tier || '')}</div>
+              </td>
+              <td class="py-3 px-4 font-bold text-emerald-400 text-sm">${escapeHTML(order.amount || '—')}</td>
+              <td class="py-3 px-4">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${escapeHTML(order.processor || '—')}</span>
+              </td>
+              <td class="py-3 px-4 text-center">
+                <span class="inline-flex items-center gap-1 text-[11px] font-bold ${paid ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'} px-2 py-0.5 rounded border">${escapeHTML(order.status || 'Unknown')}</span>
+              </td>
+            </tr>`;
+        }).join('')
+        : '<tr><td colspan="6" class="py-6 px-4 text-center text-slate-500">No orders have been recorded yet.</td></tr>';
     }
   }
 
@@ -230,7 +154,7 @@
                 <div class="flex items-center gap-2.5">
                   <h2 class="text-2xl font-black text-white tracking-tight">ApexIntel Admin Command Center</h2>
                   <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">ROOT ACCESS</span>
-                  <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Live Custom Queue • Sample Metrics</span>
+                  <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Live Custom Queue • Metrics Pending</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">Real-Time Revenue Analytics, Crawler Fleet Health, Lead Inventory & Custom Extraction Queue</p>
               </div>
@@ -255,9 +179,9 @@
                 <span>Gross Revenue (Verified)</span>
                 <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Stripe Live</span>
               </div>
-              <div id="adminGrossRevenueVal" class="text-3xl font-black text-white font-mono">$246</div>
+              <div id="adminGrossRevenueVal" class="text-3xl font-black text-white font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
-                <span id="adminOrdersCountVal" class="text-emerald-400 font-bold">3</span> paid transactions across all packs
+                <span id="adminOrdersCountVal" class="text-emerald-400 font-bold">—</span> verified paid transactions
               </div>
             </div>
 
@@ -267,9 +191,9 @@
                 <span>Net Margin</span>
                 <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Serverless</span>
               </div>
-              <div class="text-3xl font-black text-emerald-400 font-mono">97.7%</div>
+              <div class="text-3xl font-black text-emerald-400 font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
-                AWS infrastructure cost: <strong class="text-slate-300 font-mono">$0.00</strong> (credit pool)
+                AWS infrastructure cost: <strong class="text-slate-300 font-mono">Unavailable</strong>
               </div>
             </div>
 
@@ -279,7 +203,7 @@
                 <span>Pre-Warmed Lead Pool</span>
                 <span class="text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">DynamoDB</span>
               </div>
-              <div id="adminLeadsPoolVal" class="text-3xl font-black text-cyan-300 font-mono">53</div>
+              <div id="adminLeadsPoolVal" class="text-3xl font-black text-cyan-300 font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>Verified lead records in catalog cache</span>
@@ -292,7 +216,7 @@
                 <span>Total Client Accounts</span>
                 <span class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-[10px] font-mono font-bold">Auth Users</span>
               </div>
-              <div id="adminUsersCountVal" class="text-3xl font-black text-purple-300 font-mono">3</div>
+              <div id="adminUsersCountVal" class="text-3xl font-black text-purple-300 font-mono">—</div>
               <div class="text-[11px] text-slate-500 mt-1.5">
                 Active customer and admin accounts
               </div>
@@ -338,7 +262,7 @@
               </div>
               <span class="text-xs text-emerald-400 font-mono font-bold flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                ALL SYSTEMS OPERATIONAL
+                STATUS UNVERIFIED
               </span>
             </div>
 
@@ -347,12 +271,12 @@
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">Lambda Crawler</span>
-                  <span class="text-[10px] font-mono text-emerald-400 font-bold">ACTIVE ●</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">UNVERIFIED</span>
                 </div>
                 <div class="text-sm font-mono text-white font-bold truncate">apex-web-app</div>
                 <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
                   <span>Last Invoked:</span>
-                  <span class="text-slate-300 font-mono">2m ago</span>
+                  <span class="text-slate-300 font-mono">Unavailable</span>
                 </div>
                 <div class="text-[11px] text-slate-400 flex justify-between mt-0.5">
                   <span>Runtime:</span>
@@ -364,16 +288,16 @@
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">DynamoDB Ledger</span>
-                  <span class="text-[10px] font-mono text-cyan-400 font-bold">PAY_PER_REQ</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">UNVERIFIED</span>
                 </div>
                 <div class="text-sm font-mono text-white font-bold truncate">leads_cache</div>
                 <div class="text-[11px] text-slate-400 mt-1 flex justify-between">
                   <span>Items Tracked:</span>
-                  <span class="text-slate-300 font-mono font-bold">3,840</span>
+                  <span class="text-slate-300 font-mono font-bold">Unavailable</span>
                 </div>
                 <div class="text-[11px] text-slate-400 flex justify-between mt-0.5">
                   <span>Throttled Events:</span>
-                  <span class="text-emerald-400 font-mono font-bold">0</span>
+                  <span class="text-emerald-400 font-mono font-bold">Unavailable</span>
                 </div>
               </div>
 
@@ -381,15 +305,15 @@
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">DNS MX Deliverability</span>
-                  <span class="text-[10px] font-mono text-emerald-400 font-bold">98.4% PASS</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">NO LIVE DATA</span>
                 </div>
-                <div class="text-sm font-mono text-white font-bold">Zero Hard Bounces</div>
+                <div class="text-sm font-mono text-white font-bold">No verified report</div>
                 <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
-                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 98.4%"></div>
+                  <div class="bg-slate-600 h-1.5 rounded-full" style="width: 0%"></div>
                 </div>
                 <div class="text-[10px] text-slate-400 mt-1.5 flex justify-between">
                   <span>Failed Discarded:</span>
-                  <span class="text-slate-400 font-mono">61 invalid</span>
+                  <span class="text-slate-400 font-mono">Unavailable</span>
                 </div>
               </div>
 
@@ -397,15 +321,15 @@
               <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-xs font-bold text-slate-300">AWS Credit Budget</span>
-                  <span class="text-[10px] font-mono text-indigo-400 font-bold">$200.00 POOL</span>
+                  <span class="text-[10px] font-mono text-slate-400 font-bold">NO LIVE DATA</span>
                 </div>
-                <div class="text-sm font-mono text-white font-bold">$0.00 MTD Billed</div>
+                <div class="text-sm font-mono text-white font-bold">Unavailable</div>
                 <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
                   <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 1%"></div>
                 </div>
                 <div class="text-[10px] text-slate-400 mt-1.5 flex justify-between">
                   <span>Credits Remaining:</span>
-                  <span class="text-emerald-400 font-mono font-bold">$200.00</span>
+                  <span class="text-slate-400 font-mono font-bold">Unavailable</span>
                 </div>
               </div>
             </div>
@@ -418,8 +342,8 @@
               <span class="text-xs text-slate-400">Auto-balanced across 4 core datasets</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-              ${INVENTORY_DATA.map(inv => `
+            <div id="adminInventoryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              ${INVENTORY_DATA.length ? INVENTORY_DATA.map(inv => `
                 <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
                   <div>
                     <div class="flex items-center justify-between text-xs font-bold text-white mb-1">
@@ -445,7 +369,7 @@
                     </div>
                   </div>
                 </div>
-              `).join('')}
+              `).join('') : '<div class="col-span-full py-6 text-center text-slate-500">Inventory metrics are not available from the backend.</div>'}
             </div>
           </div>
 
@@ -456,7 +380,7 @@
                 <span class="text-sm font-extrabold uppercase tracking-wider text-indigo-400">📋 Live Order & Transaction Feed</span>
                 <span class="text-[10px] font-mono text-slate-500">Synced with Stripe Checkout & Webhooks</span>
               </div>
-              <span class="text-xs text-slate-400">Showing last real-time transactions</span>
+              <span class="text-xs text-slate-400">Live feed requires verified transaction data</span>
             </div>
 
             <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
@@ -471,8 +395,8 @@
                     <th class="py-3 px-4 text-center">Fulfillment</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800/60 font-mono text-slate-300">
-                  ${SEED_TRANSACTIONS.map(tx => `
+                <tbody id="adminRecentOrdersBody" class="divide-y divide-slate-800/60 font-mono text-slate-300">
+                  ${SEED_TRANSACTIONS.length ? SEED_TRANSACTIONS.map(tx => `
                     <tr class="hover:bg-slate-800/40 transition">
                       <td class="py-3 px-4 text-slate-400 text-[11px] whitespace-nowrap">${tx.time}</td>
                       <td class="py-3 px-4">
@@ -495,7 +419,7 @@
                         </span>
                       </td>
                     </tr>
-                  `).join('')}
+                  `).join('') : '<tr><td colspan="6" class="py-6 px-4 text-center text-slate-500">No verified transactions have been returned by the backend.</td></tr>'}
                 </tbody>
               </table>
             </div>
@@ -504,13 +428,13 @@
           <!-- Bottom Summary Strip -->
           <div class="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
             <div class="flex flex-wrap items-center gap-4">
-              <span>All-Time Leads: <strong class="text-white">12,480</strong></span>
+              <span>All-Time Leads: <strong id="adminAllTimeLeads" class="text-white">—</strong></span>
               <span>•</span>
-              <span>All-Time Revenue: <strong class="text-emerald-400">$14,820</strong></span>
+              <span>All-Time Revenue: <strong id="adminAllTimeRevenue" class="text-emerald-400">—</strong></span>
               <span>•</span>
-              <span>Uptime: <strong class="text-white">99.97%</strong></span>
+              <span>Uptime: <strong class="text-white">—</strong></span>
               <span>•</span>
-              <span>Avg Delivery: <strong class="text-cyan-400">1.2s</strong></span>
+              <span>Avg Delivery: <strong class="text-cyan-400">—</strong></span>
             </div>
             <div>
               <button onclick="window.closeAdminDashboard()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 font-bold transition">
@@ -643,12 +567,7 @@
         }
         if (typeof window.openAuthModal === 'function') {
           window.openAuthModal('signin');
-          setTimeout(() => {
-            const emailInput = document.getElementById('signInEmail');
-            if (emailInput && !emailInput.value) {
-              emailInput.value = 'admin@apexintel.io';
-            }
-          }, 150);
+
         }
         return;
       }

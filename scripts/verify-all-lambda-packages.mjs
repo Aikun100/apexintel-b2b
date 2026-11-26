@@ -91,7 +91,12 @@ const PACKAGES = [
       'index.mjs',
       'package.json',
       'src/discovery/repository.js',
-      'src/discovery/service.js'
+      'src/discovery/service.js',
+      'src/discovery/router.js',
+      'src/auth/repository.js',
+      'src/payments/repository.js',
+      'src/payments/catalog.js',
+      'src/requests/repository.js'
     ],
     requiredModules: ['validator', '@aws-sdk/client-dynamodb', '@aws-sdk/lib-dynamodb']
   },

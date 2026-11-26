@@ -14,7 +14,8 @@ import {
   GetCommand, 
   PutCommand, 
   UpdateCommand, 
-  QueryCommand 
+  QueryCommand,
+  ScanCommand 
 } from '@aws-sdk/lib-dynamodb';
 
 export const ORDERS_TABLE_NAME = process.env.DYNAMODB_ORDERS_TABLE || 'apexintel_orders';
@@ -122,6 +123,12 @@ export class InMemoryOrdersRepository {
     // Sort descending by createdAt
     orders.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     return orders;
+  }
+
+  async listAllOrders(options = {}) {
+    const orders = Array.from(this.ordersById.values()).map(order => ({ ...order }));
+    orders.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return options.limit ? orders.slice(0, options.limit) : orders;
   }
 
   clear() {
@@ -263,6 +270,25 @@ export class DynamoDBOrdersRepository {
       }
       throw err;
     }
+  }
+
+  async listAllOrders(options = {}) {
+    const orders = [];
+    const pageSize = Math.min(Math.max(Number(options.pageSize) || 100, 1), 1000);
+    let ExclusiveStartKey;
+
+    do {
+      const result = await this.docClient.send(new ScanCommand({
+        TableName: this.tableName,
+        Limit: pageSize,
+        ExclusiveStartKey
+      }));
+      orders.push(...(result.Items || []));
+      ExclusiveStartKey = result.LastEvaluatedKey;
+    } while (ExclusiveStartKey && (!options.limit || orders.length < options.limit));
+
+    orders.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return options.limit ? orders.slice(0, options.limit) : orders;
   }
 
   async listOrdersByUserId(userId) {

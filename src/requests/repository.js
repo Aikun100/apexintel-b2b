@@ -61,7 +61,7 @@ export class InMemoryRequestsRepository {
   async listAllRequests(options = {}) {
     let results = Array.from(this.requests.values()).map(r => ({ ...r }));
     if (options.status) {
-      results = results.filter(r => r.status.toLowerCase() === options.status.toLowerCase());
+      results = results.filter(r => String(r.status || '').toLowerCase() === String(options.status).toLowerCase());
     }
     results.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
     if (options.limit && results.length > options.limit) {
@@ -176,35 +176,35 @@ export class DynamoDBRequestsRepository {
   }
 
   async listAllRequests(options = {}) {
-    try {
+    const items = [];
+    const pageSize = Math.min(Math.max(Number(options.pageSize) || 100, 1), 1000);
+    let ExclusiveStartKey;
+
+    do {
+      const params = {
+        TableName: this.tableName,
+        Limit: pageSize,
+        ExclusiveStartKey
+      };
+
+      let result;
       if (options.status) {
-        const result = await this.docClient.send(new QueryCommand({
-          TableName: this.tableName,
-          IndexName: 'status-createdAt-index',
-          KeyConditionExpression: '#st = :st',
-          ExpressionAttributeNames: { '#st': 'status' },
-          ExpressionAttributeValues: { ':st': options.status },
-          ScanIndexForward: false,
-          Limit: options.limit || 100
-        }));
-        return result.Items || [];
+        params.IndexName = 'status-createdAt-index';
+        params.KeyConditionExpression = '#st = :st';
+        params.ExpressionAttributeNames = { '#st': 'status' };
+        params.ExpressionAttributeValues = { ':st': options.status };
+        params.ScanIndexForward = false;
+        result = await this.docClient.send(new QueryCommand(params));
+      } else {
+        result = await this.docClient.send(new ScanCommand(params));
       }
 
-      const result = await this.docClient.send(new ScanCommand({
-        TableName: this.tableName,
-        Limit: options.limit || 100
-      }));
-      const items = result.Items || [];
-      items.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-      return items;
-    } catch (err) {
-      const isProduction = process.env.NODE_ENV === 'production' || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
-      if (isProduction) {
-        throw new Error(`DynamoDB Custom Requests scan failed in production: ${err.message}`);
-      }
-      console.warn(`[DynamoDBRequestsRepository] Scan error: ${err.message}`);
-      return [];
-    }
+      items.push(...(result.Items || []));
+      ExclusiveStartKey = result.LastEvaluatedKey;
+    } while (ExclusiveStartKey && (!options.limit || items.length < options.limit));
+
+    items.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    return options.limit ? items.slice(0, options.limit) : items;
   }
 
   async updateRequestStatus(requestId, updates = {}) {

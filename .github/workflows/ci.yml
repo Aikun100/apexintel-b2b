@@ -1,0 +1,45 @@
+name: ApexIntel CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apexintel-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Rebuild and verify committed frontend bundle
+        run: |
+          npm run bundle
+          git diff --exit-code -- public/index.html
+
+      - name: Validate JavaScript syntax
+        run: npm run validate
+
+      - name: Run automated test suites
+        run: npm test

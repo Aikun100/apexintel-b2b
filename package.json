@@ -1,7 +1,7 @@
 {
-  "name": "browser-agent-workspace",
+  "name": "apexintel-b2b",
   "version": "1.0.0",
-  "description": "Dedicated workspace for controlling Google Chrome via Open Browser Control & MCP",
+  "description": "ApexIntel B2B data intelligence, prospect discovery, CRM, payments, and fulfillment platform",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -15,10 +15,14 @@
     "node": ">=20.0.0"
   },
   "keywords": [
-    "browser-automation",
-    "mcp",
-    "open-browser-control",
-    "agent"
+    "b2b",
+    "lead-generation",
+    "data-intelligence",
+    "crm",
+    "prospect-discovery",
+    "cloudflare-workers",
+    "aws-lambda",
+    "stripe"
   ],
   "author": "Aaron Agbas",
   "license": "ISC",

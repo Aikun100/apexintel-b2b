@@ -8,7 +8,8 @@
  */
 
 import { getDiscoveryRepository } from './repository.js';
-import { processLeadIngestionBatch, DEFAULT_CANDIDATE_LEADS } from '../../aws/lambda-crawler-handler.mjs';
+import { processLeadIngestionBatch } from '../../aws/lambda-crawler-handler.mjs';
+import { scoreLead } from '../tools/opportunity-scorer.js';
 
 /**
  * Mask an email address for public preview (e.g. "info@dallasroofer.com" -> "in**@dallasroofer.com")
@@ -16,7 +17,7 @@ import { processLeadIngestionBatch, DEFAULT_CANDIDATE_LEADS } from '../../aws/la
  * @returns {string}
  */
 export function maskEmail(email) {
-  if (!email || typeof email !== 'string' || !email.includes('@')) return 'in**@domain.com';
+  if (!email || typeof email !== 'string' || !email.includes('@')) return null;
   const [local, domain] = email.split('@');
   if (local.length <= 2) {
     return `${local.charAt(0)}*@${domain}`;
@@ -31,7 +32,7 @@ export function maskEmail(email) {
  * @returns {string}
  */
 export function maskPhone(phone) {
-  if (!phone || typeof phone !== 'string') return '+1 *** *** ****';
+  if (!phone || typeof phone !== 'string') return null;
   const parts = phone.trim().split(' ');
   if (parts.length >= 4) {
     return `${parts[0]} ${parts[1]} *** ${parts[3]}`;
@@ -42,6 +43,7 @@ export function maskPhone(phone) {
 export class DiscoveryService {
   constructor(options = {}) {
     this._repo = options.repository || null;
+    this.resolveMx = options.resolveMx || null;
   }
 
   get repo() {
@@ -87,31 +89,57 @@ export class DiscoveryService {
 
     // Apply server-side contact entitlement masking
     const sanitizedLeads = result.leads.map(lead => {
-      const email = lead.email || `info@${lead.id}`;
-      const phone = lead.phone || '+1 555 000 0000';
+      const email = typeof lead.email === 'string' ? lead.email : null;
+      const phone = typeof lead.phone === 'string' ? lead.phone : null;
+      const speedMs = Number.isFinite(Number(lead.speed_ms)) && lead.speed_ms !== null
+        ? Number(lead.speed_ms)
+        : null;
+      const metaPixel = typeof lead.meta_pixel === 'boolean' ? lead.meta_pixel : null;
+      const googleAds = typeof lead.google_ads === 'boolean' ? lead.google_ads : null;
+      const opportunity = scoreLead({
+        speed_ms: speedMs,
+        meta_pixel: metaPixel,
+        google_ads: googleAds,
+        email,
+        phone,
+        mx_verified: typeof lead.mx_verified === 'boolean' ? lead.mx_verified : null,
+        cms: lead.cms || lead.tech || null,
+        trade: lead.trade || lead.category || null,
+        title: lead.title,
+        metaDesc: lead.metaDesc,
+        seoIssues: lead.seoIssues,
+        sslDetails: lead.sslDetails,
+        securityHeaders: lead.securityHeaders,
+        pixels: lead.pixels,
+        scanStatus: lead.scanStatus
+      });
 
       return {
         id: lead.id,
         domain: lead.domain || lead.id,
-        name: lead.name || lead.company_name,
-        company_name: lead.company_name || lead.name,
-        trade: lead.trade || lead.category,
-        category: lead.category || lead.trade,
-        city: lead.city || lead.location,
-        location: lead.location || lead.city,
-        speed: lead.speed || `${lead.speed_ms || 750}ms`,
-        speed_ms: lead.speed_ms || 750,
-        pixel: lead.pixel || (lead.meta_pixel ? 'Meta Pixel' : 'No Pixel'),
-        meta_pixel: Boolean(lead.meta_pixel),
-        google_ads: Boolean(lead.google_ads),
-        cms: lead.cms || lead.tech || 'WordPress',
-        tech: lead.tech || lead.cms || 'WordPress',
-        mx_verified: Boolean(lead.mx_verified),
-        createdAt: lead.createdAt || lead.created_at,
-        // Sensitive contact fields: masked unless user is platform admin
+        name: lead.name || lead.company_name || null,
+        company_name: lead.company_name || lead.name || null,
+        trade: lead.trade || lead.category || null,
+        category: lead.category || lead.trade || null,
+        city: lead.city || lead.location || null,
+        location: lead.location || lead.city || null,
+        speed: lead.speed || (speedMs !== null ? `${speedMs}ms` : null),
+        speed_ms: speedMs,
+        pixel: lead.pixel || (metaPixel === null ? null : (metaPixel ? 'Meta Pixel' : 'No Pixel')),
+        meta_pixel: metaPixel,
+        google_ads: googleAds,
+        cms: lead.cms || lead.tech || null,
+        tech: lead.tech || lead.cms || null,
+        mx_verified: typeof lead.mx_verified === 'boolean' ? lead.mx_verified : null,
+        opportunityScore: opportunity.score,
+        opportunityGrade: opportunity.grade,
+        opportunityFactors: opportunity.factors,
+        provenance: opportunity.provenance,
+        createdAt: lead.createdAt || lead.created_at || null,
+        // Sensitive contact fields: masked unless user is platform admin; missing values stay unavailable.
         email: isAdmin ? email : maskEmail(email),
         phone: isAdmin ? phone : maskPhone(phone),
-        isContactMasked: !isAdmin
+        isContactMasked: !isAdmin && Boolean(email || phone)
       };
     });
 
@@ -141,17 +169,20 @@ export class DiscoveryService {
       throw err;
     }
 
-    const leads = Array.isArray(candidateLeads) && candidateLeads.length > 0 
-      ? candidateLeads 
-      : DEFAULT_CANDIDATE_LEADS;
+    if (!Array.isArray(candidateLeads) || candidateLeads.length === 0) {
+      const err = new Error('No crawl candidates were supplied. Connect a live source or submit an explicit lead batch before running ingestion.');
+      err.statusCode = 400;
+      throw err;
+    }
 
-    const result = await processLeadIngestionBatch(leads, {
-      repository: this.repo
+    const result = await processLeadIngestionBatch(candidateLeads, {
+      repository: this.repo,
+      resolveMx: this.resolveMx
     });
 
     return {
       success: true,
-      message: `Successfully executed crawler pipeline: ${result.persistedCount} verified leads ingested into DynamoDB leads_cache.`,
+      message: `Processed ${result.processedCount} supplied records; ${result.verifiedCount} domains returned MX records.`,
       processedCount: result.processedCount,
       verifiedCount: result.verifiedCount,
       persistedCount: result.persistedCount,

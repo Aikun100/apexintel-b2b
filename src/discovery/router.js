@@ -14,6 +14,10 @@
  */
 
 import { discoveryService } from './service.js';
+import { getAuthRepository } from '../auth/repository.js';
+import { getOrdersRepository } from '../payments/repository.js';
+import { getRequestsRepository } from '../requests/repository.js';
+import { listProducts, getProductByKey } from '../payments/catalog.js';
 import { authenticateSession } from '../auth/middleware.js';
 import { validateWorkerSecret } from '../auth/router.js';
 import { 
@@ -196,14 +200,83 @@ export async function dispatchDiscoveryRoute(reqObj, service = discoveryService,
     }
 
     try {
-      // Aggregate real metrics across services/repositories
-      const leadsRes = await service.searchLeads({ limit: 50, authenticatedUser: auth.user });
-      const inventory = [
-        { packKey: 'texas', title: 'Texas High-Ticket Contractors', count: 24, status: 'Active' },
-        { packKey: 'florida', title: 'Florida Solar & Restoration', count: 8, status: 'Active' },
-        { packKey: 'medspas', title: 'California Luxury MedSpas', count: 9, status: 'Active' },
-        { packKey: 'hvac', title: 'Commercial HVAC & Mechanical', count: 12, status: 'Active' }
-      ];
+      // Aggregate from persistent repositories only. Missing data is never replaced with sample values.
+      const [users, orders, customRequests, activeLeadsPool] = await Promise.all([
+        getAuthRepository().listAllUsers(),
+        getOrdersRepository().listAllOrders(),
+        getRequestsRepository().listAllRequests(),
+        service.repo.countLeads()
+      ]);
+
+      const sortedOrders = [...orders].sort((a, b) =>
+        new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      );
+      const paidOrders = sortedOrders.filter(order =>
+        ['paid', 'fulfilled', 'delivered'].includes(String(order.status || '').toLowerCase())
+      );
+      const usdRevenueCents = paidOrders
+        .filter(order => String(order.currency || 'usd').toLowerCase() === 'usd')
+        .reduce((total, order) => {
+          const cents = Number.isFinite(Number(order.amountInCents))
+            ? Number(order.amountInCents)
+            : Math.round((Number(order.amount) || 0) * 100);
+          return total + cents;
+        }, 0);
+
+      const formatOrderAmount = order => {
+        const cents = Number.isFinite(Number(order.amountInCents))
+          ? Number(order.amountInCents)
+          : Math.round((Number(order.amount) || 0) * 100);
+        const currency = String(order.currency || 'usd').toLowerCase();
+        try {
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency.toUpperCase()
+          }).format(cents / 100);
+        } catch {
+          return `${(cents / 100).toFixed(2)} ${currency.toUpperCase()}`;
+        }
+      };
+
+      const recentOrders = sortedOrders.slice(0, 10).map(order => {
+        const product = getProductByKey(order.productKey);
+        const status = String(order.status || 'unknown');
+        return {
+          id: order.orderId,
+          time: order.createdAt || null,
+          customerEmail: order.userEmail || null,
+          agency: order.companyName || order.company || null,
+          product: order.productName || product?.title || order.productKey || 'Dataset',
+          tier: product ? `${product.leadsCount} records` : null,
+          amount: formatOrderAmount(order),
+          processor: order.stripeSessionId ? 'Stripe Checkout' : null,
+          status,
+          statusColor: ['paid', 'fulfilled', 'delivered'].includes(status.toLowerCase()) ? 'emerald' : 'amber'
+        };
+      });
+
+      const inventorySummary = listProducts().map(product => ({
+        packKey: product.key,
+        title: product.title,
+        territory: product.territory,
+        niche: product.niche,
+        count: product.leadsCount,
+        status: 'Catalogued'
+      }));
+
+      const recentCustomRequests = [...customRequests]
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        .slice(0, 10)
+        .map(request => ({
+          requestId: request.requestId,
+          userId: request.userId,
+          status: request.status,
+          industry: request.industry || null,
+          territory: request.territory || null,
+          volume: request.volume || request.recordCount || null,
+          createdAt: request.createdAt || null,
+          updatedAt: request.updatedAt || null
+        }));
 
       return {
         statusCode: 200,
@@ -211,19 +284,19 @@ export async function dispatchDiscoveryRoute(reqObj, service = discoveryService,
         body: {
           success: true,
           metrics: {
-            totalRevenue: 246,
-            paidOrdersCount: 3,
-            totalUsers: 3,
-            activeLeadsPool: leadsRes.totalCount || 53,
-            customRequestsCount: 1,
-            pendingCustomRequests: 0
+            totalRevenue: usdRevenueCents / 100,
+            revenueCurrency: 'USD',
+            paidOrdersCount: paidOrders.length,
+            totalUsers: users.length,
+            activeLeadsPool,
+            customRequestsCount: customRequests.length,
+            pendingCustomRequests: customRequests.filter(request =>
+              ['submitted', 'reviewing', 'mining'].includes(String(request.status || '').toLowerCase())
+            ).length
           },
-          recentOrders: [
-            { id: 'tx_ord_9011', time: '2026-11-21 14:32', customerEmail: 'alex@velocitygrowth.io', agency: 'Velocity Growth Agency', product: 'Texas High-Ticket Contractors', tier: 'Pack (24 leads)', amount: '$79.00', processor: 'Stripe Checkout', status: 'Delivered', statusColor: 'emerald' },
-            { id: 'tx_ord_8944', time: '2026-11-21 11:45', customerEmail: 'sarah@outboundsprint.com', agency: 'OutboundSprint', product: 'California Luxury MedSpas', tier: 'Pack (9 leads)', amount: '$89.00', processor: 'Stripe Checkout', status: 'Delivered', statusColor: 'emerald' }
-          ],
-          inventorySummary: inventory,
-          customRequests: []
+          recentOrders,
+          inventorySummary,
+          customRequests: recentCustomRequests
         }
       };
     } catch (err) {

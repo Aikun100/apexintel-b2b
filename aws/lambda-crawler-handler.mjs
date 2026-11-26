@@ -2,7 +2,7 @@
  * ApexIntel B2B - AWS Lambda Lead Crawler & Ingestion Handler
  * 
  * Pipeline:
- * 1. Accepts batch of discovered leads (or pulls default crawler candidate pool)
+ * 1. Accepts an explicit batch of discovered leads; no default/sample pool is injected
  * 2. Performs live DNS MX resolution on target domains
  * 3. Persists enriched, verified leads into DynamoDB 'leads_cache' via DiscoveryRepository
  * 4. Preserves historical buyer delivery tracking (delivered_to) on existing domains
@@ -11,145 +11,43 @@
 import dns from 'node:dns/promises';
 import { getDiscoveryRepository } from '../src/discovery/repository.js';
 
-// Default candidate leads pool for crawler runs
-export const DEFAULT_CANDIDATE_LEADS = [
-  {
-    id: "dallasroofer.com",
-    company_name: "T Rock Roofing & Restoration",
-    trade: "Roofing & Storm Restoration",
-    city: "Dallas-Fort Worth, TX",
-    email: "info@dallasroofer.com",
-    phone: "+1 469 931 9867",
-    speed_ms: 1473,
-    meta_pixel: false,
-    google_ads: true,
-    cms: "WordPress / Apache"
-  },
-  {
-    id: "suttonroofinginc.com",
-    company_name: "Sutton Roofing & Solar",
-    trade: "Roofing & Exterior",
-    city: "Austin, TX",
-    email: "office@suttonroofinginc.com",
-    phone: "+1 512 837 8777",
-    speed_ms: 620,
-    meta_pixel: true,
-    google_ads: false,
-    cms: "Custom / NGINX"
-  },
-  {
-    id: "tampabaysolar.com",
-    company_name: "Tampa Bay Solar",
-    trade: "Solar & Clean Energy",
-    city: "Tampa, FL",
-    email: "info@tampabaysolar.com",
-    phone: "+1 813 398 3687",
-    speed_ms: 740,
-    meta_pixel: false,
-    google_ads: true,
-    cms: "WordPress"
-  },
-  {
-    id: "sunvena.com",
-    company_name: "SunVena Solar",
-    trade: "Solar & Clean Energy",
-    city: "Orlando, FL",
-    email: "service@sunvena.com",
-    phone: "+1 407 555 8362",
-    speed_ms: 610,
-    meta_pixel: true,
-    google_ads: false,
-    cms: "Webflow"
-  },
-  {
-    id: "nassifmd.com",
-    company_name: "NassifMD Medical Spa",
-    trade: "Aesthetic Medicine & MedSpas",
-    city: "Beverly Hills, CA",
-    email: "concierge@nassifmd.com",
-    phone: "+1 310 275 2467",
-    speed_ms: 530,
-    meta_pixel: true,
-    google_ads: true,
-    cms: "WordPress"
-  },
-  {
-    id: "skinspirit.com",
-    company_name: "SkinSpirit Beverly Hills",
-    trade: "Aesthetic Medicine & MedSpas",
-    city: "Beverly Hills, CA",
-    email: "info@skinspirit.com",
-    phone: "+1 310 555 7820",
-    speed_ms: 680,
-    meta_pixel: true,
-    google_ads: false,
-    cms: "Shopify"
-  },
-  {
-    id: "ambermech.com",
-    company_name: "Amber Mechanical Contractors",
-    trade: "Commercial HVAC & Piping",
-    city: "Chicago, IL",
-    email: "service@ambermech.com",
-    phone: "+1 708 596 7900",
-    speed_ms: 810,
-    meta_pixel: false,
-    google_ads: true,
-    cms: "Custom / NGINX"
-  },
-  {
-    id: "dallasmech.com",
-    company_name: "Dallas Mechanical Group",
-    trade: "Commercial HVAC & Piping",
-    city: "Dallas, TX",
-    email: "estimating@dallasmech.com",
-    phone: "+1 214 343 4141",
-    speed_ms: 920,
-    meta_pixel: false,
-    google_ads: false,
-    cms: "WordPress"
-  }
-];
+// No built-in sample leads: ingestion requires an explicit source batch.
+export const DEFAULT_CANDIDATE_LEADS = Object.freeze([]);
 
 export async function processLeadIngestionBatch(leadsToProcess, options = {}) {
   const isDryRun = Boolean(options.dryRun);
   const repo = options.repository || getDiscoveryRepository();
-  const leads = Array.isArray(leadsToProcess) && leadsToProcess.length > 0 
-    ? leadsToProcess 
-    : DEFAULT_CANDIDATE_LEADS;
+  const leads = Array.isArray(leadsToProcess) ? leadsToProcess : [];
+  if (leads.length === 0) {
+    const error = new Error('A non-empty lead batch is required; no sample records are injected.');
+    error.statusCode = 400;
+    throw error;
+  }
 
+  const resolveMx = options.resolveMx || dns.resolveMx.bind(dns);
   const results = [];
   const now = new Date().toISOString();
 
   for (const lead of leads) {
-    let mxValid = false;
-    let emailDomain = '';
+    let mxValid = null;
+    const email = typeof lead.email === 'string' ? lead.email.trim() : '';
+    const emailDomain = email.includes('@') ? email.split('@').pop().trim().toLowerCase() : '';
+    const recordDomain = String(lead.domain || lead.id || emailDomain).trim().toLowerCase();
 
-    if (lead.email && lead.email.includes('@')) {
-      emailDomain = lead.email.split('@')[1].trim();
-    } else if (lead.id) {
-      emailDomain = lead.id.trim();
-    }
-
-    // Live DNS MX Verification check
+    // A domain MX lookup is performed only when an actual email address is present.
     if (emailDomain) {
       try {
-        const records = await dns.resolveMx(emailDomain);
+        const records = await resolveMx(emailDomain);
         mxValid = Array.isArray(records) && records.length > 0;
       } catch {
-        // Fallback for mock/test environments
-        if (process.env.NODE_ENV === 'test' || process.env.USE_MOCK_STORAGE === 'true') {
-          mxValid = true;
-        } else {
-          mxValid = false;
-        }
+        mxValid = false;
       }
     }
 
     const enrichedRecord = {
       ...lead,
-      id: emailDomain || lead.id,
-      domain: emailDomain || lead.id,
+      id: recordDomain,
+      domain: recordDomain,
       mx_verified: mxValid,
       lastCrawledAt: now
     };
@@ -195,22 +93,22 @@ export const handler = async (event = {}) => {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: "Batch processed & verified for DynamoDB leads_cache",
+        message: "Batch processed; DNS MX status recorded for supplied email domains.",
         processed_count: result.processedCount,
         verified_count: result.verifiedCount,
         persisted_count: result.persistedCount,
         is_dry_run: result.isDryRun,
-        sample_records: result.records.slice(0, 5)
+        processed_records: result.records.length
       })
     };
   } catch (err) {
     console.error("[Crawler Handler Fatal Error]:", err);
     return {
-      statusCode: 500,
+      statusCode: err.statusCode || 500,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         success: false,
-        error: "Crawler pipeline execution failed."
+        error: err.statusCode === 400 ? err.message : "Crawler pipeline execution failed."
       })
     };
   }

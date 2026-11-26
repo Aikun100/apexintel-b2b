@@ -56,12 +56,12 @@ aws iam list-access-keys --user-name AaronJasper
 
 ## 2. Run All Automated Test Suites & Package Verification
 
-### Step 2.1: Execute Unified Test Suite (158 Tests) `[READ-ONLY]`
+### Step 2.1: Execute Unified Test Suite (192 Tests) `[READ-ONLY]`
 Run the end-to-end automated test runner covering Auth, CRM, Payments, Crawler/Discovery, Scanner, and Custom Requests:
 ```bash
 node scripts/run-all-tests.mjs
 ```
-*Verification Check:* Must display `All 158 tests across 6 suites PASSED with 0 failures`.
+*Verification Check:* Must display `All 192 tests across 7 suites PASSED with 0 failures`.
 
 ### Step 2.2: Build All 6 Lambda Deployment Packages `[MODIFIES INFRASTRUCTURE]`
 Generate minimal, production-grade Node.js 20 ESM ZIP bundles into `dist/`:
